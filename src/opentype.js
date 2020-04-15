@@ -362,6 +362,167 @@ function parseBuffer(buffer, opt) {
 }
 
 /**
+ * Parse the OpenType file data (as a FontMetadata) and return a Font object.
+ * Throws an error if the font could not be parsed.
+ * @param  {ArrayBuffer}
+ * @param  {Object} opt - options for parsing
+ */
+async function parseFontMetadata(metadata, opt) {
+    opt = (opt === undefined || opt === null) ?  {} : opt;
+
+    let indexToLocFormat;
+    let ltagTable;
+
+    // Since the constructor can also be called to create new fonts from scratch, we indicate this
+    // should be an empty font that we'll fill with our own data.
+    const font = new Font({empty: true});
+
+    const tableData = await metadata.getTables();
+    const numTables = tableData.size;
+  let tableEntries = [];
+  if (tableData.has('CFF ') || tableData.has('CFF2')) {
+    font.outlinesFormat = 'cff';
+  } else if (tableData.has('glyf') && tableData.has('loca')) {
+    font.outlinesFormat = 'truetype';
+  } else {
+    // Bitmap or SVG fonts?
+    throw new Error('Unsupported OpenType flavor');
+  }
+
+    let cffTableEntry;
+    let fvarTableEntry;
+    let glyfTableEntry;
+    let gposTableEntry;
+    let gsubTableEntry;
+    let hmtxTableEntry;
+    let kernTableEntry;
+    let locaTableEntry;
+    let nameTableEntry;
+    let metaTableEntry;
+    let p;
+
+    for (const [tag, dataBlob] of tableData.entries()) {
+        const data = new DataView(await dataBlob.arrayBuffer(), 0);
+        const tableEntry = {data, offset: 0};
+        switch (tag) {
+            case 'cmap':
+                font.tables.cmap = cmap.parse(tableEntry.data, tableEntry.offset);
+                font.encoding = new CmapEncoding(font.tables.cmap);
+                break;
+            case 'cvt ' :
+                p = new parse.Parser(tableEntry.data, tableEntry.offset);
+                font.tables.cvt = p.parseShortList(tableEntry.data.byteLength / 2);
+                break;
+            case 'fvar':
+                fvarTableEntry = tableEntry;
+                break;
+            case 'fpgm' :
+                p = new parse.Parser(tableEntry.data, tableEntry.offset);
+                font.tables.fpgm = p.parseByteList(tableEntry.data.byteLength);
+                break;
+            case 'head':
+                font.tables.head = head.parse(tableEntry.data, tableEntry.offset);
+                font.unitsPerEm = font.tables.head.unitsPerEm;
+                indexToLocFormat = font.tables.head.indexToLocFormat;
+                break;
+            case 'hhea':
+                font.tables.hhea = hhea.parse(tableEntry.data, tableEntry.offset);
+                font.ascender = font.tables.hhea.ascender;
+                font.descender = font.tables.hhea.descender;
+                font.numberOfHMetrics = font.tables.hhea.numberOfHMetrics;
+                break;
+            case 'hmtx':
+                hmtxTableEntry = tableEntry;
+                break;
+            case 'ltag':
+                ltagTable = ltag.parse(tableEntry.data, tableEntry.offset);
+                break;
+            case 'maxp':
+                font.tables.maxp = maxp.parse(tableEntry.data, tableEntry.offset);
+                font.numGlyphs = font.tables.maxp.numGlyphs;
+                break;
+            case 'name':
+                nameTableEntry = tableEntry;
+                break;
+            case 'OS/2':
+                font.tables.os2 = os2.parse(tableEntry.data, tableEntry.offset);
+                break;
+            case 'post':
+                font.tables.post = post.parse(tableEntry.data, tableEntry.offset);
+                font.glyphNames = new GlyphNames(font.tables.post);
+                break;
+            case 'prep' :
+                p = new parse.Parser(tableEntry.data, tableEntry.offset);
+                font.tables.prep = p.parseByteList(tableEntry.data.byteLength);
+                break;
+            case 'glyf':
+                glyfTableEntry = tableEntry;
+                break;
+            case 'loca':
+                locaTableEntry = tableEntry;
+                break;
+            case 'CFF ':
+                cffTableEntry = tableEntry;
+                break;
+            case 'kern':
+                kernTableEntry = tableEntry;
+                break;
+            case 'GPOS':
+                gposTableEntry = tableEntry;
+                break;
+            case 'GSUB':
+                gsubTableEntry = tableEntry;
+                break;
+            case 'meta':
+                metaTableEntry = tableEntry;
+                break;
+        }
+  }
+
+    font.tables.name = _name.parse(nameTableEntry.data, nameTableEntry.offset, ltagTable);
+    font.names = font.tables.name;
+
+    if (glyfTableEntry && locaTableEntry) {
+        const shortVersion = indexToLocFormat === 0;
+        const locaOffsets = loca.parse(locaTableEntry.data, locaTableEntry.offset, font.numGlyphs, shortVersion);
+        font.glyphs = glyf.parse(glyfTableEntry.data, glyfTableEntry.offset, locaOffsets, font, opt);
+    } else if (cffTableEntry) {
+        cff.parse(cffTableEntry.data, cffTableEntry.offset, font, opt);
+    } else {
+        throw new Error('Font doesn\'t contain TrueType or CFF outlines.');
+    }
+
+    hmtx.parse(font, hmtxTableEntry.data, hmtxTableEntry.offset, font.numberOfHMetrics, font.numGlyphs, font.glyphs, opt);
+    addGlyphNames(font, opt);
+
+    if (kernTableEntry) {
+        font.kerningPairs = kern.parse(kernTableEntry.data, kernTableEntry.offset);
+    } else {
+        font.kerningPairs = {};
+    }
+
+    if (gposTableEntry) {
+        font.tables.gpos = gpos.parse(gposTableEntry.data, gposTableEntry.offset);
+        font.position.init();
+    }
+
+    if (gsubTableEntry) {
+        font.tables.gsub = gsub.parse(gsubTableEntry.data, gsubTableEntry.offset);
+    }
+
+    if (fvarTableEntry) {
+        font.tables.fvar = fvar.parse(fvarTableEntry.data, fvarTableEntry.offset, font.names);
+    }
+
+    if (metaTableEntry) {
+        font.tables.meta = meta.parse(metaTableEntry.data, metaTableEntry.offset);
+        font.metas = font.tables.meta;
+    }
+
+    return font;
+}
+
+/**
  * Asynchronously load the font from a URL or a filesystem. When done, call the callback
  * with two arguments `(err, font)`. The `err` will be null on success,
  * the `font` is a Font object.
@@ -424,6 +585,7 @@ export {
     BoundingBox,
     parse as _parse,
     parseBuffer as parse,
+    parseFontMetadata,
     load,
     loadSync
 };
