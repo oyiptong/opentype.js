@@ -118,8 +118,8 @@
 	  var i, sum;
 
 	  /* build bits table */
-	  for (i = 0; i < delta; ++i) { bits[i] = 0; }
-	  for (i = 0; i < 30 - delta; ++i) { bits[i + delta] = i / delta | 0; }
+	  for (i = 0; i < delta; ++i) bits[i] = 0;
+	  for (i = 0; i < 30 - delta; ++i) bits[i + delta] = i / delta | 0;
 
 	  /* build base table */
 	  for (sum = first, i = 0; i < 30; ++i) {
@@ -133,23 +133,23 @@
 	  var i;
 
 	  /* build fixed length tree */
-	  for (i = 0; i < 7; ++i) { lt.table[i] = 0; }
+	  for (i = 0; i < 7; ++i) lt.table[i] = 0;
 
 	  lt.table[7] = 24;
 	  lt.table[8] = 152;
 	  lt.table[9] = 112;
 
-	  for (i = 0; i < 24; ++i) { lt.trans[i] = 256 + i; }
-	  for (i = 0; i < 144; ++i) { lt.trans[24 + i] = i; }
-	  for (i = 0; i < 8; ++i) { lt.trans[24 + 144 + i] = 280 + i; }
-	  for (i = 0; i < 112; ++i) { lt.trans[24 + 144 + 8 + i] = 144 + i; }
+	  for (i = 0; i < 24; ++i) lt.trans[i] = 256 + i;
+	  for (i = 0; i < 144; ++i) lt.trans[24 + i] = i;
+	  for (i = 0; i < 8; ++i) lt.trans[24 + 144 + i] = 280 + i;
+	  for (i = 0; i < 112; ++i) lt.trans[24 + 144 + 8 + i] = 144 + i;
 
 	  /* build fixed distance tree */
-	  for (i = 0; i < 5; ++i) { dt.table[i] = 0; }
+	  for (i = 0; i < 5; ++i) dt.table[i] = 0;
 
 	  dt.table[5] = 32;
 
-	  for (i = 0; i < 32; ++i) { dt.trans[i] = i; }
+	  for (i = 0; i < 32; ++i) dt.trans[i] = i;
 	}
 
 	/* given an array of code lengths, build a tree */
@@ -159,10 +159,10 @@
 	  var i, sum;
 
 	  /* clear code length count table */
-	  for (i = 0; i < 16; ++i) { t.table[i] = 0; }
+	  for (i = 0; i < 16; ++i) t.table[i] = 0;
 
 	  /* scan symbol lengths, and sum code length counts */
-	  for (i = 0; i < num; ++i) { t.table[lengths[off + i]]++; }
+	  for (i = 0; i < num; ++i) t.table[lengths[off + i]]++;
 
 	  t.table[0] = 0;
 
@@ -174,7 +174,7 @@
 
 	  /* create code->symbol translation table (symbols sorted by code) */
 	  for (i = 0; i < num; ++i) {
-	    if (lengths[off + i]) { t.trans[offs[lengths[off + i]]++] = i; }
+	    if (lengths[off + i]) t.trans[offs[lengths[off + i]]++] = i;
 	  }
 	}
 
@@ -201,7 +201,7 @@
 	/* read a num bit value from a stream and add base */
 	function tinf_read_bits(d, num, base) {
 	  if (!num)
-	    { return base; }
+	    return base;
 
 	  while (d.bitcount < 24) {
 	    d.tag |= d.source[d.sourceIndex++] << d.bitcount;
@@ -254,7 +254,7 @@
 	  /* get 4 bits HCLEN (4-19) */
 	  hclen = tinf_read_bits(d, 4, 4);
 
-	  for (i = 0; i < 19; ++i) { lengths[i] = 0; }
+	  for (i = 0; i < 19; ++i) lengths[i] = 0;
 
 	  /* read code lengths for code length alphabet */
 	  for (i = 0; i < hclen; ++i) {
@@ -361,13 +361,13 @@
 
 	  /* check length */
 	  if (length !== (~invlength & 0x0000ffff))
-	    { return TINF_DATA_ERROR; }
+	    return TINF_DATA_ERROR;
 
 	  d.sourceIndex += 4;
 
 	  /* copy block */
 	  for (i = length; i; --i)
-	    { d.dest[d.destLen++] = d.source[d.sourceIndex++]; }
+	    d.dest[d.destLen++] = d.source[d.sourceIndex++];
 
 	  /* make sure we start next block on a byte boundary */
 	  d.bitcount = 0;
@@ -407,15 +407,15 @@
 	    }
 
 	    if (res !== TINF_OK)
-	      { throw new Error('Data error'); }
+	      throw new Error('Data error');
 
 	  } while (!bfinal);
 
 	  if (d.destLen < d.dest.length) {
 	    if (typeof d.dest.slice === 'function')
-	      { return d.dest.slice(0, d.destLen); }
+	      return d.dest.slice(0, d.destLen);
 	    else
-	      { return d.dest.subarray(0, d.destLen); }
+	      return d.dest.subarray(0, d.destLen);
 	  }
 	  
 	  return d.dest;
@@ -539,40 +539,40 @@
 	    // This code is based on http://nishiohirokazu.blogspot.com/2009/06/how-to-calculate-bezier-curves-bounding.html
 	    // and https://github.com/icons8/svg-path-bounding-box
 
-	    var p0 = [x0, y0];
-	    var p1 = [x1, y1];
-	    var p2 = [x2, y2];
-	    var p3 = [x, y];
+	    const p0 = [x0, y0];
+	    const p1 = [x1, y1];
+	    const p2 = [x2, y2];
+	    const p3 = [x, y];
 
 	    this.addPoint(x0, y0);
 	    this.addPoint(x, y);
 
-	    for (var i = 0; i <= 1; i++) {
-	        var b = 6 * p0[i] - 12 * p1[i] + 6 * p2[i];
-	        var a = -3 * p0[i] + 9 * p1[i] - 9 * p2[i] + 3 * p3[i];
-	        var c = 3 * p1[i] - 3 * p0[i];
+	    for (let i = 0; i <= 1; i++) {
+	        const b = 6 * p0[i] - 12 * p1[i] + 6 * p2[i];
+	        const a = -3 * p0[i] + 9 * p1[i] - 9 * p2[i] + 3 * p3[i];
+	        const c = 3 * p1[i] - 3 * p0[i];
 
 	        if (a === 0) {
-	            if (b === 0) { continue; }
-	            var t = -c / b;
+	            if (b === 0) continue;
+	            const t = -c / b;
 	            if (0 < t && t < 1) {
-	                if (i === 0) { this.addX(derive(p0[i], p1[i], p2[i], p3[i], t)); }
-	                if (i === 1) { this.addY(derive(p0[i], p1[i], p2[i], p3[i], t)); }
+	                if (i === 0) this.addX(derive(p0[i], p1[i], p2[i], p3[i], t));
+	                if (i === 1) this.addY(derive(p0[i], p1[i], p2[i], p3[i], t));
 	            }
 	            continue;
 	        }
 
-	        var b2ac = Math.pow(b, 2) - 4 * c * a;
-	        if (b2ac < 0) { continue; }
-	        var t1 = (-b + Math.sqrt(b2ac)) / (2 * a);
+	        const b2ac = Math.pow(b, 2) - 4 * c * a;
+	        if (b2ac < 0) continue;
+	        const t1 = (-b + Math.sqrt(b2ac)) / (2 * a);
 	        if (0 < t1 && t1 < 1) {
-	            if (i === 0) { this.addX(derive(p0[i], p1[i], p2[i], p3[i], t1)); }
-	            if (i === 1) { this.addY(derive(p0[i], p1[i], p2[i], p3[i], t1)); }
+	            if (i === 0) this.addX(derive(p0[i], p1[i], p2[i], p3[i], t1));
+	            if (i === 1) this.addY(derive(p0[i], p1[i], p2[i], p3[i], t1));
 	        }
-	        var t2 = (-b - Math.sqrt(b2ac)) / (2 * a);
+	        const t2 = (-b - Math.sqrt(b2ac)) / (2 * a);
 	        if (0 < t2 && t2 < 1) {
-	            if (i === 0) { this.addX(derive(p0[i], p1[i], p2[i], p3[i], t2)); }
-	            if (i === 1) { this.addY(derive(p0[i], p1[i], p2[i], p3[i], t2)); }
+	            if (i === 0) this.addX(derive(p0[i], p1[i], p2[i], p3[i], t2));
+	            if (i === 1) this.addY(derive(p0[i], p1[i], p2[i], p3[i], t2));
 	        }
 	    }
 	};
@@ -588,10 +588,10 @@
 	 * @param {number} y - The ending Y coordinate.
 	 */
 	BoundingBox.prototype.addQuad = function(x0, y0, x1, y1, x, y) {
-	    var cp1x = x0 + 2 / 3 * (x1 - x0);
-	    var cp1y = y0 + 2 / 3 * (y1 - y0);
-	    var cp2x = cp1x + 1 / 3 * (x - x0);
-	    var cp2y = cp1y + 1 / 3 * (y - y0);
+	    const cp1x = x0 + 2 / 3 * (x1 - x0);
+	    const cp1y = y0 + 2 / 3 * (y1 - y0);
+	    const cp2x = cp1x + 1 / 3 * (x - x0);
+	    const cp2y = cp1y + 1 / 3 * (y - y0);
 	    this.addBezier(x0, y0, cp1x, cp1y, cp2x, cp2y, x, y);
 	};
 
@@ -729,7 +729,7 @@
 	    if (pathOrCommands.commands) {
 	        pathOrCommands = pathOrCommands.commands;
 	    } else if (pathOrCommands instanceof BoundingBox) {
-	        var box = pathOrCommands;
+	        const box = pathOrCommands;
 	        this.moveTo(box.x1, box.y1);
 	        this.lineTo(box.x2, box.y1);
 	        this.lineTo(box.x2, box.y2);
@@ -746,14 +746,14 @@
 	 * @returns {opentype.BoundingBox}
 	 */
 	Path.prototype.getBoundingBox = function() {
-	    var box = new BoundingBox();
+	    const box = new BoundingBox();
 
-	    var startX = 0;
-	    var startY = 0;
-	    var prevX = 0;
-	    var prevY = 0;
-	    for (var i = 0; i < this.commands.length; i++) {
-	        var cmd = this.commands[i];
+	    let startX = 0;
+	    let startY = 0;
+	    let prevX = 0;
+	    let prevY = 0;
+	    for (let i = 0; i < this.commands.length; i++) {
+	        const cmd = this.commands[i];
 	        switch (cmd.type) {
 	            case 'M':
 	                box.addPoint(cmd.x, cmd.y);
@@ -795,8 +795,8 @@
 	 */
 	Path.prototype.draw = function(ctx) {
 	    ctx.beginPath();
-	    for (var i = 0; i < this.commands.length; i += 1) {
-	        var cmd = this.commands[i];
+	    for (let i = 0; i < this.commands.length; i += 1) {
+	        const cmd = this.commands[i];
 	        if (cmd.type === 'M') {
 	            ctx.moveTo(cmd.x, cmd.y);
 	        } else if (cmd.type === 'L') {
@@ -840,11 +840,9 @@
 	    }
 
 	    function packValues() {
-	        var arguments$1 = arguments;
-
-	        var s = '';
-	        for (var i = 0; i < arguments.length; i += 1) {
-	            var v = arguments$1[i];
+	        let s = '';
+	        for (let i = 0; i < arguments.length; i += 1) {
+	            const v = arguments[i];
 	            if (v >= 0 && i > 0) {
 	                s += ' ';
 	            }
@@ -855,9 +853,9 @@
 	        return s;
 	    }
 
-	    var d = '';
-	    for (var i = 0; i < this.commands.length; i += 1) {
-	        var cmd = this.commands[i];
+	    let d = '';
+	    for (let i = 0; i < this.commands.length; i += 1) {
+	        const cmd = this.commands[i];
 	        if (cmd.type === 'M') {
 	            d += 'M' + packValues(cmd.x, cmd.y);
 	        } else if (cmd.type === 'L') {
@@ -880,7 +878,7 @@
 	 * @return {string}
 	 */
 	Path.prototype.toSVG = function(decimalPlaces) {
-	    var svg = '<path d="';
+	    let svg = '<path d="';
 	    svg += this.toPathData(decimalPlaces);
 	    svg += '"';
 	    if (this.fill && this.fill !== 'black') {
@@ -905,8 +903,8 @@
 	 * @return {SVGPathElement}
 	 */
 	Path.prototype.toDOMElement = function(decimalPlaces) {
-	    var temporaryPath = this.toPathData(decimalPlaces);
-	    var newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+	    const temporaryPath = this.toPathData(decimalPlaces);
+	    const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
 	    newPath.setAttribute('d', temporaryPath);
 
@@ -926,28 +924,28 @@
 	        fail(message);
 	    }
 	}
-	var check = { fail: fail, argument: argument, assert: argument };
+	var check = { fail, argument, assert: argument };
 
 	// Data types used in the OpenType font file.
 
-	var LIMIT16 = 32768; // The limit at which a 16-bit number switches signs == 2^15
-	var LIMIT32 = 2147483648; // The limit at which a 32-bit number switches signs == 2 ^ 31
+	const LIMIT16 = 32768; // The limit at which a 16-bit number switches signs == 2^15
+	const LIMIT32 = 2147483648; // The limit at which a 32-bit number switches signs == 2 ^ 31
 
 	/**
 	 * @exports opentype.decode
 	 * @class
 	 */
-	var decode = {};
+	const decode = {};
 	/**
 	 * @exports opentype.encode
 	 * @class
 	 */
-	var encode = {};
+	const encode = {};
 	/**
 	 * @exports opentype.sizeOf
 	 * @class
 	 */
-	var sizeOf = {};
+	const sizeOf = {};
 
 	// Return a function that always returns the same value.
 	function constant(v) {
@@ -994,8 +992,8 @@
 	 * @returns {Array}
 	 */
 	encode.CHARARRAY = function(v) {
-	    var b = [];
-	    for (var i = 0; i < v.length; i += 1) {
+	    const b = [];
+	    for (let i = 0; i < v.length; i += 1) {
 	        b[i] = v.charCodeAt(i);
 	    }
 
@@ -1220,19 +1218,19 @@
 	 * @returns {Array}
 	 */
 	encode.REAL = function(v) {
-	    var value = v.toString();
+	    let value = v.toString();
 
 	    // Some numbers use an epsilon to encode the value. (e.g. JavaScript will store 0.0000001 as 1e-7)
 	    // This code converts it back to a number without the epsilon.
-	    var m = /\.(\d*?)(?:9{5,20}|0{5,20})\d{0,2}(?:e(.+)|$)/.exec(value);
+	    const m = /\.(\d*?)(?:9{5,20}|0{5,20})\d{0,2}(?:e(.+)|$)/.exec(value);
 	    if (m) {
-	        var epsilon = parseFloat('1e' + ((m[2] ? +m[2] : 0) + m[1].length));
+	        const epsilon = parseFloat('1e' + ((m[2] ? +m[2] : 0) + m[1].length));
 	        value = (Math.round(v * epsilon) / epsilon).toString();
 	    }
 
-	    var nibbles = '';
-	    for (var i = 0, ii = value.length; i < ii; i += 1) {
-	        var c = value[i];
+	    let nibbles = '';
+	    for (let i = 0, ii = value.length; i < ii; i += 1) {
+	        const c = value[i];
 	        if (c === 'e') {
 	            nibbles += value[++i] === '-' ? 'c' : 'b';
 	        } else if (c === '.') {
@@ -1245,9 +1243,9 @@
 	    }
 
 	    nibbles += (nibbles.length & 1) ? 'f' : 'ff';
-	    var out = [30];
-	    for (var i$1 = 0, ii$1 = nibbles.length; i$1 < ii$1; i$1 += 2) {
-	        out.push(parseInt(nibbles.substr(i$1, 2), 16));
+	    const out = [30];
+	    for (let i = 0, ii = nibbles.length; i < ii; i += 2) {
+	        out.push(parseInt(nibbles.substr(i, 2), 16));
 	    }
 
 	    return out;
@@ -1274,9 +1272,9 @@
 	 * @returns {string}
 	 */
 	decode.UTF8 = function(data, offset, numBytes) {
-	    var codePoints = [];
-	    var numChars = numBytes;
-	    for (var j = 0; j < numChars; j++, offset += 1) {
+	    const codePoints = [];
+	    const numChars = numBytes;
+	    for (let j = 0; j < numChars; j++, offset += 1) {
 	        codePoints[j] = data.getUint8(offset);
 	    }
 
@@ -1290,9 +1288,9 @@
 	 * @returns {string}
 	 */
 	decode.UTF16 = function(data, offset, numBytes) {
-	    var codePoints = [];
-	    var numChars = numBytes / 2;
-	    for (var j = 0; j < numChars; j++, offset += 2) {
+	    const codePoints = [];
+	    const numChars = numBytes / 2;
+	    for (let j = 0; j < numChars; j++, offset += 2) {
 	        codePoints[j] = data.getUint16(offset);
 	    }
 
@@ -1305,9 +1303,9 @@
 	 * @returns {Array}
 	 */
 	encode.UTF16 = function(v) {
-	    var b = [];
-	    for (var i = 0; i < v.length; i += 1) {
-	        var codepoint = v.charCodeAt(i);
+	    const b = [];
+	    for (let i = 0; i < v.length; i += 1) {
+	        const codepoint = v.charCodeAt(i);
 	        b[b.length] = (codepoint >> 8) & 0xFF;
 	        b[b.length] = codepoint & 0xFF;
 	    }
@@ -1336,7 +1334,7 @@
 	/**
 	 * @private
 	 */
-	var eightBitMacEncodings = {
+	const eightBitMacEncodings = {
 	    'x-mac-croatian':  // Python: 'mac_croatian'
 	    'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®Š™´¨≠ŽØ∞±≤≥∆µ∂∑∏š∫ªºΩžø' +
 	    '¿¡¬√ƒ≈Ć«Č… ÀÃÕŒœĐ—“”‘’÷◊©⁄€‹›Æ»–·‚„‰ÂćÁčÈÍÎÏÌÓÔđÒÚÛÙıˆ˜¯πË˚¸Êæˇ',
@@ -1381,14 +1379,14 @@
 	 * @returns {string}
 	 */
 	decode.MACSTRING = function(dataView, offset, dataLength, encoding) {
-	    var table = eightBitMacEncodings[encoding];
+	    const table = eightBitMacEncodings[encoding];
 	    if (table === undefined) {
 	        return undefined;
 	    }
 
-	    var result = '';
-	    for (var i = 0; i < dataLength; i++) {
-	        var c = dataView.getUint8(offset + i);
+	    let result = '';
+	    for (let i = 0; i < dataLength; i++) {
+	        const c = dataView.getUint8(offset + i);
 	        // In all eight-bit Mac encodings, the characters 0x00..0x7F are
 	        // mapped to U+0000..U+007F; we only need to look up the others.
 	        if (c <= 0x7F) {
@@ -1405,21 +1403,21 @@
 	// Unicode character codes to their 8-bit MacOS equivalent. This table
 	// is not exactly a super cheap data structure, but we do not care because
 	// encoding Macintosh strings is only rarely needed in typical applications.
-	var macEncodingTableCache = typeof WeakMap === 'function' && new WeakMap();
-	var macEncodingCacheKeys;
-	var getMacEncodingTable = function (encoding) {
+	const macEncodingTableCache = typeof WeakMap === 'function' && new WeakMap();
+	let macEncodingCacheKeys;
+	const getMacEncodingTable = function (encoding) {
 	    // Since we use encoding as a cache key for WeakMap, it has to be
 	    // a String object and not a literal. And at least on NodeJS 2.10.1,
 	    // WeakMap requires that the same String instance is passed for cache hits.
 	    if (!macEncodingCacheKeys) {
 	        macEncodingCacheKeys = {};
-	        for (var e in eightBitMacEncodings) {
+	        for (let e in eightBitMacEncodings) {
 	            /*jshint -W053 */  // Suppress "Do not use String as a constructor."
 	            macEncodingCacheKeys[e] = new String(e);
 	        }
 	    }
 
-	    var cacheKey = macEncodingCacheKeys[encoding];
+	    const cacheKey = macEncodingCacheKeys[encoding];
 	    if (cacheKey === undefined) {
 	        return undefined;
 	    }
@@ -1429,19 +1427,19 @@
 	    // between the calls to cache.has() and cache.get(). In that case,
 	    // we would return 'undefined' even though we do support the encoding.
 	    if (macEncodingTableCache) {
-	        var cachedTable = macEncodingTableCache.get(cacheKey);
+	        const cachedTable = macEncodingTableCache.get(cacheKey);
 	        if (cachedTable !== undefined) {
 	            return cachedTable;
 	        }
 	    }
 
-	    var decodingTable = eightBitMacEncodings[encoding];
+	    const decodingTable = eightBitMacEncodings[encoding];
 	    if (decodingTable === undefined) {
 	        return undefined;
 	    }
 
-	    var encodingTable = {};
-	    for (var i = 0; i < decodingTable.length; i++) {
+	    const encodingTable = {};
+	    for (let i = 0; i < decodingTable.length; i++) {
 	        encodingTable[decodingTable.charCodeAt(i)] = i + 0x80;
 	    }
 
@@ -1462,14 +1460,14 @@
 	 * @returns {Array}
 	 */
 	encode.MACSTRING = function(str, encoding) {
-	    var table = getMacEncodingTable(encoding);
+	    const table = getMacEncodingTable(encoding);
 	    if (table === undefined) {
 	        return undefined;
 	    }
 
-	    var result = [];
-	    for (var i = 0; i < str.length; i++) {
-	        var c = str.charCodeAt(i);
+	    const result = [];
+	    for (let i = 0; i < str.length; i++) {
+	        let c = str.charCodeAt(i);
 
 	        // In all eight-bit Mac encodings, the characters 0x00..0x7F are
 	        // mapped to U+0000..U+007F; we only need to look up the others.
@@ -1494,7 +1492,7 @@
 	 * @returns {number}
 	 */
 	sizeOf.MACSTRING = function(str, encoding) {
-	    var b = encode.MACSTRING(str, encoding);
+	    const b = encode.MACSTRING(str, encoding);
 	    if (b !== undefined) {
 	        return b.length;
 	    } else {
@@ -1509,8 +1507,8 @@
 
 	// Helper for encode.VARDELTAS
 	function encodeVarDeltaRunAsZeroes(deltas, pos, result) {
-	    var runLength = 0;
-	    var numDeltas = deltas.length;
+	    let runLength = 0;
+	    const numDeltas = deltas.length;
 	    while (pos < numDeltas && runLength < 64 && deltas[pos] === 0) {
 	        ++pos;
 	        ++runLength;
@@ -1521,11 +1519,11 @@
 
 	// Helper for encode.VARDELTAS
 	function encodeVarDeltaRunAsBytes(deltas, offset, result) {
-	    var runLength = 0;
-	    var numDeltas = deltas.length;
-	    var pos = offset;
+	    let runLength = 0;
+	    const numDeltas = deltas.length;
+	    let pos = offset;
 	    while (pos < numDeltas && runLength < 64) {
-	        var value = deltas[pos];
+	        const value = deltas[pos];
 	        if (!isByteEncodable(value)) {
 	            break;
 	        }
@@ -1545,7 +1543,7 @@
 	        ++runLength;
 	    }
 	    result.push(runLength - 1);
-	    for (var i = offset; i < pos; ++i) {
+	    for (let i = offset; i < pos; ++i) {
 	        result.push((deltas[i] + 256) & 0xff);
 	    }
 	    return pos;
@@ -1553,11 +1551,11 @@
 
 	// Helper for encode.VARDELTAS
 	function encodeVarDeltaRunAsWords(deltas, offset, result) {
-	    var runLength = 0;
-	    var numDeltas = deltas.length;
-	    var pos = offset;
+	    let runLength = 0;
+	    const numDeltas = deltas.length;
+	    let pos = offset;
 	    while (pos < numDeltas && runLength < 64) {
-	        var value = deltas[pos];
+	        const value = deltas[pos];
 
 	        // Within a word-encoded run of deltas, it is easiest to start
 	        // a new run (with a different encoding) whenever we encounter
@@ -1583,8 +1581,8 @@
 	        ++runLength;
 	    }
 	    result.push(0x40 | (runLength - 1));
-	    for (var i = offset; i < pos; ++i) {
-	        var val = deltas[i];
+	    for (let i = offset; i < pos; ++i) {
+	        const val = deltas[i];
 	        result.push(((val + 0x10000) >> 8) & 0xff, (val + 0x100) & 0xff);
 	    }
 	    return pos;
@@ -1603,10 +1601,10 @@
 	 * @return {Array}
 	 */
 	encode.VARDELTAS = function(deltas) {
-	    var pos = 0;
-	    var result = [];
+	    let pos = 0;
+	    const result = [];
 	    while (pos < deltas.length) {
-	        var value = deltas[pos];
+	        const value = deltas[pos];
 	        if (value === 0) {
 	            pos = encodeVarDeltaRunAsZeroes(deltas, pos, result);
 	        } else if (value >= -128 && value <= 127) {
@@ -1630,11 +1628,11 @@
 	    // Because we have to know which data type to use to encode the offsets,
 	    // we have to go through the values twice: once to encode the data and
 	    // calculate the offsets, then again to encode the offsets using the fitting data type.
-	    var offset = 1; // First offset is always 1.
-	    var offsets = [offset];
-	    var data = [];
-	    for (var i = 0; i < l.length; i += 1) {
-	        var v = encode.OBJECT(l[i]);
+	    let offset = 1; // First offset is always 1.
+	    const offsets = [offset];
+	    const data = [];
+	    for (let i = 0; i < l.length; i += 1) {
+	        const v = encode.OBJECT(l[i]);
 	        Array.prototype.push.apply(data, v);
 	        offset += v.length;
 	        offsets.push(offset);
@@ -1644,11 +1642,11 @@
 	        return [0, 0];
 	    }
 
-	    var encodedOffsets = [];
-	    var offSize = (1 + Math.floor(Math.log(offset) / Math.log(2)) / 8) | 0;
-	    var offsetEncoder = [undefined, encode.BYTE, encode.USHORT, encode.UINT24, encode.ULONG][offSize];
-	    for (var i$1 = 0; i$1 < offsets.length; i$1 += 1) {
-	        var encodedOffset = offsetEncoder(offsets[i$1]);
+	    const encodedOffsets = [];
+	    const offSize = (1 + Math.floor(Math.log(offset) / Math.log(2)) / 8) | 0;
+	    const offsetEncoder = [undefined, encode.BYTE, encode.USHORT, encode.UINT24, encode.ULONG][offSize];
+	    for (let i = 0; i < offsets.length; i += 1) {
+	        const encodedOffset = offsetEncoder(offsets[i]);
 	        Array.prototype.push.apply(encodedOffsets, encodedOffset);
 	    }
 
@@ -1674,14 +1672,14 @@
 	 * @returns {Array}
 	 */
 	encode.DICT = function(m) {
-	    var d = [];
-	    var keys = Object.keys(m);
-	    var length = keys.length;
+	    let d = [];
+	    const keys = Object.keys(m);
+	    const length = keys.length;
 
-	    for (var i = 0; i < length; i += 1) {
+	    for (let i = 0; i < length; i += 1) {
 	        // Object.keys() return string keys, but our keys are always numeric.
-	        var k = parseInt(keys[i], 0);
-	        var v = m[k];
+	        const k = parseInt(keys[i], 0);
+	        const v = m[k];
 	        // Value comes before the key.
 	        d = d.concat(encode.OPERAND(v.value, v.type));
 	        d = d.concat(encode.OPERATOR(k));
@@ -1716,9 +1714,9 @@
 	 * @returns {Array}
 	 */
 	encode.OPERAND = function(v, type) {
-	    var d = [];
+	    let d = [];
 	    if (Array.isArray(type)) {
-	        for (var i = 0; i < type.length; i += 1) {
+	        for (let i = 0; i < type.length; i += 1) {
 	            check.argument(v.length === type.length, 'Not enough arguments given for type' + type);
 	            d = d.concat(encode.OPERAND(v[i], type[i]));
 	        }
@@ -1746,7 +1744,7 @@
 	sizeOf.OP = sizeOf.BYTE;
 
 	// memoize charstring encoding using WeakMap if available
-	var wmm = typeof WeakMap === 'function' && new WeakMap();
+	const wmm = typeof WeakMap === 'function' && new WeakMap();
 
 	/**
 	 * Convert a list of CharString operations to bytes.
@@ -1756,17 +1754,17 @@
 	encode.CHARSTRING = function(ops) {
 	    // See encode.MACSTRING for why we don't do "if (wmm && wmm.has(ops))".
 	    if (wmm) {
-	        var cachedValue = wmm.get(ops);
+	        const cachedValue = wmm.get(ops);
 	        if (cachedValue !== undefined) {
 	            return cachedValue;
 	        }
 	    }
 
-	    var d = [];
-	    var length = ops.length;
+	    let d = [];
+	    const length = ops.length;
 
-	    for (var i = 0; i < length; i += 1) {
-	        var op = ops[i];
+	    for (let i = 0; i < length; i += 1) {
+	        const op = ops[i];
 	        d = d.concat(encode[op.type](op.value));
 	    }
 
@@ -1793,7 +1791,7 @@
 	 * @returns {Array}
 	 */
 	encode.OBJECT = function(v) {
-	    var encodingFunction = encode[v.type];
+	    const encodingFunction = encode[v.type];
 	    check.argument(encodingFunction !== undefined, 'No encoding function for type ' + v.type);
 	    return encodingFunction(v.value);
 	};
@@ -1803,7 +1801,7 @@
 	 * @returns {number}
 	 */
 	sizeOf.OBJECT = function(v) {
-	    var sizeOfFunction = sizeOf[v.type];
+	    const sizeOfFunction = sizeOf[v.type];
 	    check.argument(sizeOfFunction !== undefined, 'No sizeOf function for type ' + v.type);
 	    return sizeOfFunction(v.value);
 	};
@@ -1816,21 +1814,21 @@
 	 * @returns {Array}
 	 */
 	encode.TABLE = function(table) {
-	    var d = [];
-	    var length = table.fields.length;
-	    var subtables = [];
-	    var subtableOffsets = [];
+	    let d = [];
+	    const length = table.fields.length;
+	    const subtables = [];
+	    const subtableOffsets = [];
 
-	    for (var i = 0; i < length; i += 1) {
-	        var field = table.fields[i];
-	        var encodingFunction = encode[field.type];
+	    for (let i = 0; i < length; i += 1) {
+	        const field = table.fields[i];
+	        const encodingFunction = encode[field.type];
 	        check.argument(encodingFunction !== undefined, 'No encoding function for field type ' + field.type + ' (' + field.name + ')');
-	        var value = table[field.name];
+	        let value = table[field.name];
 	        if (value === undefined) {
 	            value = field.value;
 	        }
 
-	        var bytes = encodingFunction(value);
+	        const bytes = encodingFunction(value);
 
 	        if (field.type === 'TABLE') {
 	            subtableOffsets.push(d.length);
@@ -1841,13 +1839,13 @@
 	        }
 	    }
 
-	    for (var i$1 = 0; i$1 < subtables.length; i$1 += 1) {
-	        var o = subtableOffsets[i$1];
-	        var offset = d.length;
+	    for (let i = 0; i < subtables.length; i += 1) {
+	        const o = subtableOffsets[i];
+	        const offset = d.length;
 	        check.argument(offset < 65536, 'Table ' + table.tableName + ' too big.');
 	        d[o] = offset >> 8;
 	        d[o + 1] = offset & 0xff;
-	        d = d.concat(subtables[i$1]);
+	        d = d.concat(subtables[i]);
 	    }
 
 	    return d;
@@ -1858,14 +1856,14 @@
 	 * @returns {number}
 	 */
 	sizeOf.TABLE = function(table) {
-	    var numBytes = 0;
-	    var length = table.fields.length;
+	    let numBytes = 0;
+	    const length = table.fields.length;
 
-	    for (var i = 0; i < length; i += 1) {
-	        var field = table.fields[i];
-	        var sizeOfFunction = sizeOf[field.type];
+	    for (let i = 0; i < length; i += 1) {
+	        const field = table.fields[i];
+	        const sizeOfFunction = sizeOf[field.type];
 	        check.argument(sizeOfFunction !== undefined, 'No sizeOf function for field type ' + field.type + ' (' + field.name + ')');
-	        var value = table[field.name];
+	        let value = table[field.name];
 	        if (value === undefined) {
 	            value = field.value;
 	        }
@@ -1904,18 +1902,18 @@
 	 * @constructor
 	 */
 	function Table(tableName, fields, options) {
-	    for (var i = 0; i < fields.length; i += 1) {
-	        var field = fields[i];
+	    for (let i = 0; i < fields.length; i += 1) {
+	        const field = fields[i];
 	        this[field.name] = field.value;
 	    }
 
 	    this.tableName = tableName;
 	    this.fields = fields;
 	    if (options) {
-	        var optionKeys = Object.keys(options);
-	        for (var i$1 = 0; i$1 < optionKeys.length; i$1 += 1) {
-	            var k = optionKeys[i$1];
-	            var v = options[k];
+	        const optionKeys = Object.keys(options);
+	        for (let i = 0; i < optionKeys.length; i += 1) {
+	            const k = optionKeys[i];
+	            const v = options[k];
 	            if (this[k] !== undefined) {
 	                this[k] = v;
 	            }
@@ -1946,9 +1944,9 @@
 	    if (count === undefined) {
 	        count = list.length;
 	    }
-	    var fields = new Array(list.length + 1);
+	    const fields = new Array(list.length + 1);
 	    fields[0] = {name: itemName + 'Count', type: 'USHORT', value: count};
-	    for (var i = 0; i < list.length; i++) {
+	    for (let i = 0; i < list.length; i++) {
 	        fields[i + 1] = {name: itemName + i, type: 'USHORT', value: list[i]};
 	    }
 	    return fields;
@@ -1958,10 +1956,10 @@
 	 * @private
 	 */
 	function tableList(itemName, records, itemCallback) {
-	    var count = records.length;
-	    var fields = new Array(count + 1);
+	    const count = records.length;
+	    const fields = new Array(count + 1);
 	    fields[0] = {name: itemName + 'Count', type: 'USHORT', value: count};
-	    for (var i = 0; i < count; i++) {
+	    for (let i = 0; i < count; i++) {
 	        fields[i + 1] = {name: itemName + i, type: 'TABLE', value: itemCallback(records[i], i)};
 	    }
 	    return fields;
@@ -1971,10 +1969,10 @@
 	 * @private
 	 */
 	function recordList(itemName, records, itemCallback) {
-	    var count = records.length;
-	    var fields = [];
+	    const count = records.length;
+	    let fields = [];
 	    fields[0] = {name: itemName + 'Count', type: 'USHORT', value: count};
-	    for (var i = 0; i < count; i++) {
+	    for (let i = 0; i < count; i++) {
 	        fields = fields.concat(itemCallback(records[i], i));
 	    }
 	    return fields;
@@ -2005,8 +2003,8 @@
 	function ScriptList(scriptListTable) {
 	    Table.call(this, 'scriptListTable',
 	        recordList('scriptRecord', scriptListTable, function(scriptRecord, i) {
-	            var script = scriptRecord.script;
-	            var defaultLangSys = script.defaultLangSys;
+	            const script = scriptRecord.script;
+	            let defaultLangSys = script.defaultLangSys;
 	            check.assert(!!defaultLangSys, 'Unable to write GSUB: script ' + scriptRecord.tag + ' has no default language system.');
 	            return [
 	                {name: 'scriptTag' + i, type: 'TAG', value: scriptRecord.tag},
@@ -2016,7 +2014,7 @@
 	                        {name: 'reqFeatureIndex', type: 'USHORT', value: defaultLangSys.reqFeatureIndex}]
 	                        .concat(ushortList('featureIndex', defaultLangSys.featureIndexes)))}
 	                    ].concat(recordList('langSys', script.langSysRecords, function(langSysRecord, i) {
-	                        var langSys = langSysRecord.langSys;
+	                        const langSys = langSysRecord.langSys;
 	                        return [
 	                            {name: 'langSysTag' + i, type: 'TAG', value: langSysRecord.tag},
 	                            {name: 'langSys' + i, type: 'TABLE', value: new Table('langSys', [
@@ -2042,11 +2040,12 @@
 	function FeatureList(featureListTable) {
 	    Table.call(this, 'featureListTable',
 	        recordList('featureRecord', featureListTable, function(featureRecord, i) {
-	            var feature = featureRecord.feature;
+	            const feature = featureRecord.feature;
 	            return [
 	                {name: 'featureTag' + i, type: 'TAG', value: featureRecord.tag},
 	                {name: 'feature' + i, type: 'TABLE', value: new Table('featureTable', [
-	                    {name: 'featureParams', type: 'USHORT', value: feature.featureParams} ].concat(ushortList('lookupListIndex', feature.lookupListIndexes)))}
+	                    {name: 'featureParams', type: 'USHORT', value: feature.featureParams},
+	                    ].concat(ushortList('lookupListIndex', feature.lookupListIndexes)))}
 	            ];
 	        })
 	    );
@@ -2064,7 +2063,7 @@
 	 */
 	function LookupList(lookupListTable, subtableMakers) {
 	    Table.call(this, 'lookupListTable', tableList('lookup', lookupListTable, function(lookupTable) {
-	        var subtableCallback = subtableMakers[lookupTable.lookupType];
+	        let subtableCallback = subtableMakers[lookupTable.lookupType];
 	        check.assert(!!subtableCallback, 'Unable to write GSUB lookup type ' + lookupTable.lookupType + ' tables.');
 	        return new Table('lookupTable', [
 	            {name: 'lookupType', type: 'USHORT', value: lookupTable.lookupType},
@@ -2078,15 +2077,15 @@
 	// Record = same as Table, but inlined (a Table has an offset and its data is further in the stream)
 	// Don't use offsets inside Records (probable bug), only in Tables.
 	var table = {
-	    Table: Table,
+	    Table,
 	    Record: Table,
-	    Coverage: Coverage,
-	    ScriptList: ScriptList,
-	    FeatureList: FeatureList,
-	    LookupList: LookupList,
-	    ushortList: ushortList,
-	    tableList: tableList,
-	    recordList: recordList,
+	    Coverage,
+	    ScriptList,
+	    FeatureList,
+	    LookupList,
+	    ushortList,
+	    tableList,
+	    recordList,
 	};
 
 	// Parsing utility functions
@@ -2117,16 +2116,16 @@
 	// Retrieve a 32-bit signed fixed-point number (16.16) from the DataView.
 	// The value is stored in big endian.
 	function getFixed(dataView, offset) {
-	    var decimal = dataView.getInt16(offset, false);
-	    var fraction = dataView.getUint16(offset + 2, false);
+	    const decimal = dataView.getInt16(offset, false);
+	    const fraction = dataView.getUint16(offset + 2, false);
 	    return decimal + fraction / 65535;
 	}
 
 	// Retrieve a 4-character tag from the DataView.
 	// Tags are used to identify tables.
 	function getTag(dataView, offset) {
-	    var tag = '';
-	    for (var i = offset; i < offset + 4; i += 1) {
+	    let tag = '';
+	    for (let i = offset; i < offset + 4; i += 1) {
 	        tag += String.fromCharCode(dataView.getInt8(i));
 	    }
 
@@ -2136,8 +2135,8 @@
 	// Retrieve an offset from the DataView.
 	// Offsets are 1 to 4 bytes in length, depending on the offSize argument.
 	function getOffset(dataView, offset, offSize) {
-	    var v = 0;
-	    for (var i = 0; i < offSize; i += 1) {
+	    let v = 0;
+	    for (let i = 0; i < offSize; i += 1) {
 	        v <<= 8;
 	        v += dataView.getUint8(offset + i);
 	    }
@@ -2147,8 +2146,8 @@
 
 	// Retrieve a number of bytes from start offset to the end offset from the DataView.
 	function getBytes(dataView, startOffset, endOffset) {
-	    var bytes = [];
-	    for (var i = startOffset; i < endOffset; i += 1) {
+	    const bytes = [];
+	    for (let i = startOffset; i < endOffset; i += 1) {
 	        bytes.push(dataView.getUint8(i));
 	    }
 
@@ -2157,15 +2156,15 @@
 
 	// Convert the list of bytes to a string.
 	function bytesToString(bytes) {
-	    var s = '';
-	    for (var i = 0; i < bytes.length; i += 1) {
+	    let s = '';
+	    for (let i = 0; i < bytes.length; i += 1) {
 	        s += String.fromCharCode(bytes[i]);
 	    }
 
 	    return s;
 	}
 
-	var typeOffsets = {
+	const typeOffsets = {
 	    byte: 1,
 	    uShort: 2,
 	    short: 2,
@@ -2184,13 +2183,13 @@
 	}
 
 	Parser.prototype.parseByte = function() {
-	    var v = this.data.getUint8(this.offset + this.relativeOffset);
+	    const v = this.data.getUint8(this.offset + this.relativeOffset);
 	    this.relativeOffset += 1;
 	    return v;
 	};
 
 	Parser.prototype.parseChar = function() {
-	    var v = this.data.getInt8(this.offset + this.relativeOffset);
+	    const v = this.data.getInt8(this.offset + this.relativeOffset);
 	    this.relativeOffset += 1;
 	    return v;
 	};
@@ -2198,7 +2197,7 @@
 	Parser.prototype.parseCard8 = Parser.prototype.parseByte;
 
 	Parser.prototype.parseUShort = function() {
-	    var v = this.data.getUint16(this.offset + this.relativeOffset);
+	    const v = this.data.getUint16(this.offset + this.relativeOffset);
 	    this.relativeOffset += 2;
 	    return v;
 	};
@@ -2208,19 +2207,19 @@
 	Parser.prototype.parseOffset16 = Parser.prototype.parseUShort;
 
 	Parser.prototype.parseShort = function() {
-	    var v = this.data.getInt16(this.offset + this.relativeOffset);
+	    const v = this.data.getInt16(this.offset + this.relativeOffset);
 	    this.relativeOffset += 2;
 	    return v;
 	};
 
 	Parser.prototype.parseF2Dot14 = function() {
-	    var v = this.data.getInt16(this.offset + this.relativeOffset) / 16384;
+	    const v = this.data.getInt16(this.offset + this.relativeOffset) / 16384;
 	    this.relativeOffset += 2;
 	    return v;
 	};
 
 	Parser.prototype.parseULong = function() {
-	    var v = getULong(this.data, this.offset + this.relativeOffset);
+	    const v = getULong(this.data, this.offset + this.relativeOffset);
 	    this.relativeOffset += 4;
 	    return v;
 	};
@@ -2228,17 +2227,17 @@
 	Parser.prototype.parseOffset32 = Parser.prototype.parseULong;
 
 	Parser.prototype.parseFixed = function() {
-	    var v = getFixed(this.data, this.offset + this.relativeOffset);
+	    const v = getFixed(this.data, this.offset + this.relativeOffset);
 	    this.relativeOffset += 4;
 	    return v;
 	};
 
 	Parser.prototype.parseString = function(length) {
-	    var dataView = this.data;
-	    var offset = this.offset + this.relativeOffset;
-	    var string = '';
+	    const dataView = this.data;
+	    const offset = this.offset + this.relativeOffset;
+	    let string = '';
 	    this.relativeOffset += length;
-	    for (var i = 0; i < length; i++) {
+	    for (let i = 0; i < length; i++) {
 	        string += String.fromCharCode(dataView.getUint8(offset + i));
 	    }
 
@@ -2254,7 +2253,7 @@
 	// only take the last 32 bits.
 	// + Since until 2038 those bits will be filled by zeros we can ignore them.
 	Parser.prototype.parseLongDateTime = function() {
-	    var v = getULong(this.data, this.offset + this.relativeOffset + 4);
+	    let v = getULong(this.data, this.offset + this.relativeOffset + 4);
 	    // Subtract seconds between 01/01/1904 and 01/01/1970
 	    // to convert Apple Mac timestamp to Standard Unix timestamp
 	    v -= 2082844800;
@@ -2263,14 +2262,14 @@
 	};
 
 	Parser.prototype.parseVersion = function(minorBase) {
-	    var major = getUShort(this.data, this.offset + this.relativeOffset);
+	    const major = getUShort(this.data, this.offset + this.relativeOffset);
 
 	    // How to interpret the minor version is very vague in the spec. 0x5000 is 5, 0x1000 is 1
 	    // Default returns the correct number if minor = 0xN000 where N is 0-9
 	    // Set minorBase to 1 for tables that use minor = N where N is 0-9
-	    var minor = getUShort(this.data, this.offset + this.relativeOffset + 2);
+	    const minor = getUShort(this.data, this.offset + this.relativeOffset + 2);
 	    this.relativeOffset += 4;
-	    if (minorBase === undefined) { minorBase = 0x1000; }
+	    if (minorBase === undefined) minorBase = 0x1000;
 	    return major + minor / minorBase / 10;
 	};
 
@@ -2287,10 +2286,10 @@
 	// Parse a list of 32 bit unsigned integers.
 	Parser.prototype.parseULongList = function(count) {
 	    if (count === undefined) { count = this.parseULong(); }
-	    var offsets = new Array(count);
-	    var dataView = this.data;
-	    var offset = this.offset + this.relativeOffset;
-	    for (var i = 0; i < count; i++) {
+	    const offsets = new Array(count);
+	    const dataView = this.data;
+	    let offset = this.offset + this.relativeOffset;
+	    for (let i = 0; i < count; i++) {
 	        offsets[i] = dataView.getUint32(offset);
 	        offset += 4;
 	    }
@@ -2304,10 +2303,10 @@
 	Parser.prototype.parseOffset16List =
 	Parser.prototype.parseUShortList = function(count) {
 	    if (count === undefined) { count = this.parseUShort(); }
-	    var offsets = new Array(count);
-	    var dataView = this.data;
-	    var offset = this.offset + this.relativeOffset;
-	    for (var i = 0; i < count; i++) {
+	    const offsets = new Array(count);
+	    const dataView = this.data;
+	    let offset = this.offset + this.relativeOffset;
+	    for (let i = 0; i < count; i++) {
 	        offsets[i] = dataView.getUint16(offset);
 	        offset += 2;
 	    }
@@ -2318,10 +2317,10 @@
 
 	// Parses a list of 16 bit signed integers.
 	Parser.prototype.parseShortList = function(count) {
-	    var list = new Array(count);
-	    var dataView = this.data;
-	    var offset = this.offset + this.relativeOffset;
-	    for (var i = 0; i < count; i++) {
+	    const list = new Array(count);
+	    const dataView = this.data;
+	    let offset = this.offset + this.relativeOffset;
+	    for (let i = 0; i < count; i++) {
 	        list[i] = dataView.getInt16(offset);
 	        offset += 2;
 	    }
@@ -2332,10 +2331,10 @@
 
 	// Parses a list of bytes.
 	Parser.prototype.parseByteList = function(count) {
-	    var list = new Array(count);
-	    var dataView = this.data;
-	    var offset = this.offset + this.relativeOffset;
-	    for (var i = 0; i < count; i++) {
+	    const list = new Array(count);
+	    const dataView = this.data;
+	    let offset = this.offset + this.relativeOffset;
+	    for (let i = 0; i < count; i++) {
 	        list[i] = dataView.getUint8(offset++);
 	    }
 
@@ -2353,8 +2352,8 @@
 	        itemCallback = count;
 	        count = this.parseUShort();
 	    }
-	    var list = new Array(count);
-	    for (var i = 0; i < count; i++) {
+	    const list = new Array(count);
+	    for (let i = 0; i < count; i++) {
 	        list[i] = itemCallback.call(this);
 	    }
 	    return list;
@@ -2365,8 +2364,8 @@
 	        itemCallback = count;
 	        count = this.parseULong();
 	    }
-	    var list = new Array(count);
-	    for (var i = 0; i < count; i++) {
+	    const list = new Array(count);
+	    for (let i = 0; i < count; i++) {
 	        list[i] = itemCallback.call(this);
 	    }
 	    return list;
@@ -2383,13 +2382,13 @@
 	        recordDescription = count;
 	        count = this.parseUShort();
 	    }
-	    var records = new Array(count);
-	    var fields = Object.keys(recordDescription);
-	    for (var i = 0; i < count; i++) {
-	        var rec = {};
-	        for (var j = 0; j < fields.length; j++) {
-	            var fieldName = fields[j];
-	            var fieldType = recordDescription[fieldName];
+	    const records = new Array(count);
+	    const fields = Object.keys(recordDescription);
+	    for (let i = 0; i < count; i++) {
+	        const rec = {};
+	        for (let j = 0; j < fields.length; j++) {
+	            const fieldName = fields[j];
+	            const fieldType = recordDescription[fieldName];
 	            rec[fieldName] = fieldType.call(this);
 	        }
 	        records[i] = rec;
@@ -2403,13 +2402,13 @@
 	        recordDescription = count;
 	        count = this.parseULong();
 	    }
-	    var records = new Array(count);
-	    var fields = Object.keys(recordDescription);
-	    for (var i = 0; i < count; i++) {
-	        var rec = {};
-	        for (var j = 0; j < fields.length; j++) {
-	            var fieldName = fields[j];
-	            var fieldType = recordDescription[fieldName];
+	    const records = new Array(count);
+	    const fields = Object.keys(recordDescription);
+	    for (let i = 0; i < count; i++) {
+	        const rec = {};
+	        for (let j = 0; j < fields.length; j++) {
+	            const fieldName = fields[j];
+	            const fieldType = recordDescription[fieldName];
 	            rec[fieldName] = fieldType.call(this);
 	        }
 	        records[i] = rec;
@@ -2423,11 +2422,11 @@
 	    if (typeof description === 'function') {
 	        return description.call(this);
 	    } else {
-	        var fields = Object.keys(description);
-	        var struct = {};
-	        for (var j = 0; j < fields.length; j++) {
-	            var fieldName = fields[j];
-	            var fieldType = description[fieldName];
+	        const fields = Object.keys(description);
+	        const struct = {};
+	        for (let j = 0; j < fields.length; j++) {
+	            const fieldName = fields[j];
+	            const fieldType = description[fieldName];
 	            struct[fieldName] = fieldType.call(this);
 	        }
 	        return struct;
@@ -2448,7 +2447,7 @@
 	        // in this case return undefined instead of an empty object, to save space
 	        return;
 	    }
-	    var valueRecord = {};
+	    const valueRecord = {};
 
 	    if (valueFormat & 0x0001) { valueRecord.xPlacement = this.parseShort(); }
 	    if (valueFormat & 0x0002) { valueRecord.yPlacement = this.parseShort(); }
@@ -2471,17 +2470,17 @@
 	 * valueFormat and valueCount are read from the stream.
 	 */
 	Parser.prototype.parseValueRecordList = function() {
-	    var valueFormat = this.parseUShort();
-	    var valueCount = this.parseUShort();
-	    var values = new Array(valueCount);
-	    for (var i = 0; i < valueCount; i++) {
+	    const valueFormat = this.parseUShort();
+	    const valueCount = this.parseUShort();
+	    const values = new Array(valueCount);
+	    for (let i = 0; i < valueCount; i++) {
 	        values[i] = this.parseValueRecord(valueFormat);
 	    }
 	    return values;
 	};
 
 	Parser.prototype.parsePointer = function(description) {
-	    var structOffset = this.parseOffset16();
+	    const structOffset = this.parseOffset16();
 	    if (structOffset > 0) {
 	        // NULL offset => return undefined
 	        return new Parser(this.data, this.offset + structOffset).parseStruct(description);
@@ -2490,7 +2489,7 @@
 	};
 
 	Parser.prototype.parsePointer32 = function(description) {
-	    var structOffset = this.parseOffset32();
+	    const structOffset = this.parseOffset32();
 	    if (structOffset > 0) {
 	        // NULL offset => return undefined
 	        return new Parser(this.data, this.offset + structOffset).parseStruct(description);
@@ -2506,12 +2505,12 @@
 	 * See examples in tables/gsub.js
 	 */
 	Parser.prototype.parseListOfLists = function(itemCallback) {
-	    var offsets = this.parseOffset16List();
-	    var count = offsets.length;
-	    var relativeOffset = this.relativeOffset;
-	    var list = new Array(count);
-	    for (var i = 0; i < count; i++) {
-	        var start = offsets[i];
+	    const offsets = this.parseOffset16List();
+	    const count = offsets.length;
+	    const relativeOffset = this.relativeOffset;
+	    const list = new Array(count);
+	    for (let i = 0; i < count; i++) {
+	        const start = offsets[i];
 	        if (start === 0) {
 	            // NULL offset
 	            // Add i as owned property to list. Convenient with assert.
@@ -2520,9 +2519,9 @@
 	        }
 	        this.relativeOffset = start;
 	        if (itemCallback) {
-	            var subOffsets = this.parseOffset16List();
-	            var subList = new Array(subOffsets.length);
-	            for (var j = 0; j < subOffsets.length; j++) {
+	            const subOffsets = this.parseOffset16List();
+	            const subList = new Array(subOffsets.length);
+	            for (let j = 0; j < subOffsets.length; j++) {
 	                this.relativeOffset = start + subOffsets[j];
 	                subList[j] = itemCallback.call(this);
 	            }
@@ -2541,17 +2540,17 @@
 	// https://www.microsoft.com/typography/OTSPEC/chapter2.htm
 	// parser.offset must point to the start of the table containing the coverage.
 	Parser.prototype.parseCoverage = function() {
-	    var startOffset = this.offset + this.relativeOffset;
-	    var format = this.parseUShort();
-	    var count = this.parseUShort();
+	    const startOffset = this.offset + this.relativeOffset;
+	    const format = this.parseUShort();
+	    const count = this.parseUShort();
 	    if (format === 1) {
 	        return {
 	            format: 1,
 	            glyphs: this.parseUShortList(count)
 	        };
 	    } else if (format === 2) {
-	        var ranges = new Array(count);
-	        for (var i = 0; i < count; i++) {
+	        const ranges = new Array(count);
+	        for (let i = 0; i < count; i++) {
 	            ranges[i] = {
 	                start: this.parseUShort(),
 	                end: this.parseUShort(),
@@ -2569,8 +2568,8 @@
 	// Parse a Class Definition Table in a GSUB, GPOS or GDEF table.
 	// https://www.microsoft.com/typography/OTSPEC/chapter2.htm
 	Parser.prototype.parseClassDef = function() {
-	    var startOffset = this.offset + this.relativeOffset;
-	    var format = this.parseUShort();
+	    const startOffset = this.offset + this.relativeOffset;
+	    const format = this.parseUShort();
 	    if (format === 1) {
 	        return {
 	            format: 1,
@@ -2642,7 +2641,7 @@
 	///// Script, Feature, Lookup lists ///////////////////////////////////////////////
 	// https://www.microsoft.com/typography/OTSPEC/chapter2.htm
 
-	var langSysTable = {
+	const langSysTable = {
 	    reserved: Parser.uShort,
 	    reqFeatureIndex: Parser.uShort,
 	    featureIndexes: Parser.uShortList
@@ -2673,10 +2672,10 @@
 
 	Parser.prototype.parseLookupList = function(lookupTableParsers) {
 	    return this.parsePointer(Parser.list(Parser.pointer(function() {
-	        var lookupType = this.parseUShort();
+	        const lookupType = this.parseUShort();
 	        check.argument(1 <= lookupType && lookupType <= 9, 'GPOS/GSUB lookup type ' + lookupType + ' unknown.');
-	        var lookupFlag = this.parseUShort();
-	        var useMarkFilteringSet = lookupFlag & 0x10;
+	        const lookupFlag = this.parseUShort();
+	        const useMarkFilteringSet = lookupFlag & 0x10;
 	        return {
 	            lookupType: lookupType,
 	            lookupFlag: lookupFlag,
@@ -2688,10 +2687,10 @@
 
 	Parser.prototype.parseFeatureVariationsList = function() {
 	    return this.parsePointer32(function() {
-	        var majorVersion = this.parseUShort();
-	        var minorVersion = this.parseUShort();
+	        const majorVersion = this.parseUShort();
+	        const minorVersion = this.parseUShort();
 	        check.argument(majorVersion === 1 && minorVersion < 1, 'GPOS/GSUB feature variations table unknown.');
-	        var featureVariations = this.parseRecordList32({
+	        const featureVariations = this.parseRecordList32({
 	            conditionSetOffset: Parser.offset32,
 	            featureTableSubstitutionOffset: Parser.offset32
 	        });
@@ -2700,18 +2699,18 @@
 	};
 
 	var parse = {
-	    getByte: getByte,
+	    getByte,
 	    getCard8: getByte,
-	    getUShort: getUShort,
+	    getUShort,
 	    getCard16: getUShort,
-	    getShort: getShort,
-	    getULong: getULong,
-	    getFixed: getFixed,
-	    getTag: getTag,
-	    getOffset: getOffset,
-	    getBytes: getBytes,
-	    bytesToString: bytesToString,
-	    Parser: Parser,
+	    getShort,
+	    getULong,
+	    getFixed,
+	    getTag,
+	    getOffset,
+	    getBytes,
+	    bytesToString,
+	    Parser,
 	};
 
 	// The `cmap` table stores the mappings from characters to glyphs.
@@ -2724,16 +2723,16 @@
 	    cmap.length = p.parseULong();
 	    cmap.language = p.parseULong();
 
-	    var groupCount;
+	    let groupCount;
 	    cmap.groupCount = groupCount = p.parseULong();
 	    cmap.glyphIndexMap = {};
 
-	    for (var i = 0; i < groupCount; i += 1) {
-	        var startCharCode = p.parseULong();
-	        var endCharCode = p.parseULong();
-	        var startGlyphId = p.parseULong();
+	    for (let i = 0; i < groupCount; i += 1) {
+	        const startCharCode = p.parseULong();
+	        const endCharCode = p.parseULong();
+	        let startGlyphId = p.parseULong();
 
-	        for (var c = startCharCode; c <= endCharCode; c += 1) {
+	        for (let c = startCharCode; c <= endCharCode; c += 1) {
 	            cmap.glyphIndexMap[c] = startGlyphId;
 	            startGlyphId++;
 	        }
@@ -2746,7 +2745,7 @@
 	    cmap.language = p.parseUShort();
 
 	    // segCount is stored x 2.
-	    var segCount;
+	    let segCount;
 	    cmap.segCount = segCount = p.parseUShort() >> 1;
 
 	    // Skip searchRange, entrySelector, rangeShift.
@@ -2754,18 +2753,18 @@
 
 	    // The "unrolled" mapping from character codes to glyph indices.
 	    cmap.glyphIndexMap = {};
-	    var endCountParser = new parse.Parser(data, start + offset + 14);
-	    var startCountParser = new parse.Parser(data, start + offset + 16 + segCount * 2);
-	    var idDeltaParser = new parse.Parser(data, start + offset + 16 + segCount * 4);
-	    var idRangeOffsetParser = new parse.Parser(data, start + offset + 16 + segCount * 6);
-	    var glyphIndexOffset = start + offset + 16 + segCount * 8;
-	    for (var i = 0; i < segCount - 1; i += 1) {
-	        var glyphIndex = (void 0);
-	        var endCount = endCountParser.parseUShort();
-	        var startCount = startCountParser.parseUShort();
-	        var idDelta = idDeltaParser.parseShort();
-	        var idRangeOffset = idRangeOffsetParser.parseUShort();
-	        for (var c = startCount; c <= endCount; c += 1) {
+	    const endCountParser = new parse.Parser(data, start + offset + 14);
+	    const startCountParser = new parse.Parser(data, start + offset + 16 + segCount * 2);
+	    const idDeltaParser = new parse.Parser(data, start + offset + 16 + segCount * 4);
+	    const idRangeOffsetParser = new parse.Parser(data, start + offset + 16 + segCount * 6);
+	    let glyphIndexOffset = start + offset + 16 + segCount * 8;
+	    for (let i = 0; i < segCount - 1; i += 1) {
+	        let glyphIndex;
+	        const endCount = endCountParser.parseUShort();
+	        const startCount = startCountParser.parseUShort();
+	        const idDelta = idDeltaParser.parseShort();
+	        const idRangeOffset = idRangeOffsetParser.parseUShort();
+	        for (let c = startCount; c <= endCount; c += 1) {
 	            if (idRangeOffset !== 0) {
 	                // The idRangeOffset is relative to the current position in the idRangeOffset array.
 	                // Take the current offset in the idRangeOffset array.
@@ -2793,17 +2792,17 @@
 	// There are many available formats, but we only support the Windows format 4 and 12.
 	// This function returns a `CmapEncoding` object or null if no supported format could be found.
 	function parseCmapTable(data, start) {
-	    var cmap = {};
+	    const cmap = {};
 	    cmap.version = parse.getUShort(data, start);
 	    check.argument(cmap.version === 0, 'cmap table version should be 0.');
 
 	    // The cmap table can contain many sub-tables, each with their own format.
 	    // We're only interested in a "platform 0" (Unicode format) and "platform 3" (Windows format) table.
 	    cmap.numTables = parse.getUShort(data, start + 2);
-	    var offset = -1;
-	    for (var i = cmap.numTables - 1; i >= 0; i -= 1) {
-	        var platformId = parse.getUShort(data, start + 4 + (i * 8));
-	        var encodingId = parse.getUShort(data, start + 4 + (i * 8) + 2);
+	    let offset = -1;
+	    for (let i = cmap.numTables - 1; i >= 0; i -= 1) {
+	        const platformId = parse.getUShort(data, start + 4 + (i * 8));
+	        const encodingId = parse.getUShort(data, start + 4 + (i * 8) + 2);
 	        if ((platformId === 3 && (encodingId === 0 || encodingId === 1 || encodingId === 10)) ||
 	            (platformId === 0 && (encodingId === 0 || encodingId === 1 || encodingId === 2 || encodingId === 3 || encodingId === 4))) {
 	            offset = parse.getULong(data, start + 4 + (i * 8) + 4);
@@ -2816,7 +2815,7 @@
 	        throw new Error('No valid cmap sub-tables found.');
 	    }
 
-	    var p = new parse.Parser(data, start + offset);
+	    const p = new parse.Parser(data, start + offset);
 	    cmap.format = p.parseUShort();
 
 	    if (cmap.format === 12) {
@@ -2852,12 +2851,12 @@
 	// Make cmap table, format 4 by default, 12 if needed only
 	function makeCmapTable(glyphs) {
 	    // Plan 0 is the base Unicode Plan but emojis, for example are on another plan, and needs cmap 12 format (with 32bit)
-	    var isPlan0Only = true;
-	    var i;
+	    let isPlan0Only = true;
+	    let i;
 
 	    // Check if we need to add cmap format 12 or if format 4 only is fine
 	    for (i = glyphs.length - 1; i > 0; i -= 1) {
-	        var g = glyphs.get(i);
+	        const g = glyphs.get(i);
 	        if (g.unicode > 65535) {
 	            console.log('Adding CMAP format 12 (needed!)');
 	            isPlan0Only = false;
@@ -2865,7 +2864,7 @@
 	        }
 	    }
 
-	    var cmapTable = [
+	    let cmapTable = [
 	        {name: 'version', type: 'USHORT', value: 0},
 	        {name: 'numTables', type: 'USHORT', value: isPlan0Only ? 1 : 2},
 
@@ -2876,12 +2875,12 @@
 	    ];
 
 	    if (!isPlan0Only)
-	        { cmapTable = cmapTable.concat([
+	        cmapTable = cmapTable.concat([
 	            // CMAP 12 header
 	            {name: 'cmap12PlatformID', type: 'USHORT', value: 3}, // We encode only for PlatformID = 3 (Windows) because it is supported everywhere
 	            {name: 'cmap12EncodingID', type: 'USHORT', value: 10},
 	            {name: 'cmap12Offset', type: 'ULONG', value: 0}
-	        ]); }
+	        ]);
 
 	    cmapTable = cmapTable.concat([
 	        // CMAP 4 Subtable
@@ -2894,12 +2893,12 @@
 	        {name: 'rangeShift', type: 'USHORT', value: 0}
 	    ]);
 
-	    var t = new table.Table('cmap', cmapTable);
+	    const t = new table.Table('cmap', cmapTable);
 
 	    t.segments = [];
 	    for (i = 0; i < glyphs.length; i += 1) {
-	        var glyph = glyphs.get(i);
-	        for (var j = 0; j < glyph.unicodes.length; j += 1) {
+	        const glyph = glyphs.get(i);
+	        for (let j = 0; j < glyph.unicodes.length; j += 1) {
 	            addSegment(t, glyph.unicodes[j], i);
 	        }
 
@@ -2910,26 +2909,26 @@
 
 	    addTerminatorSegment(t);
 
-	    var segCount = t.segments.length;
-	    var segCountToRemove = 0;
+	    const segCount = t.segments.length;
+	    let segCountToRemove = 0;
 
 	    // CMAP 4
 	    // Set up parallel segment arrays.
-	    var endCounts = [];
-	    var startCounts = [];
-	    var idDeltas = [];
-	    var idRangeOffsets = [];
-	    var glyphIds = [];
+	    let endCounts = [];
+	    let startCounts = [];
+	    let idDeltas = [];
+	    let idRangeOffsets = [];
+	    let glyphIds = [];
 
 	    // CMAP 12
-	    var cmap12Groups = [];
+	    let cmap12Groups = [];
 
 	    // Reminder this loop is not following the specification at 100%
 	    // The specification -> find suites of characters and make a group
 	    // Here we're doing one group for each letter
 	    // Doing as the spec can save 8 times (or more) space
 	    for (i = 0; i < segCount; i += 1) {
-	        var segment = t.segments[i];
+	        const segment = t.segments[i];
 
 	        // CMAP 4
 	        if (segment.end <= 65535 && segment.start <= 65535) {
@@ -2977,7 +2976,7 @@
 
 	    if (!isPlan0Only) {
 	        // CMAP 12 Subtable
-	        var cmap12Length = 16 + // Subtable header
+	        const cmap12Length = 16 + // Subtable header
 	            cmap12Groups.length * 4;
 
 	        t.cmap12Offset = 12 + (2 * 2) + 4 + t.cmap4Length;
@@ -2999,7 +2998,7 @@
 
 	// Glyph encoding
 
-	var cffStandardStrings = [
+	const cffStandardStrings = [
 	    '.notdef', 'space', 'exclam', 'quotedbl', 'numbersign', 'dollar', 'percent', 'ampersand', 'quoteright',
 	    'parenleft', 'parenright', 'asterisk', 'plus', 'comma', 'hyphen', 'period', 'slash', 'zero', 'one', 'two',
 	    'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'colon', 'semicolon', 'less', 'equal', 'greater',
@@ -3044,7 +3043,7 @@
 	    'Uacutesmall', 'Ucircumflexsmall', 'Udieresissmall', 'Yacutesmall', 'Thornsmall', 'Ydieresissmall', '001.000',
 	    '001.001', '001.002', '001.003', 'Black', 'Bold', 'Book', 'Light', 'Medium', 'Regular', 'Roman', 'Semibold'];
 
-	var cffStandardEncoding = [
+	const cffStandardEncoding = [
 	    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
 	    '', '', '', '', 'space', 'exclam', 'quotedbl', 'numbersign', 'dollar', 'percent', 'ampersand', 'quoteright',
 	    'parenleft', 'parenright', 'asterisk', 'plus', 'comma', 'hyphen', 'period', 'slash', 'zero', 'one', 'two',
@@ -3063,7 +3062,7 @@
 	    '', 'Lslash', 'Oslash', 'OE', 'ordmasculine', '', '', '', '', '', 'ae', '', '', '', 'dotlessi', '', '',
 	    'lslash', 'oslash', 'oe', 'germandbls'];
 
-	var cffExpertEncoding = [
+	const cffExpertEncoding = [
 	    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
 	    '', '', '', '', 'space', 'exclamsmall', 'Hungarumlautsmall', '', 'dollaroldstyle', 'dollarsuperior',
 	    'ampersandsmall', 'Acutesmall', 'parenleftsuperior', 'parenrightsuperior', 'twodotenleader', 'onedotenleader',
@@ -3091,7 +3090,7 @@
 	    'Ocircumflexsmall', 'Otildesmall', 'Odieresissmall', 'OEsmall', 'Oslashsmall', 'Ugravesmall', 'Uacutesmall',
 	    'Ucircumflexsmall', 'Udieresissmall', 'Yacutesmall', 'Thornsmall', 'Ydieresissmall'];
 
-	var standardNames = [
+	const standardNames = [
 	    '.notdef', '.null', 'nonmarkingreturn', 'space', 'exclam', 'quotedbl', 'numbersign', 'dollar', 'percent',
 	    'ampersand', 'quotesingle', 'parenleft', 'parenright', 'asterisk', 'plus', 'comma', 'hyphen', 'period', 'slash',
 	    'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'colon', 'semicolon', 'less',
@@ -3132,12 +3131,12 @@
 	}
 
 	DefaultEncoding.prototype.charToGlyphIndex = function(c) {
-	    var code = c.codePointAt(0);
-	    var glyphs = this.font.glyphs;
+	    const code = c.codePointAt(0);
+	    const glyphs = this.font.glyphs;
 	    if (glyphs) {
-	        for (var i = 0; i < glyphs.length; i += 1) {
-	            var glyph = glyphs.get(i);
-	            for (var j = 0; j < glyph.unicodes.length; j += 1) {
+	        for (let i = 0; i < glyphs.length; i += 1) {
+	            const glyph = glyphs.get(i);
+	            for (let j = 0; j < glyph.unicodes.length; j += 1) {
 	                if (glyph.unicodes[j] === code) {
 	                    return i;
 	                }
@@ -3182,8 +3181,8 @@
 	 * @return {number} The index.
 	 */
 	CffEncoding.prototype.charToGlyphIndex = function(s) {
-	    var code = s.codePointAt(0);
-	    var charName = this.encoding[code];
+	    const code = s.codePointAt(0);
+	    const charName = this.encoding[code];
 	    return this.charset.indexOf(charName);
 	};
 
@@ -3200,7 +3199,7 @@
 	            break;
 	        case 2:
 	            this.names = new Array(post.numberOfGlyphs);
-	            for (var i = 0; i < post.numberOfGlyphs; i++) {
+	            for (let i = 0; i < post.numberOfGlyphs; i++) {
 	                if (post.glyphNameIndex[i] < standardNames.length) {
 	                    this.names[i] = standardNames[post.glyphNameIndex[i]];
 	                } else {
@@ -3211,8 +3210,8 @@
 	            break;
 	        case 2.5:
 	            this.names = new Array(post.numberOfGlyphs);
-	            for (var i$1 = 0; i$1 < post.numberOfGlyphs; i$1++) {
-	                this.names[i$1] = standardNames[i$1 + post.glyphNameIndex[i$1]];
+	            for (let i = 0; i < post.numberOfGlyphs; i++) {
+	                this.names[i] = standardNames[i + post.glyphNameIndex[i]];
 	            }
 
 	            break;
@@ -3243,27 +3242,27 @@
 	};
 
 	function addGlyphNamesAll(font) {
-	    var glyph;
-	    var glyphIndexMap = font.tables.cmap.glyphIndexMap;
-	    var charCodes = Object.keys(glyphIndexMap);
+	    let glyph;
+	    const glyphIndexMap = font.tables.cmap.glyphIndexMap;
+	    const charCodes = Object.keys(glyphIndexMap);
 
-	    for (var i = 0; i < charCodes.length; i += 1) {
-	        var c = charCodes[i];
-	        var glyphIndex = glyphIndexMap[c];
+	    for (let i = 0; i < charCodes.length; i += 1) {
+	        const c = charCodes[i];
+	        const glyphIndex = glyphIndexMap[c];
 	        glyph = font.glyphs.get(glyphIndex);
 	        glyph.addUnicode(parseInt(c));
 	    }
 
-	    for (var i$1 = 0; i$1 < font.glyphs.length; i$1 += 1) {
-	        glyph = font.glyphs.get(i$1);
+	    for (let i = 0; i < font.glyphs.length; i += 1) {
+	        glyph = font.glyphs.get(i);
 	        if (font.cffEncoding) {
 	            if (font.isCIDFont) {
-	                glyph.name = 'gid' + i$1;
+	                glyph.name = 'gid' + i;
 	            } else {
-	                glyph.name = font.cffEncoding.charset[i$1];
+	                glyph.name = font.cffEncoding.charset[i];
 	            }
 	        } else if (font.glyphNames.names) {
-	            glyph.name = font.glyphNames.glyphIndexToName(i$1);
+	            glyph.name = font.glyphNames.glyphIndexToName(i);
 	        }
 	    }
 	}
@@ -3271,12 +3270,12 @@
 	function addGlyphNamesToUnicodeMap(font) {
 	    font._IndexToUnicodeMap = {};
 
-	    var glyphIndexMap = font.tables.cmap.glyphIndexMap;
-	    var charCodes = Object.keys(glyphIndexMap);
+	    const glyphIndexMap = font.tables.cmap.glyphIndexMap;
+	    const charCodes = Object.keys(glyphIndexMap);
 
-	    for (var i = 0; i < charCodes.length; i += 1) {
-	        var c = charCodes[i];
-	        var glyphIndex = glyphIndexMap[c];
+	    for (let i = 0; i < charCodes.length; i += 1) {
+	        const c = charCodes[i];
+	        let glyphIndex = glyphIndexMap[c];
 	        if (font._IndexToUnicodeMap[glyphIndex] === undefined) {
 	            font._IndexToUnicodeMap[glyphIndex] = {
 	                unicodes: [parseInt(c)]
@@ -3310,13 +3309,13 @@
 	    ctx.stroke();
 	}
 
-	var draw = { line: line };
+	var draw = { line };
 
 	// The Glyph object
 	// import glyf from './tables/glyf' Can't be imported here, because it's a circular dependency
 
 	function getPathDefinition(glyph, path) {
-	    var _path = path || new Path();
+	    let _path = path || new Path();
 	    return {
 	        configurable: true,
 
@@ -3434,11 +3433,11 @@
 	    x = x !== undefined ? x : 0;
 	    y = y !== undefined ? y : 0;
 	    fontSize = fontSize !== undefined ? fontSize : 72;
-	    var commands;
-	    var hPoints;
-	    if (!options) { options = { }; }
-	    var xScale = options.xScale;
-	    var yScale = options.yScale;
+	    let commands;
+	    let hPoints;
+	    if (!options) options = { };
+	    let xScale = options.xScale;
+	    let yScale = options.yScale;
 
 	    if (options.hinting && font && font.hinting) {
 	        // in case of hinting, the hinting engine takes care
@@ -3457,14 +3456,14 @@
 	        xScale = yScale = 1;
 	    } else {
 	        commands = this.path.commands;
-	        var scale = 1 / (this.path.unitsPerEm || 1000) * fontSize;
-	        if (xScale === undefined) { xScale = scale; }
-	        if (yScale === undefined) { yScale = scale; }
+	        const scale = 1 / (this.path.unitsPerEm || 1000) * fontSize;
+	        if (xScale === undefined) xScale = scale;
+	        if (yScale === undefined) yScale = scale;
 	    }
 
-	    var p = new Path();
-	    for (var i = 0; i < commands.length; i += 1) {
-	        var cmd = commands[i];
+	    const p = new Path();
+	    for (let i = 0; i < commands.length; i += 1) {
+	        const cmd = commands[i];
 	        if (cmd.type === 'M') {
 	            p.moveTo(x + (cmd.x * xScale), y + (-cmd.y * yScale));
 	        } else if (cmd.type === 'L') {
@@ -3495,10 +3494,10 @@
 	        return [];
 	    }
 
-	    var contours = [];
-	    var currentContour = [];
-	    for (var i = 0; i < this.points.length; i += 1) {
-	        var pt = this.points[i];
+	    const contours = [];
+	    let currentContour = [];
+	    for (let i = 0; i < this.points.length; i += 1) {
+	        const pt = this.points[i];
 	        currentContour.push(pt);
 	        if (pt.lastPointOfContour) {
 	            contours.push(currentContour);
@@ -3515,11 +3514,11 @@
 	 * @return {Object}
 	 */
 	Glyph.prototype.getMetrics = function() {
-	    var commands = this.path.commands;
-	    var xCoords = [];
-	    var yCoords = [];
-	    for (var i = 0; i < commands.length; i += 1) {
-	        var cmd = commands[i];
+	    const commands = this.path.commands;
+	    const xCoords = [];
+	    const yCoords = [];
+	    for (let i = 0; i < commands.length; i += 1) {
+	        const cmd = commands[i];
 	        if (cmd.type !== 'Z') {
 	            xCoords.push(cmd.x);
 	            yCoords.push(cmd.y);
@@ -3536,7 +3535,7 @@
 	        }
 	    }
 
-	    var metrics = {
+	    const metrics = {
 	        xMin: Math.min.apply(null, xCoords),
 	        yMin: Math.min.apply(null, yCoords),
 	        xMax: Math.max.apply(null, xCoords),
@@ -3587,7 +3586,7 @@
 	Glyph.prototype.drawPoints = function(ctx, x, y, fontSize) {
 	    function drawCircles(l, x, y, scale) {
 	        ctx.beginPath();
-	        for (var j = 0; j < l.length; j += 1) {
+	        for (let j = 0; j < l.length; j += 1) {
 	            ctx.moveTo(x + (l[j].x * scale), y + (l[j].y * scale));
 	            ctx.arc(x + (l[j].x * scale), y + (l[j].y * scale), 2, 0, Math.PI * 2, false);
 	        }
@@ -3599,13 +3598,13 @@
 	    x = x !== undefined ? x : 0;
 	    y = y !== undefined ? y : 0;
 	    fontSize = fontSize !== undefined ? fontSize : 24;
-	    var scale = 1 / this.path.unitsPerEm * fontSize;
+	    const scale = 1 / this.path.unitsPerEm * fontSize;
 
-	    var blueCircles = [];
-	    var redCircles = [];
-	    var path = this.path;
-	    for (var i = 0; i < path.commands.length; i += 1) {
-	        var cmd = path.commands[i];
+	    const blueCircles = [];
+	    const redCircles = [];
+	    const path = this.path;
+	    for (let i = 0; i < path.commands.length; i += 1) {
+	        const cmd = path.commands[i];
 	        if (cmd.x !== undefined) {
 	            blueCircles.push({x: cmd.x, y: -cmd.y});
 	        }
@@ -3636,7 +3635,7 @@
 	 * @param  {number} [fontSize=72] - Font size in pixels. We scale the glyph units by `1 / unitsPerEm * fontSize`.
 	 */
 	Glyph.prototype.drawMetrics = function(ctx, x, y, fontSize) {
-	    var scale;
+	    let scale;
 	    x = x !== undefined ? x : 0;
 	    y = y !== undefined ? y : 0;
 	    fontSize = fontSize !== undefined ? fontSize : 24;
@@ -3650,11 +3649,11 @@
 
 	    // This code is here due to memory optimization: by not using
 	    // defaults in the constructor, we save a notable amount of memory.
-	    var xMin = this.xMin || 0;
-	    var yMin = this.yMin || 0;
-	    var xMax = this.xMax || 0;
-	    var yMax = this.yMax || 0;
-	    var advanceWidth = this.advanceWidth || 0;
+	    const xMin = this.xMin || 0;
+	    let yMin = this.yMin || 0;
+	    const xMax = this.xMax || 0;
+	    let yMax = this.yMax || 0;
+	    const advanceWidth = this.advanceWidth || 0;
 
 	    // Draw the glyph box
 	    ctx.strokeStyle = 'blue';
@@ -3699,8 +3698,8 @@
 	    this.font = font;
 	    this.glyphs = {};
 	    if (Array.isArray(glyphs)) {
-	        for (var i = 0; i < glyphs.length; i++) {
-	            var glyph = glyphs[i];
+	        for (let i = 0; i < glyphs.length; i++) {
+	            const glyph = glyphs[i];
 	            glyph.path.unitsPerEm = font.unitsPerEm;
 	            this.glyphs[i] = glyph;
 	        }
@@ -3721,12 +3720,12 @@
 	            this.glyphs[index] = this.glyphs[index]();
 	        }
 
-	        var glyph = this.glyphs[index];
-	        var unicodeObj = this.font._IndexToUnicodeMap[index];
+	        let glyph = this.glyphs[index];
+	        let unicodeObj = this.font._IndexToUnicodeMap[index];
 
 	        if (unicodeObj) {
-	            for (var j = 0; j < unicodeObj.unicodes.length; j++)
-	                { glyph.addUnicode(unicodeObj.unicodes[j]); }
+	            for (let j = 0; j < unicodeObj.unicodes.length; j++)
+	                glyph.addUnicode(unicodeObj.unicodes[j]);
 	        }
 
 	        if (this.font.cffEncoding) {
@@ -3784,11 +3783,11 @@
 	 */
 	function ttfGlyphLoader(font, index, parseGlyph, data, position, buildPath) {
 	    return function() {
-	        var glyph = new Glyph({index: index, font: font});
+	        const glyph = new Glyph({index: index, font: font});
 
 	        glyph.path = function() {
 	            parseGlyph(glyph, data, position);
-	            var path = buildPath(font.glyphs, glyph);
+	            const path = buildPath(font.glyphs, glyph);
 	            path.unitsPerEm = font.unitsPerEm;
 	            return path;
 	        };
@@ -3811,10 +3810,10 @@
 	 */
 	function cffGlyphLoader(font, index, parseCFFCharstring, charstring) {
 	    return function() {
-	        var glyph = new Glyph({index: index, font: font});
+	        const glyph = new Glyph({index: index, font: font});
 
 	        glyph.path = function() {
-	            var path = parseCFFCharstring(font, glyph, charstring);
+	            const path = parseCFFCharstring(font, glyph, charstring);
 	            path.unitsPerEm = font.unitsPerEm;
 	            return path;
 	        };
@@ -3823,7 +3822,7 @@
 	    };
 	}
 
-	var glyphset = { GlyphSet: GlyphSet, glyphLoader: glyphLoader, ttfGlyphLoader: ttfGlyphLoader, cffGlyphLoader: cffGlyphLoader };
+	var glyphset = { GlyphSet, glyphLoader, ttfGlyphLoader, cffGlyphLoader };
 
 	// The `CFF` table contains the glyph outlines in PostScript format.
 
@@ -3836,7 +3835,7 @@
 	            return false;
 	        }
 
-	        for (var i = 0; i < a.length; i += 1) {
+	        for (let i = 0; i < a.length; i += 1) {
 	            if (!equals(a[i], b[i])) {
 	                return false;
 	            }
@@ -3851,7 +3850,7 @@
 	// Subroutines are encoded using the negative half of the number space.
 	// See type 2 chapter 4.7 "Subroutine operators".
 	function calcCFFSubroutineBias(subrs) {
-	    var bias;
+	    let bias;
 	    if (subrs.length < 1240) {
 	        bias = 107;
 	    } else if (subrs.length < 33900) {
@@ -3866,16 +3865,16 @@
 	// Parse a `CFF` INDEX array.
 	// An index array consists of a list of offsets, then a list of objects at those offsets.
 	function parseCFFIndex(data, start, conversionFn) {
-	    var offsets = [];
-	    var objects = [];
-	    var count = parse.getCard16(data, start);
-	    var objectOffset;
-	    var endOffset;
+	    const offsets = [];
+	    const objects = [];
+	    const count = parse.getCard16(data, start);
+	    let objectOffset;
+	    let endOffset;
 	    if (count !== 0) {
-	        var offsetSize = parse.getByte(data, start + 2);
+	        const offsetSize = parse.getByte(data, start + 2);
 	        objectOffset = start + ((count + 1) * offsetSize) + 2;
-	        var pos = start + 3;
-	        for (var i = 0; i < count + 1; i += 1) {
+	        let pos = start + 3;
+	        for (let i = 0; i < count + 1; i += 1) {
 	            offsets.push(parse.getOffset(data, pos, offsetSize));
 	            pos += offsetSize;
 	        }
@@ -3886,8 +3885,8 @@
 	        endOffset = start + 2;
 	    }
 
-	    for (var i$1 = 0; i$1 < offsets.length - 1; i$1 += 1) {
-	        var value = parse.getBytes(data, objectOffset + offsets[i$1], objectOffset + offsets[i$1 + 1]);
+	    for (let i = 0; i < offsets.length - 1; i += 1) {
+	        let value = parse.getBytes(data, objectOffset + offsets[i], objectOffset + offsets[i + 1]);
 	        if (conversionFn) {
 	            value = conversionFn(value);
 	        }
@@ -3899,15 +3898,15 @@
 	}
 
 	function parseCFFIndexLowMemory(data, start) {
-	    var offsets = [];
-	    var count = parse.getCard16(data, start);
-	    var objectOffset;
-	    var endOffset;
+	    const offsets = [];
+	    const count = parse.getCard16(data, start);
+	    let objectOffset;
+	    let endOffset;
 	    if (count !== 0) {
-	        var offsetSize = parse.getByte(data, start + 2);
+	        const offsetSize = parse.getByte(data, start + 2);
 	        objectOffset = start + ((count + 1) * offsetSize) + 2;
-	        var pos = start + 3;
-	        for (var i = 0; i < count + 1; i += 1) {
+	        let pos = start + 3;
+	        for (let i = 0; i < count + 1; i += 1) {
 	            offsets.push(parse.getOffset(data, pos, offsetSize));
 	            pos += offsetSize;
 	        }
@@ -3921,14 +3920,14 @@
 	    return {offsets: offsets, startOffset: start, endOffset: endOffset};
 	}
 	function getCffIndexObject(i, offsets, data, start, conversionFn) {
-	    var count = parse.getCard16(data, start);
-	    var objectOffset = 0;
+	    const count = parse.getCard16(data, start);
+	    let objectOffset = 0;
 	    if (count !== 0) {
-	        var offsetSize = parse.getByte(data, start + 2);
+	        const offsetSize = parse.getByte(data, start + 2);
 	        objectOffset = start + ((count + 1) * offsetSize) + 2;
 	    }
 
-	    var value = parse.getBytes(data, objectOffset + offsets[i], objectOffset + offsets[i + 1]);
+	    let value = parse.getBytes(data, objectOffset + offsets[i], objectOffset + offsets[i + 1]);
 	    if (conversionFn) {
 	        value = conversionFn(value);
 	    }
@@ -3937,13 +3936,13 @@
 
 	// Parse a `CFF` DICT real value.
 	function parseFloatOperand(parser) {
-	    var s = '';
-	    var eof = 15;
-	    var lookup = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', 'E', 'E-', null, '-'];
+	    let s = '';
+	    const eof = 15;
+	    const lookup = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', 'E', 'E-', null, '-'];
 	    while (true) {
-	        var b = parser.parseByte();
-	        var n1 = b >> 4;
-	        var n2 = b & 15;
+	        const b = parser.parseByte();
+	        const n1 = b >> 4;
+	        const n2 = b & 15;
 
 	        if (n1 === eof) {
 	            break;
@@ -3963,10 +3962,10 @@
 
 	// Parse a `CFF` DICT operand.
 	function parseOperand(parser, b0) {
-	    var b1;
-	    var b2;
-	    var b3;
-	    var b4;
+	    let b1;
+	    let b2;
+	    let b3;
+	    let b4;
 	    if (b0 === 28) {
 	        b1 = parser.parseByte();
 	        b2 = parser.parseByte();
@@ -4005,11 +4004,11 @@
 	// Convert the entries returned by `parseDict` to a proper dictionary.
 	// If a value is a list of one, it is unpacked.
 	function entriesToObject(entries) {
-	    var o = {};
-	    for (var i = 0; i < entries.length; i += 1) {
-	        var key = entries[i][0];
-	        var values = entries[i][1];
-	        var value = (void 0);
+	    const o = {};
+	    for (let i = 0; i < entries.length; i += 1) {
+	        const key = entries[i][0];
+	        const values = entries[i][1];
+	        let value;
 	        if (values.length === 1) {
 	            value = values[0];
 	        } else {
@@ -4030,13 +4029,13 @@
 	// A dictionary contains key-value pairs in a compact tokenized format.
 	function parseCFFDict(data, start, size) {
 	    start = start !== undefined ? start : 0;
-	    var parser = new parse.Parser(data, start);
-	    var entries = [];
-	    var operands = [];
+	    const parser = new parse.Parser(data, start);
+	    const entries = [];
+	    let operands = [];
 	    size = size !== undefined ? size : data.length;
 
 	    while (parser.relativeOffset < size) {
-	        var op = parser.parseByte();
+	        let op = parser.parseByte();
 
 	        // The first byte for each dict item distinguishes between operator (key) and operand (value).
 	        // Values <= 21 are operators.
@@ -4073,18 +4072,18 @@
 	// Interpret a dictionary and return a new dictionary with readable keys and values for missing entries.
 	// This function takes `meta` which is a list of objects containing `operand`, `name` and `default`.
 	function interpretDict(dict, meta, strings) {
-	    var newDict = {};
-	    var value;
+	    const newDict = {};
+	    let value;
 
 	    // Because we also want to include missing values, we start out from the meta list
 	    // and lookup values in the dict.
-	    for (var i = 0; i < meta.length; i += 1) {
-	        var m = meta[i];
+	    for (let i = 0; i < meta.length; i += 1) {
+	        const m = meta[i];
 
 	        if (Array.isArray(m.type)) {
-	            var values = [];
+	            const values = [];
 	            values.length = m.type.length;
-	            for (var j = 0; j < m.type.length; j++) {
+	            for (let j = 0; j < m.type.length; j++) {
 	                value = dict[m.op] !== undefined ? dict[m.op][j] : undefined;
 	                if (value === undefined) {
 	                    value = m.value !== undefined && m.value[j] !== undefined ? m.value[j] : null;
@@ -4113,7 +4112,7 @@
 
 	// Parse the CFF header.
 	function parseCFFHeader(data, start) {
-	    var header = {};
+	    const header = {};
 	    header.formatMajor = parse.getCard8(data, start);
 	    header.formatMinor = parse.getCard8(data, start + 1);
 	    header.size = parse.getCard8(data, start + 2);
@@ -4123,7 +4122,7 @@
 	    return header;
 	}
 
-	var TOP_DICT_META = [
+	const TOP_DICT_META = [
 	    {name: 'version', op: 0, type: 'SID'},
 	    {name: 'notice', op: 1, type: 'SID'},
 	    {name: 'copyright', op: 1200, type: 'SID'},
@@ -4161,7 +4160,7 @@
 	    {name: 'fontName', op: 1238, type: 'SID'}
 	];
 
-	var PRIVATE_DICT_META = [
+	const PRIVATE_DICT_META = [
 	    {name: 'subrs', op: 19, type: 'offset', value: 0},
 	    {name: 'defaultWidthX', op: 20, type: 'number', value: 0},
 	    {name: 'nominalWidthX', op: 21, type: 'number', value: 0}
@@ -4170,13 +4169,13 @@
 	// Parse the CFF top dictionary. A CFF table can contain multiple fonts, each with their own top dictionary.
 	// The top dictionary contains the essential metadata for the font, together with the private dictionary.
 	function parseCFFTopDict(data, strings) {
-	    var dict = parseCFFDict(data, 0, data.byteLength);
+	    const dict = parseCFFDict(data, 0, data.byteLength);
 	    return interpretDict(dict, TOP_DICT_META, strings);
 	}
 
 	// Parse the CFF private dictionary. We don't fully parse out all the values, only the ones we need.
 	function parseCFFPrivateDict(data, start, size, strings) {
-	    var dict = parseCFFDict(data, start, size);
+	    const dict = parseCFFDict(data, start, size);
 	    return interpretDict(dict, PRIVATE_DICT_META, strings);
 	}
 
@@ -4196,21 +4195,21 @@
 	//
 	//    _privateDict     saved copy of parsed Private DICT from Top DICT
 	function gatherCFFTopDicts(data, start, cffIndex, strings) {
-	    var topDictArray = [];
-	    for (var iTopDict = 0; iTopDict < cffIndex.length; iTopDict += 1) {
-	        var topDictData = new DataView(new Uint8Array(cffIndex[iTopDict]).buffer);
-	        var topDict = parseCFFTopDict(topDictData, strings);
+	    const topDictArray = [];
+	    for (let iTopDict = 0; iTopDict < cffIndex.length; iTopDict += 1) {
+	        const topDictData = new DataView(new Uint8Array(cffIndex[iTopDict]).buffer);
+	        const topDict = parseCFFTopDict(topDictData, strings);
 	        topDict._subrs = [];
 	        topDict._subrsBias = 0;
-	        var privateSize = topDict.private[0];
-	        var privateOffset = topDict.private[1];
+	        const privateSize = topDict.private[0];
+	        const privateOffset = topDict.private[1];
 	        if (privateSize !== 0 && privateOffset !== 0) {
-	            var privateDict = parseCFFPrivateDict(data, privateOffset + start, privateSize, strings);
+	            const privateDict = parseCFFPrivateDict(data, privateOffset + start, privateSize, strings);
 	            topDict._defaultWidthX = privateDict.defaultWidthX;
 	            topDict._nominalWidthX = privateDict.nominalWidthX;
 	            if (privateDict.subrs !== 0) {
-	                var subrOffset = privateOffset + privateDict.subrs;
-	                var subrIndex = parseCFFIndex(data, subrOffset + start);
+	                const subrOffset = privateOffset + privateDict.subrs;
+	                const subrIndex = parseCFFIndex(data, subrOffset + start);
 	                topDict._subrs = subrIndex.objects;
 	                topDict._subrsBias = calcCFFSubroutineBias(topDict._subrs);
 	            }
@@ -4225,17 +4224,17 @@
 	// This function will return a list of glyph names.
 	// See Adobe TN #5176 chapter 13, "Charsets".
 	function parseCFFCharset(data, start, nGlyphs, strings) {
-	    var sid;
-	    var count;
-	    var parser = new parse.Parser(data, start);
+	    let sid;
+	    let count;
+	    const parser = new parse.Parser(data, start);
 
 	    // The .notdef glyph is not included, so subtract 1.
 	    nGlyphs -= 1;
-	    var charset = ['.notdef'];
+	    const charset = ['.notdef'];
 
-	    var format = parser.parseCard8();
+	    const format = parser.parseCard8();
 	    if (format === 0) {
-	        for (var i = 0; i < nGlyphs; i += 1) {
+	        for (let i = 0; i < nGlyphs; i += 1) {
 	            sid = parser.parseSID();
 	            charset.push(getCFFString(strings, sid));
 	        }
@@ -4243,7 +4242,7 @@
 	        while (charset.length <= nGlyphs) {
 	            sid = parser.parseSID();
 	            count = parser.parseCard8();
-	            for (var i$1 = 0; i$1 <= count; i$1 += 1) {
+	            for (let i = 0; i <= count; i += 1) {
 	                charset.push(getCFFString(strings, sid));
 	                sid += 1;
 	            }
@@ -4252,7 +4251,7 @@
 	        while (charset.length <= nGlyphs) {
 	            sid = parser.parseSID();
 	            count = parser.parseCard16();
-	            for (var i$2 = 0; i$2 <= count; i$2 += 1) {
+	            for (let i = 0; i <= count; i += 1) {
 	                charset.push(getCFFString(strings, sid));
 	                sid += 1;
 	            }
@@ -4267,23 +4266,23 @@
 	// Parse the CFF encoding data. Only one encoding can be specified per font.
 	// See Adobe TN #5176 chapter 12, "Encodings".
 	function parseCFFEncoding(data, start, charset) {
-	    var code;
-	    var enc = {};
-	    var parser = new parse.Parser(data, start);
-	    var format = parser.parseCard8();
+	    let code;
+	    const enc = {};
+	    const parser = new parse.Parser(data, start);
+	    const format = parser.parseCard8();
 	    if (format === 0) {
-	        var nCodes = parser.parseCard8();
-	        for (var i = 0; i < nCodes; i += 1) {
+	        const nCodes = parser.parseCard8();
+	        for (let i = 0; i < nCodes; i += 1) {
 	            code = parser.parseCard8();
 	            enc[code] = i;
 	        }
 	    } else if (format === 1) {
-	        var nRanges = parser.parseCard8();
+	        const nRanges = parser.parseCard8();
 	        code = 1;
-	        for (var i$1 = 0; i$1 < nRanges; i$1 += 1) {
-	            var first = parser.parseCard8();
-	            var nLeft = parser.parseCard8();
-	            for (var j = first; j <= first + nLeft; j += 1) {
+	        for (let i = 0; i < nRanges; i += 1) {
+	            const first = parser.parseCard8();
+	            const nLeft = parser.parseCard8();
+	            for (let j = first; j <= first + nLeft; j += 1) {
 	                enc[j] = code;
 	                code += 1;
 	            }
@@ -4299,24 +4298,24 @@
 	// The encoding is described in the Type 2 Charstring Format
 	// https://www.microsoft.com/typography/OTSPEC/charstr2.htm
 	function parseCFFCharstring(font, glyph, code) {
-	    var c1x;
-	    var c1y;
-	    var c2x;
-	    var c2y;
-	    var p = new Path();
-	    var stack = [];
-	    var nStems = 0;
-	    var haveWidth = false;
-	    var open = false;
-	    var x = 0;
-	    var y = 0;
-	    var subrs;
-	    var subrsBias;
-	    var defaultWidthX;
-	    var nominalWidthX;
+	    let c1x;
+	    let c1y;
+	    let c2x;
+	    let c2y;
+	    const p = new Path();
+	    const stack = [];
+	    let nStems = 0;
+	    let haveWidth = false;
+	    let open = false;
+	    let x = 0;
+	    let y = 0;
+	    let subrs;
+	    let subrsBias;
+	    let defaultWidthX;
+	    let nominalWidthX;
 	    if (font.isCIDFont) {
-	        var fdIndex = font.tables.cff.topDict._fdSelect[glyph.index];
-	        var fdDict = font.tables.cff.topDict._fdArray[fdIndex];
+	        const fdIndex = font.tables.cff.topDict._fdSelect[glyph.index];
+	        const fdDict = font.tables.cff.topDict._fdArray[fdIndex];
 	        subrs = fdDict._subrs;
 	        subrsBias = fdDict._subrsBias;
 	        defaultWidthX = fdDict._defaultWidthX;
@@ -4327,7 +4326,7 @@
 	        defaultWidthX = font.tables.cff.topDict._defaultWidthX;
 	        nominalWidthX = font.tables.cff.topDict._nominalWidthX;
 	    }
-	    var width = defaultWidthX;
+	    let width = defaultWidthX;
 
 	    function newContour(x, y) {
 	        if (open) {
@@ -4339,7 +4338,7 @@
 	    }
 
 	    function parseStems() {
-	        var hasWidthArg;
+	        let hasWidthArg;
 
 	        // The number of stem operators on the stack is always even.
 	        // If the value is uneven, that means a width is specified.
@@ -4354,22 +4353,22 @@
 	    }
 
 	    function parse(code) {
-	        var b1;
-	        var b2;
-	        var b3;
-	        var b4;
-	        var codeIndex;
-	        var subrCode;
-	        var jpx;
-	        var jpy;
-	        var c3x;
-	        var c3y;
-	        var c4x;
-	        var c4y;
+	        let b1;
+	        let b2;
+	        let b3;
+	        let b4;
+	        let codeIndex;
+	        let subrCode;
+	        let jpx;
+	        let jpy;
+	        let c3x;
+	        let c3y;
+	        let c4x;
+	        let c4y;
 
-	        var i = 0;
+	        let i = 0;
 	        while (i < code.length) {
-	            var v = code[i];
+	            let v = code[i];
 	            i += 1;
 	            switch (v) {
 	                case 1: // hstem
@@ -4719,13 +4718,13 @@
 	}
 
 	function parseCFFFDSelect(data, start, nGlyphs, fdArrayCount) {
-	    var fdSelect = [];
-	    var fdIndex;
-	    var parser = new parse.Parser(data, start);
-	    var format = parser.parseCard8();
+	    const fdSelect = [];
+	    let fdIndex;
+	    const parser = new parse.Parser(data, start);
+	    const format = parser.parseCard8();
 	    if (format === 0) {
 	        // Simple list of nGlyphs elements
-	        for (var iGid = 0; iGid < nGlyphs; iGid++) {
+	        for (let iGid = 0; iGid < nGlyphs; iGid++) {
 	            fdIndex = parser.parseCard8();
 	            if (fdIndex >= fdArrayCount) {
 	                throw new Error('CFF table CID Font FDSelect has bad FD index value ' + fdIndex + ' (FD count ' + fdArrayCount + ')');
@@ -4734,13 +4733,13 @@
 	        }
 	    } else if (format === 3) {
 	        // Ranges
-	        var nRanges = parser.parseCard16();
-	        var first = parser.parseCard16();
+	        const nRanges = parser.parseCard16();
+	        let first = parser.parseCard16();
 	        if (first !== 0) {
 	            throw new Error('CFF Table CID Font FDSelect format 3 range has bad initial GID ' + first);
 	        }
-	        var next;
-	        for (var iRange = 0; iRange < nRanges; iRange++) {
+	        let next;
+	        for (let iRange = 0; iRange < nRanges; iRange++) {
 	            fdIndex = parser.parseCard8();
 	            next = parser.parseCard16();
 	            if (fdIndex >= fdArrayCount) {
@@ -4766,20 +4765,20 @@
 	// Parse the `CFF` table, which contains the glyph outlines in PostScript format.
 	function parseCFFTable(data, start, font, opt) {
 	    font.tables.cff = {};
-	    var header = parseCFFHeader(data, start);
-	    var nameIndex = parseCFFIndex(data, header.endOffset, parse.bytesToString);
-	    var topDictIndex = parseCFFIndex(data, nameIndex.endOffset);
-	    var stringIndex = parseCFFIndex(data, topDictIndex.endOffset, parse.bytesToString);
-	    var globalSubrIndex = parseCFFIndex(data, stringIndex.endOffset);
+	    const header = parseCFFHeader(data, start);
+	    const nameIndex = parseCFFIndex(data, header.endOffset, parse.bytesToString);
+	    const topDictIndex = parseCFFIndex(data, nameIndex.endOffset);
+	    const stringIndex = parseCFFIndex(data, topDictIndex.endOffset, parse.bytesToString);
+	    const globalSubrIndex = parseCFFIndex(data, stringIndex.endOffset);
 	    font.gsubrs = globalSubrIndex.objects;
 	    font.gsubrsBias = calcCFFSubroutineBias(font.gsubrs);
 
-	    var topDictArray = gatherCFFTopDicts(data, start, topDictIndex.objects, stringIndex.objects);
+	    const topDictArray = gatherCFFTopDicts(data, start, topDictIndex.objects, stringIndex.objects);
 	    if (topDictArray.length !== 1) {
 	        throw new Error('CFF table has too many fonts in \'FontSet\' - count of fonts NameIndex.length = ' + topDictArray.length);
 	    }
 
-	    var topDict = topDictArray[0];
+	    const topDict = topDictArray[0];
 	    font.tables.cff.topDict = topDict;
 
 	    if (topDict._privateDict) {
@@ -4792,27 +4791,27 @@
 	    }
 
 	    if (font.isCIDFont) {
-	        var fdArrayOffset = topDict.fdArray;
-	        var fdSelectOffset = topDict.fdSelect;
+	        let fdArrayOffset = topDict.fdArray;
+	        let fdSelectOffset = topDict.fdSelect;
 	        if (fdArrayOffset === 0 || fdSelectOffset === 0) {
 	            throw new Error('Font is marked as a CID font, but FDArray and/or FDSelect information is missing');
 	        }
 	        fdArrayOffset += start;
-	        var fdArrayIndex = parseCFFIndex(data, fdArrayOffset);
-	        var fdArray = gatherCFFTopDicts(data, start, fdArrayIndex.objects, stringIndex.objects);
+	        const fdArrayIndex = parseCFFIndex(data, fdArrayOffset);
+	        const fdArray = gatherCFFTopDicts(data, start, fdArrayIndex.objects, stringIndex.objects);
 	        topDict._fdArray = fdArray;
 	        fdSelectOffset += start;
 	        topDict._fdSelect = parseCFFFDSelect(data, fdSelectOffset, font.numGlyphs, fdArray.length);
 	    }
 
-	    var privateDictOffset = start + topDict.private[1];
-	    var privateDict = parseCFFPrivateDict(data, privateDictOffset, topDict.private[0], stringIndex.objects);
+	    const privateDictOffset = start + topDict.private[1];
+	    const privateDict = parseCFFPrivateDict(data, privateDictOffset, topDict.private[0], stringIndex.objects);
 	    font.defaultWidthX = privateDict.defaultWidthX;
 	    font.nominalWidthX = privateDict.nominalWidthX;
 
 	    if (privateDict.subrs !== 0) {
-	        var subrOffset = privateDictOffset + privateDict.subrs;
-	        var subrIndex = parseCFFIndex(data, subrOffset);
+	        const subrOffset = privateDictOffset + privateDict.subrs;
+	        const subrIndex = parseCFFIndex(data, subrOffset);
 	        font.subrs = subrIndex.objects;
 	        font.subrsBias = calcCFFSubroutineBias(font.subrs);
 	    } else {
@@ -4821,7 +4820,7 @@
 	    }
 
 	    // Offsets in the top dict are relative to the beginning of the CFF data, so add the CFF start offset.
-	    var charStringsIndex;
+	    let charStringsIndex;
 	    if (opt.lowMemory) {
 	        charStringsIndex = parseCFFIndexLowMemory(data, start + topDict.charStrings);
 	        font.nGlyphs = charStringsIndex.offsets.length;
@@ -4830,7 +4829,7 @@
 	        font.nGlyphs = charStringsIndex.objects.length;
 	    }
 
-	    var charset = parseCFFCharset(data, start + topDict.charset, font.nGlyphs, stringIndex.objects);
+	    const charset = parseCFFCharset(data, start + topDict.charset, font.nGlyphs, stringIndex.objects);
 	    if (topDict.encoding === 0) {
 	        // Standard encoding
 	        font.cffEncoding = new CffEncoding(cffStandardEncoding, charset);
@@ -4847,12 +4846,12 @@
 	    font.glyphs = new glyphset.GlyphSet(font);
 	    if (opt.lowMemory) {
 	        font._push = function(i) {
-	            var charString = getCffIndexObject(i, charStringsIndex.offsets, data, start + topDict.charStrings);
+	            const charString = getCffIndexObject(i, charStringsIndex.offsets, data, start + topDict.charStrings);
 	            font.glyphs.push(i, glyphset.cffGlyphLoader(font, i, parseCFFCharstring, charString));
 	        };
 	    } else {
-	        for (var i = 0; i < font.nGlyphs; i += 1) {
-	            var charString = charStringsIndex.objects[i];
+	        for (let i = 0; i < font.nGlyphs; i += 1) {
+	            const charString = charStringsIndex.objects[i];
 	            font.glyphs.push(i, glyphset.cffGlyphLoader(font, i, parseCFFCharstring, charString));
 	        }
 	    }
@@ -4861,10 +4860,10 @@
 	// Convert a string to a String ID (SID).
 	// The list of strings is modified in place.
 	function encodeString(s, strings) {
-	    var sid;
+	    let sid;
 
 	    // Is the string in the CFF standard strings?
-	    var i = cffStandardStrings.indexOf(s);
+	    let i = cffStandardStrings.indexOf(s);
 	    if (i >= 0) {
 	        sid = i;
 	    }
@@ -4891,11 +4890,11 @@
 	}
 
 	function makeNameIndex(fontNames) {
-	    var t = new table.Record('Name INDEX', [
+	    const t = new table.Record('Name INDEX', [
 	        {name: 'names', type: 'INDEX', value: []}
 	    ]);
 	    t.names = [];
-	    for (var i = 0; i < fontNames.length; i += 1) {
+	    for (let i = 0; i < fontNames.length; i += 1) {
 	        t.names.push({name: 'name_' + i, type: 'NAME', value: fontNames[i]});
 	    }
 
@@ -4904,10 +4903,10 @@
 
 	// Given a dictionary's metadata, create a DICT structure.
 	function makeDict(meta, attrs, strings) {
-	    var m = {};
-	    for (var i = 0; i < meta.length; i += 1) {
-	        var entry = meta[i];
-	        var value = attrs[entry.name];
+	    const m = {};
+	    for (let i = 0; i < meta.length; i += 1) {
+	        const entry = meta[i];
+	        let value = attrs[entry.name];
 	        if (value !== undefined && !equals(value, entry.value)) {
 	            if (entry.type === 'SID') {
 	                value = encodeString(value, strings);
@@ -4922,7 +4921,7 @@
 
 	// The Top DICT houses the global font attributes.
 	function makeTopDict(attrs, strings) {
-	    var t = new table.Record('Top DICT', [
+	    const t = new table.Record('Top DICT', [
 	        {name: 'dict', type: 'DICT', value: {}}
 	    ]);
 	    t.dict = makeDict(TOP_DICT_META, attrs, strings);
@@ -4930,7 +4929,7 @@
 	}
 
 	function makeTopDictIndex(topDict) {
-	    var t = new table.Record('Top DICT INDEX', [
+	    const t = new table.Record('Top DICT INDEX', [
 	        {name: 'topDicts', type: 'INDEX', value: []}
 	    ]);
 	    t.topDicts = [{name: 'topDict_0', type: 'TABLE', value: topDict}];
@@ -4938,11 +4937,11 @@
 	}
 
 	function makeStringIndex(strings) {
-	    var t = new table.Record('String INDEX', [
+	    const t = new table.Record('String INDEX', [
 	        {name: 'strings', type: 'INDEX', value: []}
 	    ]);
 	    t.strings = [];
-	    for (var i = 0; i < strings.length; i += 1) {
+	    for (let i = 0; i < strings.length; i += 1) {
 	        t.strings.push({name: 'string_' + i, type: 'STRING', value: strings[i]});
 	    }
 
@@ -4957,12 +4956,12 @@
 	}
 
 	function makeCharsets(glyphNames, strings) {
-	    var t = new table.Record('Charsets', [
+	    const t = new table.Record('Charsets', [
 	        {name: 'format', type: 'Card8', value: 0}
 	    ]);
-	    for (var i = 0; i < glyphNames.length; i += 1) {
-	        var glyphName = glyphNames[i];
-	        var glyphSID = encodeString(glyphName, strings);
+	    for (let i = 0; i < glyphNames.length; i += 1) {
+	        const glyphName = glyphNames[i];
+	        const glyphSID = encodeString(glyphName, strings);
 	        t.fields.push({name: 'glyph_' + i, type: 'SID', value: glyphSID});
 	    }
 
@@ -4970,19 +4969,19 @@
 	}
 
 	function glyphToOps(glyph) {
-	    var ops = [];
-	    var path = glyph.path;
+	    const ops = [];
+	    const path = glyph.path;
 	    ops.push({name: 'width', type: 'NUMBER', value: glyph.advanceWidth});
-	    var x = 0;
-	    var y = 0;
-	    for (var i = 0; i < path.commands.length; i += 1) {
-	        var dx = (void 0);
-	        var dy = (void 0);
-	        var cmd = path.commands[i];
+	    let x = 0;
+	    let y = 0;
+	    for (let i = 0; i < path.commands.length; i += 1) {
+	        let dx;
+	        let dy;
+	        let cmd = path.commands[i];
 	        if (cmd.type === 'Q') {
 	            // CFF only supports bézier curves, so convert the quad to a bézier.
-	            var _13 = 1 / 3;
-	            var _23 = 2 / 3;
+	            const _13 = 1 / 3;
+	            const _23 = 2 / 3;
 
 	            // We're going to create a new command so we don't change the original path.
 	            cmd = {
@@ -5013,10 +5012,10 @@
 	            x = Math.round(cmd.x);
 	            y = Math.round(cmd.y);
 	        } else if (cmd.type === 'C') {
-	            var dx1 = Math.round(cmd.x1 - x);
-	            var dy1 = Math.round(cmd.y1 - y);
-	            var dx2 = Math.round(cmd.x2 - cmd.x1);
-	            var dy2 = Math.round(cmd.y2 - cmd.y1);
+	            const dx1 = Math.round(cmd.x1 - x);
+	            const dy1 = Math.round(cmd.y1 - y);
+	            const dx2 = Math.round(cmd.x2 - cmd.x1);
+	            const dy2 = Math.round(cmd.y2 - cmd.y1);
 	            dx = Math.round(cmd.x - cmd.x2);
 	            dy = Math.round(cmd.y - cmd.y2);
 	            ops.push({name: 'dx1', type: 'NUMBER', value: dx1});
@@ -5038,13 +5037,13 @@
 	}
 
 	function makeCharStringsIndex(glyphs) {
-	    var t = new table.Record('CharStrings INDEX', [
+	    const t = new table.Record('CharStrings INDEX', [
 	        {name: 'charStrings', type: 'INDEX', value: []}
 	    ]);
 
-	    for (var i = 0; i < glyphs.length; i += 1) {
-	        var glyph = glyphs.get(i);
-	        var ops = glyphToOps(glyph);
+	    for (let i = 0; i < glyphs.length; i += 1) {
+	        const glyph = glyphs.get(i);
+	        const ops = glyphToOps(glyph);
 	        t.charStrings.push({name: glyph.name, type: 'CHARSTRING', value: ops});
 	    }
 
@@ -5052,7 +5051,7 @@
 	}
 
 	function makePrivateDict(attrs, strings) {
-	    var t = new table.Record('Private DICT', [
+	    const t = new table.Record('Private DICT', [
 	        {name: 'dict', type: 'DICT', value: {}}
 	    ]);
 	    t.dict = makeDict(PRIVATE_DICT_META, attrs, strings);
@@ -5060,7 +5059,7 @@
 	}
 
 	function makeCFFTable(glyphs, options) {
-	    var t = new table.Table('CFF ', [
+	    const t = new table.Table('CFF ', [
 	        {name: 'header', type: 'RECORD'},
 	        {name: 'nameIndex', type: 'RECORD'},
 	        {name: 'topDictIndex', type: 'RECORD'},
@@ -5071,11 +5070,11 @@
 	        {name: 'privateDict', type: 'RECORD'}
 	    ]);
 
-	    var fontScale = 1 / options.unitsPerEm;
+	    const fontScale = 1 / options.unitsPerEm;
 	    // We use non-zero values for the offsets so that the DICT encodes them.
 	    // This is important because the size of the Top DICT plays a role in offset calculation,
 	    // and the size shouldn't change after we've written correct offsets.
-	    var attrs = {
+	    const attrs = {
 	        version: options.version,
 	        fullName: options.fullName,
 	        familyName: options.familyName,
@@ -5088,22 +5087,22 @@
 	        private: [0, 999]
 	    };
 
-	    var privateAttrs = {};
+	    const privateAttrs = {};
 
-	    var glyphNames = [];
-	    var glyph;
+	    const glyphNames = [];
+	    let glyph;
 
 	    // Skip first glyph (.notdef)
-	    for (var i = 1; i < glyphs.length; i += 1) {
+	    for (let i = 1; i < glyphs.length; i += 1) {
 	        glyph = glyphs.get(i);
 	        glyphNames.push(glyph.name);
 	    }
 
-	    var strings = [];
+	    const strings = [];
 
 	    t.header = makeHeader();
 	    t.nameIndex = makeNameIndex([options.postScriptName]);
-	    var topDict = makeTopDict(attrs, strings);
+	    let topDict = makeTopDict(attrs, strings);
 	    t.topDictIndex = makeTopDictIndex(topDict);
 	    t.globalSubrIndex = makeGlobalSubrIndex();
 	    t.charsets = makeCharsets(glyphNames, strings);
@@ -5113,7 +5112,7 @@
 	    // Needs to come at the end, to encode all custom strings used in the font.
 	    t.stringIndex = makeStringIndex(strings);
 
-	    var startOffset = t.header.sizeOf() +
+	    const startOffset = t.header.sizeOf() +
 	        t.nameIndex.sizeOf() +
 	        t.topDictIndex.sizeOf() +
 	        t.stringIndex.sizeOf() +
@@ -5138,8 +5137,8 @@
 
 	// Parse the header `head` table
 	function parseHeadTable(data, start) {
-	    var head = {};
-	    var p = new parse.Parser(data, start);
+	    const head = {};
+	    const p = new parse.Parser(data, start);
 	    head.version = p.parseVersion();
 	    head.fontRevision = Math.round(p.parseFixed() * 1000) / 1000;
 	    head.checkSumAdjustment = p.parseULong();
@@ -5163,8 +5162,8 @@
 
 	function makeHeadTable(options) {
 	    // Apple Mac timestamp epoch is 01/01/1904 not 01/01/1970
-	    var timestamp = Math.round(new Date().getTime() / 1000) + 2082844800;
-	    var createdTimestamp = timestamp;
+	    const timestamp = Math.round(new Date().getTime() / 1000) + 2082844800;
+	    let createdTimestamp = timestamp;
 
 	    if (options.createdTimestamp) {
 	        createdTimestamp = options.createdTimestamp + 2082844800;
@@ -5197,8 +5196,8 @@
 
 	// Parse the horizontal header `hhea` table
 	function parseHheaTable(data, start) {
-	    var hhea = {};
-	    var p = new parse.Parser(data, start);
+	    const hhea = {};
+	    const p = new parse.Parser(data, start);
 	    hhea.version = p.parseVersion();
 	    hhea.ascender = p.parseShort();
 	    hhea.descender = p.parseShort();
@@ -5243,17 +5242,17 @@
 	// The `hmtx` table contains the horizontal metrics for all glyphs.
 
 	function parseHmtxTableAll(data, start, numMetrics, numGlyphs, glyphs) {
-	    var advanceWidth;
-	    var leftSideBearing;
-	    var p = new parse.Parser(data, start);
-	    for (var i = 0; i < numGlyphs; i += 1) {
+	    let advanceWidth;
+	    let leftSideBearing;
+	    const p = new parse.Parser(data, start);
+	    for (let i = 0; i < numGlyphs; i += 1) {
 	        // If the font is monospaced, only one entry is needed. This last entry applies to all subsequent glyphs.
 	        if (i < numMetrics) {
 	            advanceWidth = p.parseUShort();
 	            leftSideBearing = p.parseShort();
 	        }
 
-	        var glyph = glyphs.get(i);
+	        const glyph = glyphs.get(i);
 	        glyph.advanceWidth = advanceWidth;
 	        glyph.leftSideBearing = leftSideBearing;
 	    }
@@ -5262,10 +5261,10 @@
 	function parseHmtxTableOnLowMemory(font, data, start, numMetrics, numGlyphs) {
 	    font._hmtxTableData = {};
 
-	    var advanceWidth;
-	    var leftSideBearing;
-	    var p = new parse.Parser(data, start);
-	    for (var i = 0; i < numGlyphs; i += 1) {
+	    let advanceWidth;
+	    let leftSideBearing;
+	    const p = new parse.Parser(data, start);
+	    for (let i = 0; i < numGlyphs; i += 1) {
 	        // If the font is monospaced, only one entry is needed. This last entry applies to all subsequent glyphs.
 	        if (i < numMetrics) {
 	            advanceWidth = p.parseUShort();
@@ -5283,17 +5282,17 @@
 	// This function augments the glyph array, adding the advanceWidth and leftSideBearing to each glyph.
 	function parseHmtxTable(font, data, start, numMetrics, numGlyphs, glyphs, opt) {
 	    if (opt.lowMemory)
-	        { parseHmtxTableOnLowMemory(font, data, start, numMetrics, numGlyphs); }
+	        parseHmtxTableOnLowMemory(font, data, start, numMetrics, numGlyphs);
 	    else
-	        { parseHmtxTableAll(data, start, numMetrics, numGlyphs, glyphs); }
+	        parseHmtxTableAll(data, start, numMetrics, numGlyphs, glyphs);
 	}
 
 	function makeHmtxTable(glyphs) {
-	    var t = new table.Table('hmtx', []);
-	    for (var i = 0; i < glyphs.length; i += 1) {
-	        var glyph = glyphs.get(i);
-	        var advanceWidth = glyph.advanceWidth || 0;
-	        var leftSideBearing = glyph.leftSideBearing || 0;
+	    const t = new table.Table('hmtx', []);
+	    for (let i = 0; i < glyphs.length; i += 1) {
+	        const glyph = glyphs.get(i);
+	        const advanceWidth = glyph.advanceWidth || 0;
+	        const leftSideBearing = glyph.leftSideBearing || 0;
 	        t.fields.push({name: 'advanceWidth_' + i, type: 'USHORT', value: advanceWidth});
 	        t.fields.push({name: 'leftSideBearing_' + i, type: 'SHORT', value: leftSideBearing});
 	    }
@@ -5306,16 +5305,16 @@
 	// The `ltag` table stores IETF BCP-47 language tags. It allows supporting
 
 	function makeLtagTable(tags) {
-	    var result = new table.Table('ltag', [
+	    const result = new table.Table('ltag', [
 	        {name: 'version', type: 'ULONG', value: 1},
 	        {name: 'flags', type: 'ULONG', value: 0},
 	        {name: 'numTags', type: 'ULONG', value: tags.length}
 	    ]);
 
-	    var stringPool = '';
-	    var stringPoolOffset = 12 + tags.length * 4;
-	    for (var i = 0; i < tags.length; ++i) {
-	        var pos = stringPool.indexOf(tags[i]);
+	    let stringPool = '';
+	    const stringPoolOffset = 12 + tags.length * 4;
+	    for (let i = 0; i < tags.length; ++i) {
+	        let pos = stringPool.indexOf(tags[i]);
 	        if (pos < 0) {
 	            pos = stringPool.length;
 	            stringPool += tags[i];
@@ -5330,19 +5329,19 @@
 	}
 
 	function parseLtagTable(data, start) {
-	    var p = new parse.Parser(data, start);
-	    var tableVersion = p.parseULong();
+	    const p = new parse.Parser(data, start);
+	    const tableVersion = p.parseULong();
 	    check.argument(tableVersion === 1, 'Unsupported ltag table version.');
 	    // The 'ltag' specification does not define any flags; skip the field.
 	    p.skip('uLong', 1);
-	    var numTags = p.parseULong();
+	    const numTags = p.parseULong();
 
-	    var tags = [];
-	    for (var i = 0; i < numTags; i++) {
-	        var tag = '';
-	        var offset = start + p.parseUShort();
-	        var length = p.parseUShort();
-	        for (var j = offset; j < offset + length; ++j) {
+	    const tags = [];
+	    for (let i = 0; i < numTags; i++) {
+	        let tag = '';
+	        const offset = start + p.parseUShort();
+	        const length = p.parseUShort();
+	        for (let j = offset; j < offset + length; ++j) {
 	            tag += String.fromCharCode(data.getInt8(j));
 	        }
 
@@ -5358,8 +5357,8 @@
 
 	// Parse the maximum profile `maxp` table.
 	function parseMaxpTable(data, start) {
-	    var maxp = {};
-	    var p = new parse.Parser(data, start);
+	    const maxp = {};
+	    const p = new parse.Parser(data, start);
 	    maxp.version = p.parseVersion();
 	    maxp.numGlyphs = p.parseUShort();
 	    if (maxp.version === 1.0) {
@@ -5393,7 +5392,7 @@
 	// The `name` naming table.
 
 	// NameIDs for the name table.
-	var nameTableNames = [
+	const nameTableNames = [
 	    'copyright',              // 0
 	    'fontFamily',             // 1
 	    'fontSubfamily',          // 2
@@ -5419,7 +5418,7 @@
 	    'wwsSubfamily'            // 22
 	];
 
-	var macLanguages = {
+	const macLanguages = {
 	    0: 'en',
 	    1: 'fr',
 	    2: 'de',
@@ -5553,7 +5552,7 @@
 	// done as a (pretty radical) "modification" of Ethiopic.
 	//
 	// http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/Readme.txt
-	var macLanguageToScript = {
+	const macLanguageToScript = {
 	    0: 0,  // langEnglish → smRoman
 	    1: 0,  // langFrench → smRoman
 	    2: 0,  // langGerman → smRoman
@@ -5691,7 +5690,7 @@
 	//
 	// http://www.unicode.org/cldr/charts/latest/supplemental/likely_subtags.html
 	// http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
-	var windowsLanguages = {
+	const windowsLanguages = {
 	    0x0436: 'af',
 	    0x041C: 'sq',
 	    0x0484: 'gsw',
@@ -5931,11 +5930,11 @@
 	    return undefined;
 	}
 
-	var utf16 = 'utf-16';
+	const utf16 = 'utf-16';
 
 	// MacOS script ID → encoding. This table stores the default case,
 	// which can be overridden by macLanguageEncodings.
-	var macScriptEncodings = {
+	const macScriptEncodings = {
 	    0: 'macintosh',           // smRoman
 	    1: 'x-mac-japanese',      // smJapanese
 	    2: 'x-mac-chinesetrad',   // smTradChinese
@@ -5973,7 +5972,7 @@
 	// merge macScriptEncodings into macLanguageEncodings.
 	//
 	// http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/Readme.txt
-	var macLanguageEncodings = {
+	const macLanguageEncodings = {
 	    15: 'x-mac-icelandic',    // langIcelandic
 	    17: 'x-mac-turkish',      // langTurkish
 	    18: 'x-mac-croatian',     // langCroatian
@@ -6014,23 +6013,23 @@
 	// FIXME: Format 1 additional fields are not supported yet.
 	// ltag is the content of the `ltag' table, such as ['en', 'zh-Hans', 'de-CH-1904'].
 	function parseNameTable(data, start, ltag) {
-	    var name = {};
-	    var p = new parse.Parser(data, start);
-	    var format = p.parseUShort();
-	    var count = p.parseUShort();
-	    var stringOffset = p.offset + p.parseUShort();
-	    for (var i = 0; i < count; i++) {
-	        var platformID = p.parseUShort();
-	        var encodingID = p.parseUShort();
-	        var languageID = p.parseUShort();
-	        var nameID = p.parseUShort();
-	        var property = nameTableNames[nameID] || nameID;
-	        var byteLength = p.parseUShort();
-	        var offset = p.parseUShort();
-	        var language = getLanguageCode(platformID, languageID, ltag);
-	        var encoding = getEncoding(platformID, encodingID, languageID);
+	    const name = {};
+	    const p = new parse.Parser(data, start);
+	    const format = p.parseUShort();
+	    const count = p.parseUShort();
+	    const stringOffset = p.offset + p.parseUShort();
+	    for (let i = 0; i < count; i++) {
+	        const platformID = p.parseUShort();
+	        const encodingID = p.parseUShort();
+	        const languageID = p.parseUShort();
+	        const nameID = p.parseUShort();
+	        const property = nameTableNames[nameID] || nameID;
+	        const byteLength = p.parseUShort();
+	        const offset = p.parseUShort();
+	        const language = getLanguageCode(platformID, languageID, ltag);
+	        const encoding = getEncoding(platformID, encodingID, languageID);
 	        if (encoding !== undefined && language !== undefined) {
-	            var text = (void 0);
+	            let text;
 	            if (encoding === utf16) {
 	                text = decode.UTF16(data, stringOffset + offset, byteLength);
 	            } else {
@@ -6038,7 +6037,7 @@
 	            }
 
 	            if (text) {
-	                var translations = name[property];
+	                let translations = name[property];
 	                if (translations === undefined) {
 	                    translations = name[property] = {};
 	                }
@@ -6048,7 +6047,7 @@
 	        }
 	    }
 
-	    var langTagCount = 0;
+	    let langTagCount = 0;
 	    if (format === 1) {
 	        // FIXME: Also handle Microsoft's 'name' table 1.
 	        langTagCount = p.parseUShort();
@@ -6060,8 +6059,8 @@
 	// {23: 'foo'} → {'foo': 23}
 	// ['bar', 'baz'] → {'bar': 0, 'baz': 1}
 	function reverseDict(dict) {
-	    var result = {};
-	    for (var key in dict) {
+	    const result = {};
+	    for (let key in dict) {
 	        result[dict[key]] = parseInt(key);
 	    }
 
@@ -6082,13 +6081,13 @@
 	// Finds the position of needle in haystack, or -1 if not there.
 	// Like String.indexOf(), but for arrays.
 	function findSubArray(needle, haystack) {
-	    var needleLength = needle.length;
-	    var limit = haystack.length - needleLength + 1;
+	    const needleLength = needle.length;
+	    const limit = haystack.length - needleLength + 1;
 
 	    loop:
-	    for (var pos = 0; pos < limit; pos++) {
+	    for (let pos = 0; pos < limit; pos++) {
 	        for (; pos < limit; pos++) {
-	            for (var k = 0; k < needleLength; k++) {
+	            for (let k = 0; k < needleLength; k++) {
 	                if (haystack[pos + k] !== needle[k]) {
 	                    continue loop;
 	                }
@@ -6102,11 +6101,11 @@
 	}
 
 	function addStringToPool(s, pool) {
-	    var offset = findSubArray(s, pool);
+	    let offset = findSubArray(s, pool);
 	    if (offset < 0) {
 	        offset = pool.length;
-	        var i = 0;
-	        var len = s.length;
+	        let i = 0;
+	        const len = s.length;
 	        for (; i < len; ++i) {
 	            pool.push(s[i]);
 	        }
@@ -6117,13 +6116,13 @@
 	}
 
 	function makeNameTable(names, ltag) {
-	    var nameID;
-	    var nameIDs = [];
+	    let nameID;
+	    const nameIDs = [];
 
-	    var namesWithNumericKeys = {};
-	    var nameTableIds = reverseDict(nameTableNames);
-	    for (var key in names) {
-	        var id = nameTableIds[key];
+	    const namesWithNumericKeys = {};
+	    const nameTableIds = reverseDict(nameTableNames);
+	    for (let key in names) {
+	        let id = nameTableIds[key];
 	        if (id === undefined) {
 	            id = key;
 	        }
@@ -6138,17 +6137,17 @@
 	        nameIDs.push(nameID);
 	    }
 
-	    var macLanguageIds = reverseDict(macLanguages);
-	    var windowsLanguageIds = reverseDict(windowsLanguages);
+	    const macLanguageIds = reverseDict(macLanguages);
+	    const windowsLanguageIds = reverseDict(windowsLanguages);
 
-	    var nameRecords = [];
-	    var stringPool = [];
+	    const nameRecords = [];
+	    const stringPool = [];
 
-	    for (var i = 0; i < nameIDs.length; i++) {
+	    for (let i = 0; i < nameIDs.length; i++) {
 	        nameID = nameIDs[i];
-	        var translations = namesWithNumericKeys[nameID];
-	        for (var lang in translations) {
-	            var text = translations[lang];
+	        const translations = namesWithNumericKeys[nameID];
+	        for (let lang in translations) {
+	            const text = translations[lang];
 
 	            // For MacOS, we try to emit the name in the form that was introduced
 	            // in the initial version of the TrueType spec (in the late 1980s).
@@ -6164,11 +6163,11 @@
 	            // However, there are many applications and libraries that read
 	            // 'name' tables directly, and these will usually only recognize
 	            // the ancient form (silently skipping the unrecognized names).
-	            var macPlatform = 1;  // Macintosh
-	            var macLanguage = macLanguageIds[lang];
-	            var macScript = macLanguageToScript[macLanguage];
-	            var macEncoding = getEncoding(macPlatform, macScript, macLanguage);
-	            var macName = encode.MACSTRING(text, macEncoding);
+	            let macPlatform = 1;  // Macintosh
+	            let macLanguage = macLanguageIds[lang];
+	            let macScript = macLanguageToScript[macLanguage];
+	            const macEncoding = getEncoding(macPlatform, macScript, macLanguage);
+	            let macName = encode.MACSTRING(text, macEncoding);
 	            if (macName === undefined) {
 	                macPlatform = 0;  // Unicode
 	                macLanguage = ltag.indexOf(lang);
@@ -6181,14 +6180,14 @@
 	                macName = encode.UTF16(text);
 	            }
 
-	            var macNameOffset = addStringToPool(macName, stringPool);
+	            const macNameOffset = addStringToPool(macName, stringPool);
 	            nameRecords.push(makeNameRecord(macPlatform, macScript, macLanguage,
 	                                            nameID, macName.length, macNameOffset));
 
-	            var winLanguage = windowsLanguageIds[lang];
+	            const winLanguage = windowsLanguageIds[lang];
 	            if (winLanguage !== undefined) {
-	                var winName = encode.UTF16(text);
-	                var winNameOffset = addStringToPool(winName, stringPool);
+	                const winName = encode.UTF16(text);
+	                const winNameOffset = addStringToPool(winName, stringPool);
 	                nameRecords.push(makeNameRecord(3, 1, winLanguage,
 	                                                nameID, winName.length, winNameOffset));
 	            }
@@ -6202,13 +6201,13 @@
 	                (a.nameID - b.nameID));
 	    });
 
-	    var t = new table.Table('name', [
+	    const t = new table.Table('name', [
 	        {name: 'format', type: 'USHORT', value: 0},
 	        {name: 'count', type: 'USHORT', value: nameRecords.length},
 	        {name: 'stringOffset', type: 'USHORT', value: 6 + nameRecords.length * 12}
 	    ]);
 
-	    for (var r = 0; r < nameRecords.length; r++) {
+	    for (let r = 0; r < nameRecords.length; r++) {
 	        t.fields.push({name: 'record_' + r, type: 'RECORD', value: nameRecords[r]});
 	    }
 
@@ -6220,7 +6219,7 @@
 
 	// The `OS/2` table contains metrics required in OpenType fonts.
 
-	var unicodeRanges = [
+	const unicodeRanges = [
 	    {begin: 0x0000, end: 0x007F}, // Basic Latin
 	    {begin: 0x0080, end: 0x00FF}, // Latin-1 Supplement
 	    {begin: 0x0100, end: 0x017F}, // Latin Extended-A
@@ -6347,8 +6346,8 @@
 	];
 
 	function getUnicodeRange(unicode) {
-	    for (var i = 0; i < unicodeRanges.length; i += 1) {
-	        var range = unicodeRanges[i];
+	    for (let i = 0; i < unicodeRanges.length; i += 1) {
+	        const range = unicodeRanges[i];
 	        if (unicode >= range.begin && unicode < range.end) {
 	            return i;
 	        }
@@ -6359,8 +6358,8 @@
 
 	// Parse the OS/2 and Windows metrics `OS/2` table
 	function parseOS2Table(data, start) {
-	    var os2 = {};
-	    var p = new parse.Parser(data, start);
+	    const os2 = {};
+	    const p = new parse.Parser(data, start);
 	    os2.version = p.parseUShort();
 	    os2.xAvgCharWidth = p.parseShort();
 	    os2.usWeightClass = p.parseUShort();
@@ -6378,7 +6377,7 @@
 	    os2.yStrikeoutPosition = p.parseShort();
 	    os2.sFamilyClass = p.parseShort();
 	    os2.panose = [];
-	    for (var i = 0; i < 10; i++) {
+	    for (let i = 0; i < 10; i++) {
 	        os2.panose[i] = p.parseByte();
 	    }
 
@@ -6462,14 +6461,14 @@
 	    ], options);
 	}
 
-	var os2 = { parse: parseOS2Table, make: makeOS2Table, unicodeRanges: unicodeRanges, getUnicodeRange: getUnicodeRange };
+	var os2 = { parse: parseOS2Table, make: makeOS2Table, unicodeRanges, getUnicodeRange };
 
 	// The `post` table stores additional PostScript information, such as glyph names.
 
 	// Parse the PostScript `post` table
 	function parsePostTable(data, start) {
-	    var post = {};
-	    var p = new parse.Parser(data, start);
+	    const post = {};
+	    const p = new parse.Parser(data, start);
 	    post.version = p.parseVersion();
 	    post.italicAngle = p.parseFixed();
 	    post.underlinePosition = p.parseShort();
@@ -6486,14 +6485,14 @@
 	        case 2:
 	            post.numberOfGlyphs = p.parseUShort();
 	            post.glyphNameIndex = new Array(post.numberOfGlyphs);
-	            for (var i = 0; i < post.numberOfGlyphs; i++) {
+	            for (let i = 0; i < post.numberOfGlyphs; i++) {
 	                post.glyphNameIndex[i] = p.parseUShort();
 	            }
 
 	            post.names = [];
-	            for (var i$1 = 0; i$1 < post.numberOfGlyphs; i$1++) {
-	                if (post.glyphNameIndex[i$1] >= standardNames.length) {
-	                    var nameLength = p.parseChar();
+	            for (let i = 0; i < post.numberOfGlyphs; i++) {
+	                if (post.glyphNameIndex[i] >= standardNames.length) {
+	                    const nameLength = p.parseChar();
 	                    post.names.push(p.parseString(nameLength));
 	                }
 	            }
@@ -6502,8 +6501,8 @@
 	        case 2.5:
 	            post.numberOfGlyphs = p.parseUShort();
 	            post.offset = new Array(post.numberOfGlyphs);
-	            for (var i$2 = 0; i$2 < post.numberOfGlyphs; i$2++) {
-	                post.offset[i$2] = p.parseChar();
+	            for (let i = 0; i < post.numberOfGlyphs; i++) {
+	                post.offset[i] = p.parseChar();
 	            }
 
 	            break;
@@ -6529,12 +6528,12 @@
 
 	// The `GSUB` table contains ligatures, among other things.
 
-	var subtableParsers = new Array(9);         // subtableParsers[0] is unused
+	const subtableParsers = new Array(9);         // subtableParsers[0] is unused
 
 	// https://www.microsoft.com/typography/OTSPEC/GSUB.htm#SS
 	subtableParsers[1] = function parseLookup1() {
-	    var start = this.offset + this.relativeOffset;
-	    var substFormat = this.parseUShort();
+	    const start = this.offset + this.relativeOffset;
+	    const substFormat = this.parseUShort();
 	    if (substFormat === 1) {
 	        return {
 	            substFormat: 1,
@@ -6553,7 +6552,7 @@
 
 	// https://www.microsoft.com/typography/OTSPEC/GSUB.htm#MS
 	subtableParsers[2] = function parseLookup2() {
-	    var substFormat = this.parseUShort();
+	    const substFormat = this.parseUShort();
 	    check.argument(substFormat === 1, 'GSUB Multiple Substitution Subtable identifier-format must be 1');
 	    return {
 	        substFormat: substFormat,
@@ -6564,7 +6563,7 @@
 
 	// https://www.microsoft.com/typography/OTSPEC/GSUB.htm#AS
 	subtableParsers[3] = function parseLookup3() {
-	    var substFormat = this.parseUShort();
+	    const substFormat = this.parseUShort();
 	    check.argument(substFormat === 1, 'GSUB Alternate Substitution Subtable identifier-format must be 1');
 	    return {
 	        substFormat: substFormat,
@@ -6575,7 +6574,7 @@
 
 	// https://www.microsoft.com/typography/OTSPEC/GSUB.htm#LS
 	subtableParsers[4] = function parseLookup4() {
-	    var substFormat = this.parseUShort();
+	    const substFormat = this.parseUShort();
 	    check.argument(substFormat === 1, 'GSUB ligature table identifier-format must be 1');
 	    return {
 	        substFormat: substFormat,
@@ -6589,23 +6588,23 @@
 	    };
 	};
 
-	var lookupRecordDesc = {
+	const lookupRecordDesc = {
 	    sequenceIndex: Parser.uShort,
 	    lookupListIndex: Parser.uShort
 	};
 
 	// https://www.microsoft.com/typography/OTSPEC/GSUB.htm#CSF
 	subtableParsers[5] = function parseLookup5() {
-	    var start = this.offset + this.relativeOffset;
-	    var substFormat = this.parseUShort();
+	    const start = this.offset + this.relativeOffset;
+	    const substFormat = this.parseUShort();
 
 	    if (substFormat === 1) {
 	        return {
 	            substFormat: substFormat,
 	            coverage: this.parsePointer(Parser.coverage),
 	            ruleSets: this.parseListOfLists(function() {
-	                var glyphCount = this.parseUShort();
-	                var substCount = this.parseUShort();
+	                const glyphCount = this.parseUShort();
+	                const substCount = this.parseUShort();
 	                return {
 	                    input: this.parseUShortList(glyphCount - 1),
 	                    lookupRecords: this.parseRecordList(substCount, lookupRecordDesc)
@@ -6618,8 +6617,8 @@
 	            coverage: this.parsePointer(Parser.coverage),
 	            classDef: this.parsePointer(Parser.classDef),
 	            classSets: this.parseListOfLists(function() {
-	                var glyphCount = this.parseUShort();
-	                var substCount = this.parseUShort();
+	                const glyphCount = this.parseUShort();
+	                const substCount = this.parseUShort();
 	                return {
 	                    classes: this.parseUShortList(glyphCount - 1),
 	                    lookupRecords: this.parseRecordList(substCount, lookupRecordDesc)
@@ -6627,8 +6626,8 @@
 	            })
 	        };
 	    } else if (substFormat === 3) {
-	        var glyphCount = this.parseUShort();
-	        var substCount = this.parseUShort();
+	        const glyphCount = this.parseUShort();
+	        const substCount = this.parseUShort();
 	        return {
 	            substFormat: substFormat,
 	            coverages: this.parseList(glyphCount, Parser.pointer(Parser.coverage)),
@@ -6640,8 +6639,8 @@
 
 	// https://www.microsoft.com/typography/OTSPEC/GSUB.htm#CC
 	subtableParsers[6] = function parseLookup6() {
-	    var start = this.offset + this.relativeOffset;
-	    var substFormat = this.parseUShort();
+	    const start = this.offset + this.relativeOffset;
+	    const substFormat = this.parseUShort();
 	    if (substFormat === 1) {
 	        return {
 	            substFormat: 1,
@@ -6686,10 +6685,10 @@
 	// https://www.microsoft.com/typography/OTSPEC/GSUB.htm#ES
 	subtableParsers[7] = function parseLookup7() {
 	    // Extension Substitution subtable
-	    var substFormat = this.parseUShort();
+	    const substFormat = this.parseUShort();
 	    check.argument(substFormat === 1, 'GSUB Extension Substitution subtable identifier-format must be 1');
-	    var extensionLookupType = this.parseUShort();
-	    var extensionParser = new Parser(this.data, this.offset + this.parseULong());
+	    const extensionLookupType = this.parseUShort();
+	    const extensionParser = new Parser(this.data, this.offset + this.parseULong());
 	    return {
 	        substFormat: 1,
 	        lookupType: extensionLookupType,
@@ -6699,7 +6698,7 @@
 
 	// https://www.microsoft.com/typography/OTSPEC/GSUB.htm#RCCS
 	subtableParsers[8] = function parseLookup8() {
-	    var substFormat = this.parseUShort();
+	    const substFormat = this.parseUShort();
 	    check.argument(substFormat === 1, 'GSUB Reverse Chaining Contextual Single Substitution Subtable identifier-format must be 1');
 	    return {
 	        substFormat: substFormat,
@@ -6713,8 +6712,8 @@
 	// https://www.microsoft.com/typography/OTSPEC/gsub.htm
 	function parseGsubTable(data, start) {
 	    start = start || 0;
-	    var p = new Parser(data, start);
-	    var tableVersion = p.parseVersion(1);
+	    const p = new Parser(data, start);
+	    const tableVersion = p.parseVersion(1);
 	    check.argument(tableVersion === 1 || tableVersion === 1.1, 'Unsupported GSUB table version.');
 	    if (tableVersion === 1) {
 	        return {
@@ -6736,7 +6735,7 @@
 	}
 
 	// GSUB Writing //////////////////////////////////////////////
-	var subtableMakers = new Array(9);
+	const subtableMakers = new Array(9);
 
 	subtableMakers[1] = function makeLookup1(subtable) {
 	    if (subtable.substFormat === 1) {
@@ -6794,19 +6793,19 @@
 	// Parse the metadata `meta` table.
 	// https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6meta.html
 	function parseMetaTable(data, start) {
-	    var p = new parse.Parser(data, start);
-	    var tableVersion = p.parseULong();
+	    const p = new parse.Parser(data, start);
+	    const tableVersion = p.parseULong();
 	    check.argument(tableVersion === 1, 'Unsupported META table version.');
 	    p.parseULong(); // flags - currently unused and set to 0
 	    p.parseULong(); // tableOffset
-	    var numDataMaps = p.parseULong();
+	    const numDataMaps = p.parseULong();
 
-	    var tags = {};
-	    for (var i = 0; i < numDataMaps; i++) {
-	        var tag = p.parseTag();
-	        var dataOffset = p.parseULong();
-	        var dataLength = p.parseULong();
-	        var text = decode.UTF8(data, start + dataOffset, dataLength);
+	    const tags = {};
+	    for (let i = 0; i < numDataMaps; i++) {
+	        const tag = p.parseTag();
+	        const dataOffset = p.parseULong();
+	        const dataLength = p.parseULong();
+	        const text = decode.UTF8(data, start + dataOffset, dataLength);
 
 	        tags[tag] = text;
 	    }
@@ -6814,19 +6813,19 @@
 	}
 
 	function makeMetaTable(tags) {
-	    var numTags = Object.keys(tags).length;
-	    var stringPool = '';
-	    var stringPoolOffset = 16 + numTags * 12;
+	    const numTags = Object.keys(tags).length;
+	    let stringPool = '';
+	    const stringPoolOffset = 16 + numTags * 12;
 
-	    var result = new table.Table('meta', [
+	    const result = new table.Table('meta', [
 	        {name: 'version', type: 'ULONG', value: 1},
 	        {name: 'flags', type: 'ULONG', value: 0},
 	        {name: 'offset', type: 'ULONG', value: stringPoolOffset},
 	        {name: 'numTags', type: 'ULONG', value: numTags}
 	    ]);
 
-	    for (var tag in tags) {
-	        var pos = stringPool.length;
+	    for (let tag in tags) {
+	        const pos = stringPool.length;
 	        stringPool += tags[tag];
 
 	        result.fields.push({name: 'tag ' + tag, type: 'TAG', value: tag});
@@ -6852,8 +6851,8 @@
 	        bytes.push(0);
 	    }
 
-	    var sum = 0;
-	    for (var i = 0; i < bytes.length; i += 4) {
+	    let sum = 0;
+	    for (let i = 0; i < bytes.length; i += 4) {
 	        sum += (bytes[i] << 24) +
 	            (bytes[i + 1] << 16) +
 	            (bytes[i + 2] << 8) +
@@ -6874,7 +6873,7 @@
 	}
 
 	function makeSfntTable(tables) {
-	    var sfnt = new table.Table('sfnt', [
+	    const sfnt = new table.Table('sfnt', [
 	        {name: 'version', type: 'TAG', value: 'OTTO'},
 	        {name: 'numTables', type: 'USHORT', value: 0},
 	        {name: 'searchRange', type: 'USHORT', value: 0},
@@ -6883,25 +6882,25 @@
 	    ]);
 	    sfnt.tables = tables;
 	    sfnt.numTables = tables.length;
-	    var highestPowerOf2 = Math.pow(2, log2(sfnt.numTables));
+	    const highestPowerOf2 = Math.pow(2, log2(sfnt.numTables));
 	    sfnt.searchRange = 16 * highestPowerOf2;
 	    sfnt.entrySelector = log2(highestPowerOf2);
 	    sfnt.rangeShift = sfnt.numTables * 16 - sfnt.searchRange;
 
-	    var recordFields = [];
-	    var tableFields = [];
+	    const recordFields = [];
+	    const tableFields = [];
 
-	    var offset = sfnt.sizeOf() + (makeTableRecord().sizeOf() * sfnt.numTables);
+	    let offset = sfnt.sizeOf() + (makeTableRecord().sizeOf() * sfnt.numTables);
 	    while (offset % 4 !== 0) {
 	        offset += 1;
 	        tableFields.push({name: 'padding', type: 'BYTE', value: 0});
 	    }
 
-	    for (var i = 0; i < tables.length; i += 1) {
-	        var t = tables[i];
+	    for (let i = 0; i < tables.length; i += 1) {
+	        const t = tables[i];
 	        check.argument(t.tableName.length === 4, 'Table name' + t.tableName + ' is invalid.');
-	        var tableLength = t.sizeOf();
-	        var tableRecord = makeTableRecord(t.tableName, computeCheckSum(t.encode()), offset, tableLength);
+	        const tableLength = t.sizeOf();
+	        const tableRecord = makeTableRecord(t.tableName, computeCheckSum(t.encode()), offset, tableLength);
 	        recordFields.push({name: tableRecord.tag + ' Table Record', type: 'RECORD', value: tableRecord});
 	        tableFields.push({name: t.tableName + ' table', type: 'RECORD', value: t});
 	        offset += tableLength;
@@ -6930,10 +6929,10 @@
 	// this function returns metrics for the first available character.
 	// You can provide optional fallback metrics if no characters are available.
 	function metricsForChar(font, chars, notFoundMetrics) {
-	    for (var i = 0; i < chars.length; i += 1) {
-	        var glyphIndex = font.charToGlyphIndex(chars[i]);
+	    for (let i = 0; i < chars.length; i += 1) {
+	        const glyphIndex = font.charToGlyphIndex(chars[i]);
 	        if (glyphIndex > 0) {
-	            var glyph = font.glyphs.get(glyphIndex);
+	            const glyph = font.glyphs.get(glyphIndex);
 	            return glyph.getMetrics();
 	        }
 	    }
@@ -6942,8 +6941,8 @@
 	}
 
 	function average(vs) {
-	    var sum = 0;
-	    for (var i = 0; i < vs.length; i += 1) {
+	    let sum = 0;
+	    for (let i = 0; i < vs.length; i += 1) {
 	        sum += vs[i];
 	    }
 
@@ -6953,23 +6952,23 @@
 	// Convert the font object to a SFNT data structure.
 	// This structure contains all the necessary tables and metadata to create a binary OTF file.
 	function fontToSfntTable(font) {
-	    var xMins = [];
-	    var yMins = [];
-	    var xMaxs = [];
-	    var yMaxs = [];
-	    var advanceWidths = [];
-	    var leftSideBearings = [];
-	    var rightSideBearings = [];
-	    var firstCharIndex;
-	    var lastCharIndex = 0;
-	    var ulUnicodeRange1 = 0;
-	    var ulUnicodeRange2 = 0;
-	    var ulUnicodeRange3 = 0;
-	    var ulUnicodeRange4 = 0;
+	    const xMins = [];
+	    const yMins = [];
+	    const xMaxs = [];
+	    const yMaxs = [];
+	    const advanceWidths = [];
+	    const leftSideBearings = [];
+	    const rightSideBearings = [];
+	    let firstCharIndex;
+	    let lastCharIndex = 0;
+	    let ulUnicodeRange1 = 0;
+	    let ulUnicodeRange2 = 0;
+	    let ulUnicodeRange3 = 0;
+	    let ulUnicodeRange4 = 0;
 
-	    for (var i = 0; i < font.glyphs.length; i += 1) {
-	        var glyph = font.glyphs.get(i);
-	        var unicode = glyph.unicode | 0;
+	    for (let i = 0; i < font.glyphs.length; i += 1) {
+	        const glyph = font.glyphs.get(i);
+	        const unicode = glyph.unicode | 0;
 
 	        if (isNaN(glyph.advanceWidth)) {
 	            throw new Error('Glyph ' + glyph.name + ' (' + i + '): advanceWidth is not a number.');
@@ -6986,7 +6985,7 @@
 	            lastCharIndex = unicode;
 	        }
 
-	        var position = os2.getUnicodeRange(unicode);
+	        const position = os2.getUnicodeRange(unicode);
 	        if (position < 32) {
 	            ulUnicodeRange1 |= 1 << position;
 	        } else if (position < 64) {
@@ -6999,8 +6998,8 @@
 	            throw new Error('Unicode ranges bits > 123 are reserved for internal usage');
 	        }
 	        // Skip non-important characters.
-	        if (glyph.name === '.notdef') { continue; }
-	        var metrics = glyph.getMetrics();
+	        if (glyph.name === '.notdef') continue;
+	        const metrics = glyph.getMetrics();
 	        xMins.push(metrics.xMin);
 	        yMins.push(metrics.yMin);
 	        xMaxs.push(metrics.xMax);
@@ -7010,7 +7009,7 @@
 	        advanceWidths.push(glyph.advanceWidth);
 	    }
 
-	    var globals = {
+	    const globals = {
 	        xMin: Math.min.apply(null, xMins),
 	        yMin: Math.min.apply(null, yMins),
 	        xMax: Math.max.apply(null, xMaxs),
@@ -7024,7 +7023,7 @@
 	    globals.ascender = font.ascender;
 	    globals.descender = font.descender;
 
-	    var headTable = head.make({
+	    const headTable = head.make({
 	        flags: 3, // 00000011 (baseline for font at y=0; left sidebearing point at x=0)
 	        unitsPerEm: font.unitsPerEm,
 	        xMin: globals.xMin,
@@ -7035,7 +7034,7 @@
 	        createdTimestamp: font.createdTimestamp
 	    });
 
-	    var hheaTable = hhea.make({
+	    const hheaTable = hhea.make({
 	        ascender: globals.ascender,
 	        descender: globals.descender,
 	        advanceWidthMax: globals.advanceWidthMax,
@@ -7045,9 +7044,9 @@
 	        numberOfHMetrics: font.glyphs.length
 	    });
 
-	    var maxpTable = maxp.make(font.glyphs.length);
+	    const maxpTable = maxp.make(font.glyphs.length);
 
-	    var os2Table = os2.make(Object.assign({
+	    const os2Table = os2.make(Object.assign({
 	        xAvgCharWidth: Math.round(globals.advanceWidthAvg),
 	        usFirstCharIndex: firstCharIndex,
 	        usLastCharIndex: lastCharIndex,
@@ -7071,19 +7070,19 @@
 	        usBreakChar: font.hasChar(' ') ? 32 : 0, // Use space as the break character, if available.
 	    }, font.tables.os2));
 
-	    var hmtxTable = hmtx.make(font.glyphs);
-	    var cmapTable = cmap.make(font.glyphs);
+	    const hmtxTable = hmtx.make(font.glyphs);
+	    const cmapTable = cmap.make(font.glyphs);
 
-	    var englishFamilyName = font.getEnglishName('fontFamily');
-	    var englishStyleName = font.getEnglishName('fontSubfamily');
-	    var englishFullName = englishFamilyName + ' ' + englishStyleName;
-	    var postScriptName = font.getEnglishName('postScriptName');
+	    const englishFamilyName = font.getEnglishName('fontFamily');
+	    const englishStyleName = font.getEnglishName('fontSubfamily');
+	    const englishFullName = englishFamilyName + ' ' + englishStyleName;
+	    let postScriptName = font.getEnglishName('postScriptName');
 	    if (!postScriptName) {
 	        postScriptName = englishFamilyName.replace(/\s/g, '') + '-' + englishStyleName;
 	    }
 
-	    var names = {};
-	    for (var n in font.names) {
+	    const names = {};
+	    for (let n in font.names) {
 	        names[n] = font.names[n];
 	    }
 
@@ -7103,12 +7102,12 @@
 	        names.preferredSubfamily = font.names.fontSubfamily;
 	    }
 
-	    var languageTags = [];
-	    var nameTable = _name.make(names, languageTags);
-	    var ltagTable = (languageTags.length > 0 ? ltag.make(languageTags) : undefined);
+	    const languageTags = [];
+	    const nameTable = _name.make(names, languageTags);
+	    const ltagTable = (languageTags.length > 0 ? ltag.make(languageTags) : undefined);
 
-	    var postTable = post.make();
-	    var cffTable = cff.make(font.glyphs, {
+	    const postTable = post.make();
+	    const cffTable = cff.make(font.glyphs, {
 	        version: font.getEnglishName('version'),
 	        fullName: englishFullName,
 	        familyName: englishFamilyName,
@@ -7118,10 +7117,10 @@
 	        fontBBox: [0, globals.yMin, globals.ascender, globals.advanceWidthMax]
 	    });
 
-	    var metaTable = (font.metas && Object.keys(font.metas).length > 0) ? meta.make(font.metas) : undefined;
+	    const metaTable = (font.metas && Object.keys(font.metas).length > 0) ? meta.make(font.metas) : undefined;
 
 	    // The order does not matter because makeSfntTable() will sort them.
-	    var tables = [headTable, hheaTable, maxpTable, os2Table, nameTable, cmapTable, postTable, cffTable, hmtxTable];
+	    const tables = [headTable, hheaTable, maxpTable, os2Table, nameTable, cmapTable, postTable, cffTable, hmtxTable];
 	    if (ltagTable) {
 	        tables.push(ltagTable);
 	    }
@@ -7133,16 +7132,16 @@
 	        tables.push(metaTable);
 	    }
 
-	    var sfntTable = makeSfntTable(tables);
+	    const sfntTable = makeSfntTable(tables);
 
 	    // Compute the font's checkSum and store it in head.checkSumAdjustment.
-	    var bytes = sfntTable.encode();
-	    var checkSum = computeCheckSum(bytes);
-	    var tableFields = sfntTable.fields;
-	    var checkSumAdjusted = false;
-	    for (var i$1 = 0; i$1 < tableFields.length; i$1 += 1) {
-	        if (tableFields[i$1].name === 'head table') {
-	            tableFields[i$1].value.checkSumAdjustment = 0xB1B0AFBA - checkSum;
+	    const bytes = sfntTable.encode();
+	    const checkSum = computeCheckSum(bytes);
+	    const tableFields = sfntTable.fields;
+	    let checkSumAdjusted = false;
+	    for (let i = 0; i < tableFields.length; i += 1) {
+	        if (tableFields[i].name === 'head table') {
+	            tableFields[i].value.checkSumAdjustment = 0xB1B0AFBA - checkSum;
 	            checkSumAdjusted = true;
 	            break;
 	        }
@@ -7155,17 +7154,17 @@
 	    return sfntTable;
 	}
 
-	var sfnt = { make: makeSfntTable, fontToTable: fontToSfntTable, computeCheckSum: computeCheckSum };
+	var sfnt = { make: makeSfntTable, fontToTable: fontToSfntTable, computeCheckSum };
 
 	// The Layout object is the prototype of Substitution objects, and provides
 
 	function searchTag(arr, tag) {
 	    /* jshint bitwise: false */
-	    var imin = 0;
-	    var imax = arr.length - 1;
+	    let imin = 0;
+	    let imax = arr.length - 1;
 	    while (imin <= imax) {
-	        var imid = (imin + imax) >>> 1;
-	        var val = arr[imid].tag;
+	        const imid = (imin + imax) >>> 1;
+	        const val = arr[imid].tag;
 	        if (val === tag) {
 	            return imid;
 	        } else if (val < tag) {
@@ -7178,11 +7177,11 @@
 
 	function binSearch(arr, value) {
 	    /* jshint bitwise: false */
-	    var imin = 0;
-	    var imax = arr.length - 1;
+	    let imin = 0;
+	    let imax = arr.length - 1;
 	    while (imin <= imax) {
-	        var imid = (imin + imax) >>> 1;
-	        var val = arr[imid];
+	        const imid = (imin + imax) >>> 1;
+	        const val = arr[imid];
 	        if (val === value) {
 	            return imid;
 	        } else if (val < value) {
@@ -7196,13 +7195,13 @@
 	// binary search in a list of ranges (coverage, class definition)
 	function searchRange(ranges, value) {
 	    // jshint bitwise: false
-	    var range;
-	    var imin = 0;
-	    var imax = ranges.length - 1;
+	    let range;
+	    let imin = 0;
+	    let imax = ranges.length - 1;
 	    while (imin <= imax) {
-	        var imid = (imin + imax) >>> 1;
+	        const imid = (imin + imax) >>> 1;
 	        range = ranges[imid];
-	        var start = range.start;
+	        const start = range.start;
 	        if (start === value) {
 	            return range;
 	        } else if (start < value) {
@@ -7211,7 +7210,7 @@
 	    }
 	    if (imin > 0) {
 	        range = ranges[imin - 1];
-	        if (value > range.end) { return 0; }
+	        if (value > range.end) return 0;
 	        return range;
 	    }
 	}
@@ -7255,7 +7254,7 @@
 	     * @return {Object} The GSUB or GPOS table.
 	     */
 	    getTable: function(create) {
-	        var layout = this.font.tables[this.tableName];
+	        let layout = this.font.tables[this.tableName];
 	        if (!layout && create) {
 	            layout = this.font.tables[this.tableName] = this.createDefaultTable();
 	        }
@@ -7268,7 +7267,7 @@
 	     * @return {Array}
 	     */
 	    getScriptNames: function() {
-	        var layout = this.getTable();
+	        let layout = this.getTable();
 	        if (!layout) { return []; }
 	        return layout.scripts.map(function(script) {
 	            return script.tag;
@@ -7282,15 +7281,15 @@
 	     * If neither exist, returns undefined.
 	     */
 	    getDefaultScriptName: function() {
-	        var layout = this.getTable();
+	        let layout = this.getTable();
 	        if (!layout) { return; }
-	        var hasLatn = false;
-	        for (var i = 0; i < layout.scripts.length; i++) {
-	            var name = layout.scripts[i].tag;
-	            if (name === 'DFLT') { return name; }
-	            if (name === 'latn') { hasLatn = true; }
+	        let hasLatn = false;
+	        for (let i = 0; i < layout.scripts.length; i++) {
+	            const name = layout.scripts[i].tag;
+	            if (name === 'DFLT') return name;
+	            if (name === 'latn') hasLatn = true;
 	        }
-	        if (hasLatn) { return 'latn'; }
+	        if (hasLatn) return 'latn';
 	    },
 
 	    /**
@@ -7301,15 +7300,15 @@
 	     * @return {Object} An object with tag and script properties.
 	     */
 	    getScriptTable: function(script, create) {
-	        var layout = this.getTable(create);
+	        const layout = this.getTable(create);
 	        if (layout) {
 	            script = script || 'DFLT';
-	            var scripts = layout.scripts;
-	            var pos = searchTag(layout.scripts, script);
+	            const scripts = layout.scripts;
+	            const pos = searchTag(layout.scripts, script);
 	            if (pos >= 0) {
 	                return scripts[pos].script;
 	            } else if (create) {
-	                var scr = {
+	                const scr = {
 	                    tag: script,
 	                    script: {
 	                        defaultLangSys: {reserved: 0, reqFeatureIndex: 0xffff, featureIndexes: []},
@@ -7331,16 +7330,16 @@
 	     * @return {Object}
 	     */
 	    getLangSysTable: function(script, language, create) {
-	        var scriptTable = this.getScriptTable(script, create);
+	        const scriptTable = this.getScriptTable(script, create);
 	        if (scriptTable) {
 	            if (!language || language === 'dflt' || language === 'DFLT') {
 	                return scriptTable.defaultLangSys;
 	            }
-	            var pos = searchTag(scriptTable.langSysRecords, language);
+	            const pos = searchTag(scriptTable.langSysRecords, language);
 	            if (pos >= 0) {
 	                return scriptTable.langSysRecords[pos].langSys;
 	            } else if (create) {
-	                var langSysRecord = {
+	                const langSysRecord = {
 	                    tag: language,
 	                    langSys: {reserved: 0, reqFeatureIndex: 0xffff, featureIndexes: []}
 	                };
@@ -7360,21 +7359,21 @@
 	     * @return {Object}
 	     */
 	    getFeatureTable: function(script, language, feature, create) {
-	        var langSysTable = this.getLangSysTable(script, language, create);
+	        const langSysTable = this.getLangSysTable(script, language, create);
 	        if (langSysTable) {
-	            var featureRecord;
-	            var featIndexes = langSysTable.featureIndexes;
-	            var allFeatures = this.font.tables[this.tableName].features;
+	            let featureRecord;
+	            const featIndexes = langSysTable.featureIndexes;
+	            const allFeatures = this.font.tables[this.tableName].features;
 	            // The FeatureIndex array of indices is in arbitrary order,
 	            // even if allFeatures is sorted alphabetically by feature tag.
-	            for (var i = 0; i < featIndexes.length; i++) {
+	            for (let i = 0; i < featIndexes.length; i++) {
 	                featureRecord = allFeatures[featIndexes[i]];
 	                if (featureRecord.tag === feature) {
 	                    return featureRecord.feature;
 	                }
 	            }
 	            if (create) {
-	                var index = allFeatures.length;
+	                const index = allFeatures.length;
 	                // Automatic ordering of features would require to shift feature indexes in the script list.
 	                check.assert(index === 0 || feature >= allFeatures[index - 1].tag, 'Features must be added in alphabetical order.');
 	                featureRecord = {
@@ -7399,14 +7398,14 @@
 	     * @return {Object[]}
 	     */
 	    getLookupTables: function(script, language, feature, lookupType, create) {
-	        var featureTable = this.getFeatureTable(script, language, feature, create);
-	        var tables = [];
+	        const featureTable = this.getFeatureTable(script, language, feature, create);
+	        const tables = [];
 	        if (featureTable) {
-	            var lookupTable;
-	            var lookupListIndexes = featureTable.lookupListIndexes;
-	            var allLookups = this.font.tables[this.tableName].lookups;
+	            let lookupTable;
+	            const lookupListIndexes = featureTable.lookupListIndexes;
+	            const allLookups = this.font.tables[this.tableName].lookups;
 	            // lookupListIndexes are in no particular order, so use naive search.
-	            for (var i = 0; i < lookupListIndexes.length; i++) {
+	            for (let i = 0; i < lookupListIndexes.length; i++) {
 	                lookupTable = allLookups[lookupListIndexes[i]];
 	                if (lookupTable.lookupType === lookupType) {
 	                    tables.push(lookupTable);
@@ -7419,7 +7418,7 @@
 	                    subtables: [],
 	                    markFilteringSet: undefined
 	                };
-	                var index = allLookups.length;
+	                const index = allLookups.length;
 	                allLookups.push(lookupTable);
 	                lookupListIndexes.push(index);
 	                return [lookupTable];
@@ -7443,7 +7442,7 @@
 	                }
 	                return 0;
 	            case 2:
-	                var range = searchRange(classDefTable.ranges, glyphIndex);
+	                const range = searchRange(classDefTable.ranges, glyphIndex);
 	                return range ? range.classId : 0;
 	        }
 	    },
@@ -7458,10 +7457,10 @@
 	    getCoverageIndex: function(coverageTable, glyphIndex) {
 	        switch (coverageTable.format) {
 	            case 1:
-	                var index = binSearch(coverageTable.glyphs, glyphIndex);
+	                const index = binSearch(coverageTable.glyphs, glyphIndex);
 	                return index >= 0 ? index : -1;
 	            case 2:
-	                var range = searchRange(coverageTable.ranges, glyphIndex);
+	                const range = searchRange(coverageTable.ranges, glyphIndex);
 	                return range ? range.index + glyphIndex - range.start : -1;
 	        }
 	    },
@@ -7478,13 +7477,13 @@
 	        if (coverageTable.format === 1) {
 	            return coverageTable.glyphs;
 	        } else {
-	            var glyphs = [];
-	            var ranges = coverageTable.ranges;
-	            for (var i = 0; i < ranges.length; i++) {
-	                var range = ranges[i];
-	                var start = range.start;
-	                var end = range.end;
-	                for (var j = start; j <= end; j++) {
+	            const glyphs = [];
+	            const ranges = coverageTable.ranges;
+	            for (let i = 0; i < ranges.length; i++) {
+	                const range = ranges[i];
+	                const start = range.start;
+	                const end = range.end;
+	                for (let j = start; j <= end; j++) {
 	                    glyphs.push(j);
 	                }
 	            }
@@ -7513,7 +7512,7 @@
 	 * Init some data for faster and easier access later.
 	 */
 	Position.prototype.init = function() {
-	    var script = this.getDefaultScriptName();
+	    const script = this.getDefaultScriptName();
 	    this.defaultKerningTables = this.getKerningTables(script);
 	};
 
@@ -7525,18 +7524,18 @@
 	 * @returns {integer}
 	 */
 	Position.prototype.getKerningValue = function(kerningLookups, leftIndex, rightIndex) {
-	    for (var i = 0; i < kerningLookups.length; i++) {
-	        var subtables = kerningLookups[i].subtables;
-	        for (var j = 0; j < subtables.length; j++) {
-	            var subtable = subtables[j];
-	            var covIndex = this.getCoverageIndex(subtable.coverage, leftIndex);
-	            if (covIndex < 0) { continue; }
+	    for (let i = 0; i < kerningLookups.length; i++) {
+	        const subtables = kerningLookups[i].subtables;
+	        for (let j = 0; j < subtables.length; j++) {
+	            const subtable = subtables[j];
+	            const covIndex = this.getCoverageIndex(subtable.coverage, leftIndex);
+	            if (covIndex < 0) continue;
 	            switch (subtable.posFormat) {
 	                case 1:
 	                    // Search Pair Adjustment Positioning Format 1
-	                    var pairSet = subtable.pairSets[covIndex];
-	                    for (var k = 0; k < pairSet.length; k++) {
-	                        var pair = pairSet[k];
+	                    let pairSet = subtable.pairSets[covIndex];
+	                    for (let k = 0; k < pairSet.length; k++) {
+	                        let pair = pairSet[k];
 	                        if (pair.secondGlyph === rightIndex) {
 	                            return pair.value1 && pair.value1.xAdvance || 0;
 	                        }
@@ -7544,10 +7543,10 @@
 	                    break;      // left glyph found, not right glyph - try next subtable
 	                case 2:
 	                    // Search Pair Adjustment Positioning Format 2
-	                    var class1 = this.getGlyphClass(subtable.classDef1, leftIndex);
-	                    var class2 = this.getGlyphClass(subtable.classDef2, rightIndex);
-	                    var pair$1 = subtable.classRecords[class1][class2];
-	                    return pair$1.value1 && pair$1.value1.xAdvance || 0;
+	                    const class1 = this.getGlyphClass(subtable.classDef1, leftIndex);
+	                    const class2 = this.getGlyphClass(subtable.classDef2, rightIndex);
+	                    const pair = subtable.classRecords[class1][class2];
+	                    return pair.value1 && pair.value1.xAdvance || 0;
 	            }
 	        }
 	    }
@@ -7582,9 +7581,9 @@
 
 	// Check if 2 arrays of primitives are equal.
 	function arraysEqual(ar1, ar2) {
-	    var n = ar1.length;
+	    const n = ar1.length;
 	    if (n !== ar2.length) { return false; }
-	    for (var i = 0; i < n; i++) {
+	    for (let i = 0; i < n; i++) {
 	        if (ar1[i] !== ar2[i]) { return false; }
 	    }
 	    return true;
@@ -7592,9 +7591,9 @@
 
 	// Find the first subtable of a lookup table in a particular format.
 	function getSubstFormat(lookupTable, format, defaultSubtable) {
-	    var subtables = lookupTable.subtables;
-	    for (var i = 0; i < subtables.length; i++) {
-	        var subtable = subtables[i];
+	    const subtables = lookupTable.subtables;
+	    for (let i = 0; i < subtables.length; i++) {
+	        const subtable = subtables[i];
 	        if (subtable.substFormat === format) {
 	            return subtable;
 	        }
@@ -7636,22 +7635,22 @@
 	 * @return {Array} substitutions - The list of substitutions.
 	 */
 	Substitution.prototype.getSingle = function(feature, script, language) {
-	    var substitutions = [];
-	    var lookupTables = this.getLookupTables(script, language, feature, 1);
-	    for (var idx = 0; idx < lookupTables.length; idx++) {
-	        var subtables = lookupTables[idx].subtables;
-	        for (var i = 0; i < subtables.length; i++) {
-	            var subtable = subtables[i];
-	            var glyphs = this.expandCoverage(subtable.coverage);
-	            var j = (void 0);
+	    const substitutions = [];
+	    const lookupTables = this.getLookupTables(script, language, feature, 1);
+	    for (let idx = 0; idx < lookupTables.length; idx++) {
+	        const subtables = lookupTables[idx].subtables;
+	        for (let i = 0; i < subtables.length; i++) {
+	            const subtable = subtables[i];
+	            const glyphs = this.expandCoverage(subtable.coverage);
+	            let j;
 	            if (subtable.substFormat === 1) {
-	                var delta = subtable.deltaGlyphId;
+	                const delta = subtable.deltaGlyphId;
 	                for (j = 0; j < glyphs.length; j++) {
-	                    var glyph = glyphs[j];
+	                    const glyph = glyphs[j];
 	                    substitutions.push({ sub: glyph, by: glyph + delta });
 	                }
 	            } else {
-	                var substitute = subtable.substitute;
+	                const substitute = subtable.substitute;
 	                for (j = 0; j < glyphs.length; j++) {
 	                    substitutions.push({ sub: glyphs[j], by: substitute[j] });
 	                }
@@ -7669,15 +7668,15 @@
 	 * @return {Array} alternates - The list of alternates
 	 */
 	Substitution.prototype.getAlternates = function(feature, script, language) {
-	    var alternates = [];
-	    var lookupTables = this.getLookupTables(script, language, feature, 3);
-	    for (var idx = 0; idx < lookupTables.length; idx++) {
-	        var subtables = lookupTables[idx].subtables;
-	        for (var i = 0; i < subtables.length; i++) {
-	            var subtable = subtables[i];
-	            var glyphs = this.expandCoverage(subtable.coverage);
-	            var alternateSets = subtable.alternateSets;
-	            for (var j = 0; j < glyphs.length; j++) {
+	    const alternates = [];
+	    const lookupTables = this.getLookupTables(script, language, feature, 3);
+	    for (let idx = 0; idx < lookupTables.length; idx++) {
+	        const subtables = lookupTables[idx].subtables;
+	        for (let i = 0; i < subtables.length; i++) {
+	            const subtable = subtables[i];
+	            const glyphs = this.expandCoverage(subtable.coverage);
+	            const alternateSets = subtable.alternateSets;
+	            for (let j = 0; j < glyphs.length; j++) {
 	                alternates.push({ sub: glyphs[j], by: alternateSets[j] });
 	            }
 	        }
@@ -7694,19 +7693,19 @@
 	 * @return {Array} ligatures - The list of ligatures.
 	 */
 	Substitution.prototype.getLigatures = function(feature, script, language) {
-	    var ligatures = [];
-	    var lookupTables = this.getLookupTables(script, language, feature, 4);
-	    for (var idx = 0; idx < lookupTables.length; idx++) {
-	        var subtables = lookupTables[idx].subtables;
-	        for (var i = 0; i < subtables.length; i++) {
-	            var subtable = subtables[i];
-	            var glyphs = this.expandCoverage(subtable.coverage);
-	            var ligatureSets = subtable.ligatureSets;
-	            for (var j = 0; j < glyphs.length; j++) {
-	                var startGlyph = glyphs[j];
-	                var ligSet = ligatureSets[j];
-	                for (var k = 0; k < ligSet.length; k++) {
-	                    var lig = ligSet[k];
+	    const ligatures = [];
+	    const lookupTables = this.getLookupTables(script, language, feature, 4);
+	    for (let idx = 0; idx < lookupTables.length; idx++) {
+	        const subtables = lookupTables[idx].subtables;
+	        for (let i = 0; i < subtables.length; i++) {
+	            const subtable = subtables[i];
+	            const glyphs = this.expandCoverage(subtable.coverage);
+	            const ligatureSets = subtable.ligatureSets;
+	            for (let j = 0; j < glyphs.length; j++) {
+	                const startGlyph = glyphs[j];
+	                const ligSet = ligatureSets[j];
+	                for (let k = 0; k < ligSet.length; k++) {
+	                    const lig = ligSet[k];
 	                    ligatures.push({
 	                        sub: [startGlyph].concat(lig.components),
 	                        by: lig.ligGlyph
@@ -7727,15 +7726,15 @@
 	 * @param {string} [language='dflt']
 	 */
 	Substitution.prototype.addSingle = function(feature, substitution, script, language) {
-	    var lookupTable = this.getLookupTables(script, language, feature, 1, true)[0];
-	    var subtable = getSubstFormat(lookupTable, 2, {                // lookup type 1 subtable, format 2, coverage format 1
+	    const lookupTable = this.getLookupTables(script, language, feature, 1, true)[0];
+	    const subtable = getSubstFormat(lookupTable, 2, {                // lookup type 1 subtable, format 2, coverage format 1
 	        substFormat: 2,
 	        coverage: {format: 1, glyphs: []},
 	        substitute: []
 	    });
 	    check.assert(subtable.coverage.format === 1, 'Ligature: unable to modify coverage table format ' + subtable.coverage.format);
-	    var coverageGlyph = substitution.sub;
-	    var pos = this.binSearch(subtable.coverage.glyphs, coverageGlyph);
+	    const coverageGlyph = substitution.sub;
+	    let pos = this.binSearch(subtable.coverage.glyphs, coverageGlyph);
 	    if (pos < 0) {
 	        pos = -1 - pos;
 	        subtable.coverage.glyphs.splice(pos, 0, coverageGlyph);
@@ -7752,15 +7751,15 @@
 	 * @param {string} [language='dflt']
 	 */
 	Substitution.prototype.addAlternate = function(feature, substitution, script, language) {
-	    var lookupTable = this.getLookupTables(script, language, feature, 3, true)[0];
-	    var subtable = getSubstFormat(lookupTable, 1, {                // lookup type 3 subtable, format 1, coverage format 1
+	    const lookupTable = this.getLookupTables(script, language, feature, 3, true)[0];
+	    const subtable = getSubstFormat(lookupTable, 1, {                // lookup type 3 subtable, format 1, coverage format 1
 	        substFormat: 1,
 	        coverage: {format: 1, glyphs: []},
 	        alternateSets: []
 	    });
 	    check.assert(subtable.coverage.format === 1, 'Ligature: unable to modify coverage table format ' + subtable.coverage.format);
-	    var coverageGlyph = substitution.sub;
-	    var pos = this.binSearch(subtable.coverage.glyphs, coverageGlyph);
+	    const coverageGlyph = substitution.sub;
+	    let pos = this.binSearch(subtable.coverage.glyphs, coverageGlyph);
 	    if (pos < 0) {
 	        pos = -1 - pos;
 	        subtable.coverage.glyphs.splice(pos, 0, coverageGlyph);
@@ -7778,8 +7777,8 @@
 	 * @param {string} [language='dflt']
 	 */
 	Substitution.prototype.addLigature = function(feature, ligature, script, language) {
-	    var lookupTable = this.getLookupTables(script, language, feature, 4, true)[0];
-	    var subtable = lookupTable.subtables[0];
+	    const lookupTable = this.getLookupTables(script, language, feature, 4, true)[0];
+	    let subtable = lookupTable.subtables[0];
 	    if (!subtable) {
 	        subtable = {                // lookup type 4 subtable, format 1, coverage format 1
 	            substFormat: 1,
@@ -7789,17 +7788,17 @@
 	        lookupTable.subtables[0] = subtable;
 	    }
 	    check.assert(subtable.coverage.format === 1, 'Ligature: unable to modify coverage table format ' + subtable.coverage.format);
-	    var coverageGlyph = ligature.sub[0];
-	    var ligComponents = ligature.sub.slice(1);
-	    var ligatureTable = {
+	    const coverageGlyph = ligature.sub[0];
+	    const ligComponents = ligature.sub.slice(1);
+	    const ligatureTable = {
 	        ligGlyph: ligature.by,
 	        components: ligComponents
 	    };
-	    var pos = this.binSearch(subtable.coverage.glyphs, coverageGlyph);
+	    let pos = this.binSearch(subtable.coverage.glyphs, coverageGlyph);
 	    if (pos >= 0) {
 	        // ligatureSet already exists
-	        var ligatureSet = subtable.ligatureSets[pos];
-	        for (var i = 0; i < ligatureSet.length; i++) {
+	        const ligatureSet = subtable.ligatureSets[pos];
+	        for (let i = 0; i < ligatureSet.length; i++) {
 	            // If ligature already exists, return.
 	            if (arraysEqual(ligatureSet[i].components, ligComponents)) {
 	                return;
@@ -7871,9 +7870,9 @@
 	}
 
 	function nodeBufferToArrayBuffer(buffer) {
-	    var ab = new ArrayBuffer(buffer.length);
-	    var view = new Uint8Array(ab);
-	    for (var i = 0; i < buffer.length; ++i) {
+	    const ab = new ArrayBuffer(buffer.length);
+	    const view = new Uint8Array(ab);
+	    for (let i = 0; i < buffer.length; ++i) {
 	        view[i] = buffer[i];
 	    }
 
@@ -7881,9 +7880,9 @@
 	}
 
 	function arrayBufferToNodeBuffer(ab) {
-	    var buffer = new Buffer(ab.byteLength);
-	    var view = new Uint8Array(ab);
-	    for (var i = 0; i < buffer.length; ++i) {
+	    const buffer = new Buffer(ab.byteLength);
+	    const view = new Uint8Array(ab);
+	    for (let i = 0; i < buffer.length; ++i) {
 	        buffer[i] = view[i];
 	    }
 
@@ -7900,7 +7899,7 @@
 
 	// Parse the coordinate data for a glyph.
 	function parseGlyphCoordinate(p, flag, previousValue, shortVectorBitMask, sameBitMask) {
-	    var v;
+	    let v;
 	    if ((flag & shortVectorBitMask) > 0) {
 	        // The coordinate is 1 byte long.
 	        v = p.parseByte();
@@ -7926,39 +7925,39 @@
 
 	// Parse a TrueType glyph.
 	function parseGlyph(glyph, data, start) {
-	    var p = new parse.Parser(data, start);
+	    const p = new parse.Parser(data, start);
 	    glyph.numberOfContours = p.parseShort();
 	    glyph._xMin = p.parseShort();
 	    glyph._yMin = p.parseShort();
 	    glyph._xMax = p.parseShort();
 	    glyph._yMax = p.parseShort();
-	    var flags;
-	    var flag;
+	    let flags;
+	    let flag;
 
 	    if (glyph.numberOfContours > 0) {
 	        // This glyph is not a composite.
-	        var endPointIndices = glyph.endPointIndices = [];
-	        for (var i = 0; i < glyph.numberOfContours; i += 1) {
+	        const endPointIndices = glyph.endPointIndices = [];
+	        for (let i = 0; i < glyph.numberOfContours; i += 1) {
 	            endPointIndices.push(p.parseUShort());
 	        }
 
 	        glyph.instructionLength = p.parseUShort();
 	        glyph.instructions = [];
-	        for (var i$1 = 0; i$1 < glyph.instructionLength; i$1 += 1) {
+	        for (let i = 0; i < glyph.instructionLength; i += 1) {
 	            glyph.instructions.push(p.parseByte());
 	        }
 
-	        var numberOfCoordinates = endPointIndices[endPointIndices.length - 1] + 1;
+	        const numberOfCoordinates = endPointIndices[endPointIndices.length - 1] + 1;
 	        flags = [];
-	        for (var i$2 = 0; i$2 < numberOfCoordinates; i$2 += 1) {
+	        for (let i = 0; i < numberOfCoordinates; i += 1) {
 	            flag = p.parseByte();
 	            flags.push(flag);
 	            // If bit 3 is set, we repeat this flag n times, where n is the next byte.
 	            if ((flag & 8) > 0) {
-	                var repeatCount = p.parseByte();
-	                for (var j = 0; j < repeatCount; j += 1) {
+	                const repeatCount = p.parseByte();
+	                for (let j = 0; j < repeatCount; j += 1) {
 	                    flags.push(flag);
-	                    i$2 += 1;
+	                    i += 1;
 	                }
 	            }
 	        }
@@ -7966,30 +7965,30 @@
 	        check.argument(flags.length === numberOfCoordinates, 'Bad flags.');
 
 	        if (endPointIndices.length > 0) {
-	            var points = [];
-	            var point;
+	            const points = [];
+	            let point;
 	            // X/Y coordinates are relative to the previous point, except for the first point which is relative to 0,0.
 	            if (numberOfCoordinates > 0) {
-	                for (var i$3 = 0; i$3 < numberOfCoordinates; i$3 += 1) {
-	                    flag = flags[i$3];
+	                for (let i = 0; i < numberOfCoordinates; i += 1) {
+	                    flag = flags[i];
 	                    point = {};
 	                    point.onCurve = !!(flag & 1);
-	                    point.lastPointOfContour = endPointIndices.indexOf(i$3) >= 0;
+	                    point.lastPointOfContour = endPointIndices.indexOf(i) >= 0;
 	                    points.push(point);
 	                }
 
-	                var px = 0;
-	                for (var i$4 = 0; i$4 < numberOfCoordinates; i$4 += 1) {
-	                    flag = flags[i$4];
-	                    point = points[i$4];
+	                let px = 0;
+	                for (let i = 0; i < numberOfCoordinates; i += 1) {
+	                    flag = flags[i];
+	                    point = points[i];
 	                    point.x = parseGlyphCoordinate(p, flag, px, 2, 16);
 	                    px = point.x;
 	                }
 
-	                var py = 0;
-	                for (var i$5 = 0; i$5 < numberOfCoordinates; i$5 += 1) {
-	                    flag = flags[i$5];
-	                    point = points[i$5];
+	                let py = 0;
+	                for (let i = 0; i < numberOfCoordinates; i += 1) {
+	                    flag = flags[i];
+	                    point = points[i];
 	                    point.y = parseGlyphCoordinate(p, flag, py, 4, 32);
 	                    py = point.y;
 	                }
@@ -8005,10 +8004,10 @@
 	        glyph.isComposite = true;
 	        glyph.points = [];
 	        glyph.components = [];
-	        var moreComponents = true;
+	        let moreComponents = true;
 	        while (moreComponents) {
 	            flags = p.parseUShort();
-	            var component = {
+	            const component = {
 	                glyphIndex: p.parseUShort(),
 	                xScale: 1,
 	                scale01: 0,
@@ -8062,7 +8061,7 @@
 	            // We have instructions
 	            glyph.instructionLength = p.parseUShort();
 	            glyph.instructions = [];
-	            for (var i$6 = 0; i$6 < glyph.instructionLength; i$6 += 1) {
+	            for (let i = 0; i < glyph.instructionLength; i += 1) {
 	                glyph.instructions.push(p.parseByte());
 	            }
 	        }
@@ -8071,10 +8070,10 @@
 
 	// Transform an array of points and return a new array.
 	function transformPoints(points, transform) {
-	    var newPoints = [];
-	    for (var i = 0; i < points.length; i += 1) {
-	        var pt = points[i];
-	        var newPt = {
+	    const newPoints = [];
+	    for (let i = 0; i < points.length; i += 1) {
+	        const pt = points[i];
+	        const newPt = {
 	            x: transform.xScale * pt.x + transform.scale01 * pt.y + transform.dx,
 	            y: transform.scale10 * pt.x + transform.yScale * pt.y + transform.dy,
 	            onCurve: pt.onCurve,
@@ -8087,10 +8086,10 @@
 	}
 
 	function getContours(points) {
-	    var contours = [];
-	    var currentContour = [];
-	    for (var i = 0; i < points.length; i += 1) {
-	        var pt = points[i];
+	    const contours = [];
+	    let currentContour = [];
+	    for (let i = 0; i < points.length; i += 1) {
+	        const pt = points[i];
 	        currentContour.push(pt);
 	        if (pt.lastPointOfContour) {
 	            contours.push(currentContour);
@@ -8104,19 +8103,19 @@
 
 	// Convert the TrueType glyph outline to a Path.
 	function getPath(points) {
-	    var p = new Path();
+	    const p = new Path();
 	    if (!points) {
 	        return p;
 	    }
 
-	    var contours = getContours(points);
+	    const contours = getContours(points);
 
-	    for (var contourIndex = 0; contourIndex < contours.length; ++contourIndex) {
-	        var contour = contours[contourIndex];
+	    for (let contourIndex = 0; contourIndex < contours.length; ++contourIndex) {
+	        const contour = contours[contourIndex];
 
-	        var prev = null;
-	        var curr = contour[contour.length - 1];
-	        var next = contour[0];
+	        let prev = null;
+	        let curr = contour[contour.length - 1];
+	        let next = contour[0];
 
 	        if (curr.onCurve) {
 	            p.moveTo(curr.x, curr.y);
@@ -8125,12 +8124,12 @@
 	                p.moveTo(next.x, next.y);
 	            } else {
 	                // If both first and last points are off-curve, start at their middle.
-	                var start = {x: (curr.x + next.x) * 0.5, y: (curr.y + next.y) * 0.5};
+	                const start = {x: (curr.x + next.x) * 0.5, y: (curr.y + next.y) * 0.5};
 	                p.moveTo(start.x, start.y);
 	            }
 	        }
 
-	        for (var i = 0; i < contour.length; ++i) {
+	        for (let i = 0; i < contour.length; ++i) {
 	            prev = curr;
 	            curr = next;
 	            next = contour[(i + 1) % contour.length];
@@ -8139,8 +8138,8 @@
 	                // This is a straight line.
 	                p.lineTo(curr.x, curr.y);
 	            } else {
-	                var prev2 = prev;
-	                var next2 = next;
+	                let prev2 = prev;
+	                let next2 = next;
 
 	                if (!prev.onCurve) {
 	                    prev2 = { x: (curr.x + prev.x) * 0.5, y: (curr.y + prev.y) * 0.5 };
@@ -8161,13 +8160,13 @@
 
 	function buildPath(glyphs, glyph) {
 	    if (glyph.isComposite) {
-	        for (var j = 0; j < glyph.components.length; j += 1) {
-	            var component = glyph.components[j];
-	            var componentGlyph = glyphs.get(component.glyphIndex);
+	        for (let j = 0; j < glyph.components.length; j += 1) {
+	            const component = glyph.components[j];
+	            const componentGlyph = glyphs.get(component.glyphIndex);
 	            // Force the ttfGlyphLoader to parse the glyph.
 	            componentGlyph.getPath();
 	            if (componentGlyph.points) {
-	                var transformedPoints = (void 0);
+	                let transformedPoints;
 	                if (component.matchedPoints === undefined) {
 	                    // component positioned by offset
 	                    transformedPoints = transformPoints(componentGlyph.points, component);
@@ -8177,9 +8176,9 @@
 	                        (component.matchedPoints[1] > componentGlyph.points.length - 1)) {
 	                        throw Error('Matched points out of range in ' + glyph.name);
 	                    }
-	                    var firstPt = glyph.points[component.matchedPoints[0]];
-	                    var secondPt = componentGlyph.points[component.matchedPoints[1]];
-	                    var transform = {
+	                    const firstPt = glyph.points[component.matchedPoints[0]];
+	                    let secondPt = componentGlyph.points[component.matchedPoints[1]];
+	                    const transform = {
 	                        xScale: component.xScale, scale01: component.scale01,
 	                        scale10: component.scale10, yScale: component.yScale,
 	                        dx: 0, dy: 0
@@ -8198,12 +8197,12 @@
 	}
 
 	function parseGlyfTableAll(data, start, loca, font) {
-	    var glyphs = new glyphset.GlyphSet(font);
+	    const glyphs = new glyphset.GlyphSet(font);
 
 	    // The last element of the loca table is invalid.
-	    for (var i = 0; i < loca.length - 1; i += 1) {
-	        var offset = loca[i];
-	        var nextOffset = loca[i + 1];
+	    for (let i = 0; i < loca.length - 1; i += 1) {
+	        const offset = loca[i];
+	        const nextOffset = loca[i + 1];
 	        if (offset !== nextOffset) {
 	            glyphs.push(i, glyphset.ttfGlyphLoader(font, i, parseGlyph, data, start + offset, buildPath));
 	        } else {
@@ -8215,11 +8214,11 @@
 	}
 
 	function parseGlyfTableOnLowMemory(data, start, loca, font) {
-	    var glyphs = new glyphset.GlyphSet(font);
+	    const glyphs = new glyphset.GlyphSet(font);
 
 	    font._push = function(i) {
-	        var offset = loca[i];
-	        var nextOffset = loca[i + 1];
+	        const offset = loca[i];
+	        const nextOffset = loca[i + 1];
 	        if (offset !== nextOffset) {
 	            glyphs.push(i, glyphset.ttfGlyphLoader(font, i, parseGlyph, data, start + offset, buildPath));
 	        } else {
@@ -8233,12 +8232,12 @@
 	// Parse all the glyphs according to the offsets from the `loca` table.
 	function parseGlyfTable(data, start, loca, font, opt) {
 	    if (opt.lowMemory)
-	        { return parseGlyfTableOnLowMemory(data, start, loca, font); }
+	        return parseGlyfTableOnLowMemory(data, start, loca, font);
 	    else
-	        { return parseGlyfTableAll(data, start, loca, font); }
+	        return parseGlyfTableAll(data, start, loca, font);
 	}
 
-	var glyf = { getPath: getPath, parse: parseGlyfTable};
+	var glyf = { getPath, parse: parseGlyfTable};
 
 	/* A TrueType font hinting interpreter.
 	*
@@ -8268,10 +8267,10 @@
 	* The exports.DEBUG statements are removed on the minified distribution file.
 	*/
 
-	var instructionTable;
-	var exec;
-	var execGlyph;
-	var execComponent;
+	let instructionTable;
+	let exec;
+	let execGlyph;
+	let execComponent;
 
 	/*
 	* Creates a hinting object.
@@ -8348,11 +8347,11 @@
 	/*
 	* Super rounding.
 	*/
-	var roundSuper = function (v) {
-	    var period = this.srPeriod;
-	    var phase = this.srPhase;
-	    var threshold = this.srThreshold;
-	    var sign = 1;
+	const roundSuper = function (v) {
+	    const period = this.srPeriod;
+	    let phase = this.srPhase;
+	    const threshold = this.srThreshold;
+	    let sign = 1;
 
 	    if (v < 0) {
 	        v = -v;
@@ -8366,7 +8365,7 @@
 	    v += phase;
 
 	    // according to http://xgridfit.sourceforge.net/round.html
-	    if (v < 0) { return phase * sign; }
+	    if (v < 0) return phase * sign;
 
 	    return v * sign;
 	};
@@ -8374,7 +8373,7 @@
 	/*
 	* Unit vector of x-axis.
 	*/
-	var xUnitVector = {
+	const xUnitVector = {
 	    x: 1,
 
 	    y: 0,
@@ -8393,13 +8392,13 @@
 	    //
 	    // See APPENDIX on INTERPOLATE at the bottom of this file.
 	    interpolate: function (p, rp1, rp2, pv) {
-	        var do1;
-	        var do2;
-	        var doa1;
-	        var doa2;
-	        var dm1;
-	        var dm2;
-	        var dt;
+	        let do1;
+	        let do2;
+	        let doa1;
+	        let doa2;
+	        let dm1;
+	        let dm2;
+	        let dt;
 
 	        if (!pv || pv === this) {
 	            do1 = p.xo - rp1.xo;
@@ -8454,10 +8453,10 @@
 	            return;
 	        }
 
-	        var rpx = org ? rp.xo : rp.x;
-	        var rpy = org ? rp.yo : rp.y;
-	        var rpdx = rpx + d * pv.x;
-	        var rpdy = rpy + d * pv.y;
+	        const rpx = org ? rp.xo : rp.x;
+	        const rpy = org ? rp.yo : rp.y;
+	        const rpdx = rpx + d * pv.x;
+	        const rpdy = rpy + d * pv.y;
 
 	        p.x = rpdx + (p.y - rpdy) / pv.normalSlope;
 	    },
@@ -8484,7 +8483,7 @@
 	/*
 	* Unit vector of y-axis.
 	*/
-	var yUnitVector = {
+	const yUnitVector = {
 	    x: 0,
 
 	    y: 1,
@@ -8503,13 +8502,13 @@
 	    //
 	    // See APPENDIX on INTERPOLATE at the bottom of this file.
 	    interpolate: function (p, rp1, rp2, pv) {
-	        var do1;
-	        var do2;
-	        var doa1;
-	        var doa2;
-	        var dm1;
-	        var dm2;
-	        var dt;
+	        let do1;
+	        let do2;
+	        let doa1;
+	        let doa2;
+	        let dm1;
+	        let dm2;
+	        let dt;
 
 	        if (!pv || pv === this) {
 	            do1 = p.yo - rp1.yo;
@@ -8564,10 +8563,10 @@
 	            return;
 	        }
 
-	        var rpx = org ? rp.xo : rp.x;
-	        var rpy = org ? rp.yo : rp.y;
-	        var rpdx = rpx + d * pv.x;
-	        var rpdy = rpy + d * pv.y;
+	        const rpx = org ? rp.xo : rp.x;
+	        const rpy = org ? rp.yo : rp.y;
+	        const rpdx = rpx + d * pv.x;
+	        const rpdy = rpy + d * pv.y;
 
 	        p.y = rpdy + pv.normalSlope * (p.x - rpdx);
 	    },
@@ -8625,13 +8624,13 @@
 	* See APPENDIX on INTERPOLATE at the bottom of this file.
 	*/
 	UnitVector.prototype.interpolate = function(p, rp1, rp2, pv) {
-	    var dm1;
-	    var dm2;
-	    var do1;
-	    var do2;
-	    var doa1;
-	    var doa2;
-	    var dt;
+	    let dm1;
+	    let dm2;
+	    let do1;
+	    let do2;
+	    let doa1;
+	    let doa2;
+	    let dt;
 
 	    do1 = pv.distance(p, rp1, true, true);
 	    do2 = pv.distance(p, rp2, true, true);
@@ -8664,16 +8663,16 @@
 	UnitVector.prototype.setRelative = function(p, rp, d, pv, org) {
 	    pv = pv || this;
 
-	    var rpx = org ? rp.xo : rp.x;
-	    var rpy = org ? rp.yo : rp.y;
-	    var rpdx = rpx + d * pv.x;
-	    var rpdy = rpy + d * pv.y;
+	    const rpx = org ? rp.xo : rp.x;
+	    const rpy = org ? rp.yo : rp.y;
+	    const rpdx = rpx + d * pv.x;
+	    const rpdy = rpy + d * pv.y;
 
-	    var pvns = pv.normalSlope;
-	    var fvs = this.slope;
+	    const pvns = pv.normalSlope;
+	    const fvs = this.slope;
 
-	    var px = p.x;
-	    var py = p.y;
+	    const px = p.x;
+	    const py = p.y;
 
 	    p.x = (fvs * px - pvns * rpdx + rpdy - py) / (fvs - pvns);
 	    p.y = fvs * (p.x - px) + py;
@@ -8691,14 +8690,14 @@
 	* Returns a unit vector with x/y coordinates.
 	*/
 	function getUnitVector(x, y) {
-	    var d = Math.sqrt(x * x + y * y);
+	    const d = Math.sqrt(x * x + y * y);
 
 	    x /= d;
 	    y /= d;
 
-	    if (x === 1 && y === 0) { return xUnitVector; }
-	    else if (x === 0 && y === 1) { return yUnitVector; }
-	    else { return new UnitVector(x, y); }
+	    if (x === 1 && y === 0) return xUnitVector;
+	    else if (x === 0 && y === 1) return yUnitVector;
+	    else return new UnitVector(x, y);
 	}
 
 	/*
@@ -8729,9 +8728,9 @@
 	* v  ... unit vector to test touch axis.
 	*/
 	HPoint.prototype.nextTouched = function(v) {
-	    var p = this.nextPointOnContour;
+	    let p = this.nextPointOnContour;
 
-	    while (!v.touched(p) && p !== this) { p = p.nextPointOnContour; }
+	    while (!v.touched(p) && p !== this) p = p.nextPointOnContour;
 
 	    return p;
 	};
@@ -8742,9 +8741,9 @@
 	* v  ... unit vector to test touch axis.
 	*/
 	HPoint.prototype.prevTouched = function(v) {
-	    var p = this.prevPointOnContour;
+	    let p = this.prevPointOnContour;
 
-	    while (!v.touched(p) && p !== this) { p = p.prevPointOnContour; }
+	    while (!v.touched(p) && p !== this) p = p.prevPointOnContour;
 
 	    return p;
 	};
@@ -8752,7 +8751,7 @@
 	/*
 	* The zero point.
 	*/
-	var HPZero = Object.freeze(new HPoint(0, 0));
+	const HPZero = Object.freeze(new HPoint(0, 0));
 
 	/*
 	* The default state of the interpreter.
@@ -8762,7 +8761,7 @@
 	* so this is avoided, albeit the defaultState shouldn't
 	* ever change.
 	*/
-	var defaultState = {
+	const defaultState = {
 	    cvCutIn: 17 / 16,    // control value cut in
 	    deltaBase: 9,
 	    deltaShift: 0.125,
@@ -8809,13 +8808,13 @@
 	    }
 
 	    // Received a fatal error, don't do any hinting anymore.
-	    if (this._errorState > 2) { return; }
+	    if (this._errorState > 2) return;
 
-	    var font = this.font;
-	    var prepState = this._prepState;
+	    const font = this.font;
+	    let prepState = this._prepState;
 
 	    if (!prepState || prepState.ppem !== ppem) {
-	        var fpgmState = this._fpgmState;
+	        let fpgmState = this._fpgmState;
 
 	        if (!fpgmState) {
 	            // Executes the fpgm state.
@@ -8856,11 +8855,11 @@
 
 	        // Creates a copy of the cvt table
 	        // and scales it to the current ppem setting.
-	        var oCvt = font.tables.cvt;
+	        const oCvt = font.tables.cvt;
 	        if (oCvt) {
-	            var cvt = prepState.cvt = new Array(oCvt.length);
-	            var scale = ppem / font.unitsPerEm;
-	            for (var c = 0; c < oCvt.length; c++) {
+	            const cvt = prepState.cvt = new Array(oCvt.length);
+	            const scale = ppem / font.unitsPerEm;
+	            for (let c = 0; c < oCvt.length; c++) {
 	                cvt[c] = oCvt[c] * scale;
 	            }
 	        } else {
@@ -8882,7 +8881,7 @@
 	        }
 	    }
 
-	    if (this._errorState > 1) { return; }
+	    if (this._errorState > 1) return;
 
 	    try {
 	        return execGlyph(glyph, prepState);
@@ -8901,12 +8900,12 @@
 	*/
 	execGlyph = function(glyph, prepState) {
 	    // original point positions
-	    var xScale = prepState.ppem / prepState.font.unitsPerEm;
-	    var yScale = xScale;
-	    var components = glyph.components;
-	    var contours;
-	    var gZone;
-	    var state;
+	    const xScale = prepState.ppem / prepState.font.unitsPerEm;
+	    const yScale = xScale;
+	    let components = glyph.components;
+	    let contours;
+	    let gZone;
+	    let state;
 
 	    State.prototype = prepState;
 	    if (!components) {
@@ -8918,12 +8917,12 @@
 	        execComponent(glyph, state, xScale, yScale);
 	        gZone = state.gZone;
 	    } else {
-	        var font = prepState.font;
+	        const font = prepState.font;
 	        gZone = [];
 	        contours = [];
-	        for (var i = 0; i < components.length; i++) {
-	            var c = components[i];
-	            var cg = font.glyphs.get(c.glyphIndex);
+	        for (let i = 0; i < components.length; i++) {
+	            const c = components[i];
+	            const cg = font.glyphs.get(c.glyphIndex);
 
 	            state = new State('glyf', cg.instructions);
 
@@ -8935,20 +8934,20 @@
 	            execComponent(cg, state, xScale, yScale);
 	            // appends the computed points to the result array
 	            // post processes the component points
-	            var dx = Math.round(c.dx * xScale);
-	            var dy = Math.round(c.dy * yScale);
-	            var gz = state.gZone;
-	            var cc = state.contours;
-	            for (var pi = 0; pi < gz.length; pi++) {
-	                var p = gz[pi];
+	            const dx = Math.round(c.dx * xScale);
+	            const dy = Math.round(c.dy * yScale);
+	            const gz = state.gZone;
+	            const cc = state.contours;
+	            for (let pi = 0; pi < gz.length; pi++) {
+	                const p = gz[pi];
 	                p.xTouched = p.yTouched = false;
 	                p.xo = p.x = p.x + dx;
 	                p.yo = p.y = p.y + dy;
 	            }
 
-	            var gLen = gZone.length;
+	            const gLen = gZone.length;
 	            gZone.push.apply(gZone, gz);
-	            for (var j = 0; j < cc.length; j++) {
+	            for (let j = 0; j < cc.length; j++) {
 	                contours.push(cc[j] + gLen);
 	            }
 	        }
@@ -8988,15 +8987,15 @@
 	*/
 	execComponent = function(glyph, state, xScale, yScale)
 	{
-	    var points = glyph.points || [];
-	    var pLen = points.length;
-	    var gZone = state.gZone = state.z0 = state.z1 = state.z2 = [];
-	    var contours = state.contours = [];
+	    const points = glyph.points || [];
+	    const pLen = points.length;
+	    const gZone = state.gZone = state.z0 = state.z1 = state.z2 = [];
+	    const contours = state.contours = [];
 
 	    // Scales the original points and
 	    // makes copies for the hinted points.
-	    var cp; // current point
-	    for (var i = 0; i < pLen; i++) {
+	    let cp; // current point
+	    for (let i = 0; i < pLen; i++) {
 	        cp = points[i];
 
 	        gZone[i] = new HPoint(
@@ -9008,15 +9007,15 @@
 	    }
 
 	    // Chain links the contours.
-	    var sp; // start point
-	    var np; // next point
+	    let sp; // start point
+	    let np; // next point
 
-	    for (var i$1 = 0; i$1 < pLen; i$1++) {
-	        cp = gZone[i$1];
+	    for (let i = 0; i < pLen; i++) {
+	        cp = gZone[i];
 
 	        if (!sp) {
 	            sp = cp;
-	            contours.push(i$1);
+	            contours.push(i);
 	        }
 
 	        if (cp.lastPointOfContour) {
@@ -9024,18 +9023,18 @@
 	            sp.prevPointOnContour = cp;
 	            sp = undefined;
 	        } else {
-	            np = gZone[i$1 + 1];
+	            np = gZone[i + 1];
 	            cp.nextPointOnContour = np;
 	            np.prevPointOnContour = cp;
 	        }
 	    }
 
-	    if (state.inhibitGridFit) { return; }
+	    if (state.inhibitGridFit) return;
 
 	    if (exports.DEBUG) {
 	        console.log('PROCESSING GLYPH', state.stack);
-	        for (var i$2 = 0; i$2 < pLen; i$2++) {
-	            console.log(i$2, gZone[i$2].x, gZone[i$2].y);
+	        for (let i = 0; i < pLen; i++) {
+	            console.log(i, gZone[i].x, gZone[i].y);
 	        }
 	    }
 
@@ -9051,8 +9050,8 @@
 
 	    if (exports.DEBUG) {
 	        console.log('FINISHED GLYPH', state.stack);
-	        for (var i$3 = 0; i$3 < pLen; i$3++) {
-	            console.log(i$3, gZone[i$3].x, gZone[i$3].y);
+	        for (let i = 0; i < pLen; i++) {
+	            console.log(i, gZone[i].x, gZone[i].y);
 	        }
 	    }
 	};
@@ -9061,15 +9060,15 @@
 	* Executes the program loaded in state.
 	*/
 	exec = function(state) {
-	    var prog = state.prog;
+	    let prog = state.prog;
 
-	    if (!prog) { return; }
+	    if (!prog) return;
 
-	    var pLen = prog.length;
-	    var ins;
+	    const pLen = prog.length;
+	    let ins;
 
 	    for (state.ip = 0; state.ip < pLen; state.ip++) {
-	        if (exports.DEBUG) { state.step++; }
+	        if (exports.DEBUG) state.step++;
 	        ins = instructionTable[prog[state.ip]];
 
 	        if (!ins) {
@@ -9133,10 +9132,10 @@
 	*/
 	function initTZone(state)
 	{
-	    var tZone = state.tZone = new Array(state.gZone.length);
+	    const tZone = state.tZone = new Array(state.gZone.length);
 
 	    // no idea if this is actually correct...
-	    for (var i = 0; i < tZone.length; i++)
+	    for (let i = 0; i < tZone.length; i++)
 	    {
 	        tZone[i] = new HPoint(0, 0);
 	    }
@@ -9148,27 +9147,27 @@
 	*/
 	function skip(state, handleElse)
 	{
-	    var prog = state.prog;
-	    var ip = state.ip;
-	    var nesting = 1;
-	    var ins;
+	    const prog = state.prog;
+	    let ip = state.ip;
+	    let nesting = 1;
+	    let ins;
 
 	    do {
 	        ins = prog[++ip];
 	        if (ins === 0x58) // IF
-	            { nesting++; }
+	            nesting++;
 	        else if (ins === 0x59) // EIF
-	            { nesting--; }
+	            nesting--;
 	        else if (ins === 0x40) // NPUSHB
-	            { ip += prog[ip + 1] + 1; }
+	            ip += prog[ip + 1] + 1;
 	        else if (ins === 0x41) // NPUSHW
-	            { ip += 2 * prog[ip + 1] + 1; }
+	            ip += 2 * prog[ip + 1] + 1;
 	        else if (ins >= 0xB0 && ins <= 0xB7) // PUSHB
-	            { ip += ins - 0xB0 + 1; }
+	            ip += ins - 0xB0 + 1;
 	        else if (ins >= 0xB8 && ins <= 0xBF) // PUSHW
-	            { ip += (ins - 0xB8 + 1) * 2; }
+	            ip += (ins - 0xB8 + 1) * 2;
 	        else if (handleElse && nesting === 1 && ins === 0x1B) // ELSE
-	            { break; }
+	            break;
 	    } while (nesting > 0);
 
 	    state.ip = ip;
@@ -9181,7 +9180,7 @@
 	// SVTCA[a] Set freedom and projection Vectors To Coordinate Axis
 	// 0x00-0x01
 	function SVTCA(v, state) {
-	    if (exports.DEBUG) { console.log(state.step, 'SVTCA[' + v.axis + ']'); }
+	    if (exports.DEBUG) console.log(state.step, 'SVTCA[' + v.axis + ']');
 
 	    state.fv = state.pv = state.dpv = v;
 	}
@@ -9189,7 +9188,7 @@
 	// SPVTCA[a] Set Projection Vector to Coordinate Axis
 	// 0x02-0x03
 	function SPVTCA(v, state) {
-	    if (exports.DEBUG) { console.log(state.step, 'SPVTCA[' + v.axis + ']'); }
+	    if (exports.DEBUG) console.log(state.step, 'SPVTCA[' + v.axis + ']');
 
 	    state.pv = state.dpv = v;
 	}
@@ -9197,7 +9196,7 @@
 	// SFVTCA[a] Set Freedom Vector to Coordinate Axis
 	// 0x04-0x05
 	function SFVTCA(v, state) {
-	    if (exports.DEBUG) { console.log(state.step, 'SFVTCA[' + v.axis + ']'); }
+	    if (exports.DEBUG) console.log(state.step, 'SFVTCA[' + v.axis + ']');
 
 	    state.fv = v;
 	}
@@ -9205,16 +9204,16 @@
 	// SPVTL[a] Set Projection Vector To Line
 	// 0x06-0x07
 	function SPVTL(a, state) {
-	    var stack = state.stack;
-	    var p2i = stack.pop();
-	    var p1i = stack.pop();
-	    var p2 = state.z2[p2i];
-	    var p1 = state.z1[p1i];
+	    const stack = state.stack;
+	    const p2i = stack.pop();
+	    const p1i = stack.pop();
+	    const p2 = state.z2[p2i];
+	    const p1 = state.z1[p1i];
 
-	    if (exports.DEBUG) { console.log('SPVTL[' + a + ']', p2i, p1i); }
+	    if (exports.DEBUG) console.log('SPVTL[' + a + ']', p2i, p1i);
 
-	    var dx;
-	    var dy;
+	    let dx;
+	    let dy;
 
 	    if (!a) {
 	        dx = p1.x - p2.x;
@@ -9230,16 +9229,16 @@
 	// SFVTL[a] Set Freedom Vector To Line
 	// 0x08-0x09
 	function SFVTL(a, state) {
-	    var stack = state.stack;
-	    var p2i = stack.pop();
-	    var p1i = stack.pop();
-	    var p2 = state.z2[p2i];
-	    var p1 = state.z1[p1i];
+	    const stack = state.stack;
+	    const p2i = stack.pop();
+	    const p1i = stack.pop();
+	    const p2 = state.z2[p2i];
+	    const p1 = state.z1[p1i];
 
-	    if (exports.DEBUG) { console.log('SFVTL[' + a + ']', p2i, p1i); }
+	    if (exports.DEBUG) console.log('SFVTL[' + a + ']', p2i, p1i);
 
-	    var dx;
-	    var dy;
+	    let dx;
+	    let dy;
 
 	    if (!a) {
 	        dx = p1.x - p2.x;
@@ -9255,11 +9254,11 @@
 	// SPVFS[] Set Projection Vector From Stack
 	// 0x0A
 	function SPVFS(state) {
-	    var stack = state.stack;
-	    var y = stack.pop();
-	    var x = stack.pop();
+	    const stack = state.stack;
+	    const y = stack.pop();
+	    const x = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SPVFS[]', y, x); }
+	    if (exports.DEBUG) console.log(state.step, 'SPVFS[]', y, x);
 
 	    state.pv = state.dpv = getUnitVector(x, y);
 	}
@@ -9267,11 +9266,11 @@
 	// SFVFS[] Set Freedom Vector From Stack
 	// 0x0B
 	function SFVFS(state) {
-	    var stack = state.stack;
-	    var y = stack.pop();
-	    var x = stack.pop();
+	    const stack = state.stack;
+	    const y = stack.pop();
+	    const x = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SPVFS[]', y, x); }
+	    if (exports.DEBUG) console.log(state.step, 'SPVFS[]', y, x);
 
 	    state.fv = getUnitVector(x, y);
 	}
@@ -9279,10 +9278,10 @@
 	// GPV[] Get Projection Vector
 	// 0x0C
 	function GPV(state) {
-	    var stack = state.stack;
-	    var pv = state.pv;
+	    const stack = state.stack;
+	    const pv = state.pv;
 
-	    if (exports.DEBUG) { console.log(state.step, 'GPV[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'GPV[]');
 
 	    stack.push(pv.x * 0x4000);
 	    stack.push(pv.y * 0x4000);
@@ -9291,10 +9290,10 @@
 	// GFV[] Get Freedom Vector
 	// 0x0C
 	function GFV(state) {
-	    var stack = state.stack;
-	    var fv = state.fv;
+	    const stack = state.stack;
+	    const fv = state.fv;
 
-	    if (exports.DEBUG) { console.log(state.step, 'GFV[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'GFV[]');
 
 	    stack.push(fv.x * 0x4000);
 	    stack.push(fv.y * 0x4000);
@@ -9305,44 +9304,44 @@
 	function SFVTPV(state) {
 	    state.fv = state.pv;
 
-	    if (exports.DEBUG) { console.log(state.step, 'SFVTPV[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'SFVTPV[]');
 	}
 
 	// ISECT[] moves point p to the InterSECTion of two lines
 	// 0x0F
 	function ISECT(state)
 	{
-	    var stack = state.stack;
-	    var pa0i = stack.pop();
-	    var pa1i = stack.pop();
-	    var pb0i = stack.pop();
-	    var pb1i = stack.pop();
-	    var pi = stack.pop();
-	    var z0 = state.z0;
-	    var z1 = state.z1;
-	    var pa0 = z0[pa0i];
-	    var pa1 = z0[pa1i];
-	    var pb0 = z1[pb0i];
-	    var pb1 = z1[pb1i];
-	    var p = state.z2[pi];
+	    const stack = state.stack;
+	    const pa0i = stack.pop();
+	    const pa1i = stack.pop();
+	    const pb0i = stack.pop();
+	    const pb1i = stack.pop();
+	    const pi = stack.pop();
+	    const z0 = state.z0;
+	    const z1 = state.z1;
+	    const pa0 = z0[pa0i];
+	    const pa1 = z0[pa1i];
+	    const pb0 = z1[pb0i];
+	    const pb1 = z1[pb1i];
+	    const p = state.z2[pi];
 
-	    if (exports.DEBUG) { console.log('ISECT[], ', pa0i, pa1i, pb0i, pb1i, pi); }
+	    if (exports.DEBUG) console.log('ISECT[], ', pa0i, pa1i, pb0i, pb1i, pi);
 
 	    // math from
 	    // en.wikipedia.org/wiki/Line%E2%80%93line_intersection#Given_two_points_on_each_line
 
-	    var x1 = pa0.x;
-	    var y1 = pa0.y;
-	    var x2 = pa1.x;
-	    var y2 = pa1.y;
-	    var x3 = pb0.x;
-	    var y3 = pb0.y;
-	    var x4 = pb1.x;
-	    var y4 = pb1.y;
+	    const x1 = pa0.x;
+	    const y1 = pa0.y;
+	    const x2 = pa1.x;
+	    const y2 = pa1.y;
+	    const x3 = pb0.x;
+	    const y3 = pb0.y;
+	    const x4 = pb1.x;
+	    const y4 = pb1.y;
 
-	    var div = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-	    var f1 = x1 * y2 - y1 * x2;
-	    var f2 = x3 * y4 - y3 * x4;
+	    const div = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+	    const f1 = x1 * y2 - y1 * x2;
+	    const f2 = x3 * y4 - y3 * x4;
 
 	    p.x = (f1 * (x3 - x4) - f2 * (x1 - x2)) / div;
 	    p.y = (f1 * (y3 - y4) - f2 * (y1 - y2)) / div;
@@ -9353,7 +9352,7 @@
 	function SRP0(state) {
 	    state.rp0 = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SRP0[]', state.rp0); }
+	    if (exports.DEBUG) console.log(state.step, 'SRP0[]', state.rp0);
 	}
 
 	// SRP1[] Set Reference Point 1
@@ -9361,7 +9360,7 @@
 	function SRP1(state) {
 	    state.rp1 = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SRP1[]', state.rp1); }
+	    if (exports.DEBUG) console.log(state.step, 'SRP1[]', state.rp1);
 	}
 
 	// SRP1[] Set Reference Point 2
@@ -9369,21 +9368,21 @@
 	function SRP2(state) {
 	    state.rp2 = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SRP2[]', state.rp2); }
+	    if (exports.DEBUG) console.log(state.step, 'SRP2[]', state.rp2);
 	}
 
 	// SZP0[] Set Zone Pointer 0
 	// 0x13
 	function SZP0(state) {
-	    var n = state.stack.pop();
+	    const n = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SZP0[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'SZP0[]', n);
 
 	    state.zp0 = n;
 
 	    switch (n) {
 	        case 0:
-	            if (!state.tZone) { initTZone(state); }
+	            if (!state.tZone) initTZone(state);
 	            state.z0 = state.tZone;
 	            break;
 	        case 1 :
@@ -9397,15 +9396,15 @@
 	// SZP1[] Set Zone Pointer 1
 	// 0x14
 	function SZP1(state) {
-	    var n = state.stack.pop();
+	    const n = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SZP1[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'SZP1[]', n);
 
 	    state.zp1 = n;
 
 	    switch (n) {
 	        case 0:
-	            if (!state.tZone) { initTZone(state); }
+	            if (!state.tZone) initTZone(state);
 	            state.z1 = state.tZone;
 	            break;
 	        case 1 :
@@ -9419,15 +9418,15 @@
 	// SZP2[] Set Zone Pointer 2
 	// 0x15
 	function SZP2(state) {
-	    var n = state.stack.pop();
+	    const n = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SZP2[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'SZP2[]', n);
 
 	    state.zp2 = n;
 
 	    switch (n) {
 	        case 0:
-	            if (!state.tZone) { initTZone(state); }
+	            if (!state.tZone) initTZone(state);
 	            state.z2 = state.tZone;
 	            break;
 	        case 1 :
@@ -9441,15 +9440,15 @@
 	// SZPS[] Set Zone PointerS
 	// 0x16
 	function SZPS(state) {
-	    var n = state.stack.pop();
+	    const n = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SZPS[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'SZPS[]', n);
 
 	    state.zp0 = state.zp1 = state.zp2 = n;
 
 	    switch (n) {
 	        case 0:
-	            if (!state.tZone) { initTZone(state); }
+	            if (!state.tZone) initTZone(state);
 	            state.z0 = state.z1 = state.z2 = state.tZone;
 	            break;
 	        case 1 :
@@ -9465,13 +9464,13 @@
 	function SLOOP(state) {
 	    state.loop = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SLOOP[]', state.loop); }
+	    if (exports.DEBUG) console.log(state.step, 'SLOOP[]', state.loop);
 	}
 
 	// RTG[] Round To Grid
 	// 0x18
 	function RTG(state) {
-	    if (exports.DEBUG) { console.log(state.step, 'RTG[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'RTG[]');
 
 	    state.round = roundToGrid;
 	}
@@ -9479,7 +9478,7 @@
 	// RTHG[] Round To Half Grid
 	// 0x19
 	function RTHG(state) {
-	    if (exports.DEBUG) { console.log(state.step, 'RTHG[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'RTHG[]');
 
 	    state.round = roundToHalfGrid;
 	}
@@ -9487,9 +9486,9 @@
 	// SMD[] Set Minimum Distance
 	// 0x1A
 	function SMD(state) {
-	    var d = state.stack.pop();
+	    const d = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SMD[]', d); }
+	    if (exports.DEBUG) console.log(state.step, 'SMD[]', d);
 
 	    state.minDis = d / 0x40;
 	}
@@ -9503,7 +9502,7 @@
 	    // In case the IF was negative the IF[] instruction already
 	    // skipped forward over the ELSE[]
 
-	    if (exports.DEBUG) { console.log(state.step, 'ELSE[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'ELSE[]');
 
 	    skip(state, false);
 	}
@@ -9511,9 +9510,9 @@
 	// JMPR[] JuMP Relative
 	// 0x1C
 	function JMPR(state) {
-	    var o = state.stack.pop();
+	    const o = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'JMPR[]', o); }
+	    if (exports.DEBUG) console.log(state.step, 'JMPR[]', o);
 
 	    // A jump by 1 would do nothing.
 	    state.ip += o - 1;
@@ -9522,9 +9521,9 @@
 	// SCVTCI[] Set Control Value Table Cut-In
 	// 0x1D
 	function SCVTCI(state) {
-	    var n = state.stack.pop();
+	    const n = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SCVTCI[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'SCVTCI[]', n);
 
 	    state.cvCutIn = n / 0x40;
 	}
@@ -9532,9 +9531,9 @@
 	// DUP[] DUPlicate top stack element
 	// 0x20
 	function DUP(state) {
-	    var stack = state.stack;
+	    const stack = state.stack;
 
-	    if (exports.DEBUG) { console.log(state.step, 'DUP[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'DUP[]');
 
 	    stack.push(stack[stack.length - 1]);
 	}
@@ -9542,7 +9541,7 @@
 	// POP[] POP top stack element
 	// 0x21
 	function POP(state) {
-	    if (exports.DEBUG) { console.log(state.step, 'POP[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'POP[]');
 
 	    state.stack.pop();
 	}
@@ -9550,7 +9549,7 @@
 	// CLEAR[] CLEAR the stack
 	// 0x22
 	function CLEAR(state) {
-	    if (exports.DEBUG) { console.log(state.step, 'CLEAR[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'CLEAR[]');
 
 	    state.stack.length = 0;
 	}
@@ -9558,12 +9557,12 @@
 	// SWAP[] SWAP the top two elements on the stack
 	// 0x23
 	function SWAP(state) {
-	    var stack = state.stack;
+	    const stack = state.stack;
 
-	    var a = stack.pop();
-	    var b = stack.pop();
+	    const a = stack.pop();
+	    const b = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SWAP[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'SWAP[]');
 
 	    stack.push(a);
 	    stack.push(b);
@@ -9572,9 +9571,9 @@
 	// DEPTH[] DEPTH of the stack
 	// 0x24
 	function DEPTH(state) {
-	    var stack = state.stack;
+	    const stack = state.stack;
 
-	    if (exports.DEBUG) { console.log(state.step, 'DEPTH[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'DEPTH[]');
 
 	    stack.push(stack.length);
 	}
@@ -9582,27 +9581,27 @@
 	// LOOPCALL[] LOOPCALL function
 	// 0x2A
 	function LOOPCALL(state) {
-	    var stack = state.stack;
-	    var fn = stack.pop();
-	    var c = stack.pop();
+	    const stack = state.stack;
+	    const fn = stack.pop();
+	    const c = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'LOOPCALL[]', fn, c); }
+	    if (exports.DEBUG) console.log(state.step, 'LOOPCALL[]', fn, c);
 
 	    // saves callers program
-	    var cip = state.ip;
-	    var cprog = state.prog;
+	    const cip = state.ip;
+	    const cprog = state.prog;
 
 	    state.prog = state.funcs[fn];
 
 	    // executes the function
-	    for (var i = 0; i < c; i++) {
+	    for (let i = 0; i < c; i++) {
 	        exec(state);
 
-	        if (exports.DEBUG) { console.log(
+	        if (exports.DEBUG) console.log(
 	            ++state.step,
 	            i + 1 < c ? 'next loopcall' : 'done loopcall',
 	            i
-	        ); }
+	        );
 	    }
 
 	    // restores the callers program
@@ -9613,13 +9612,13 @@
 	// CALL[] CALL function
 	// 0x2B
 	function CALL(state) {
-	    var fn = state.stack.pop();
+	    const fn = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'CALL[]', fn); }
+	    if (exports.DEBUG) console.log(state.step, 'CALL[]', fn);
 
 	    // saves callers program
-	    var cip = state.ip;
-	    var cprog = state.prog;
+	    const cip = state.ip;
+	    const cprog = state.prog;
 
 	    state.prog = state.funcs[fn];
 
@@ -9630,16 +9629,16 @@
 	    state.ip = cip;
 	    state.prog = cprog;
 
-	    if (exports.DEBUG) { console.log(++state.step, 'returning from', fn); }
+	    if (exports.DEBUG) console.log(++state.step, 'returning from', fn);
 	}
 
 	// CINDEX[] Copy the INDEXed element to the top of the stack
 	// 0x25
 	function CINDEX(state) {
-	    var stack = state.stack;
-	    var k = stack.pop();
+	    const stack = state.stack;
+	    const k = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'CINDEX[]', k); }
+	    if (exports.DEBUG) console.log(state.step, 'CINDEX[]', k);
 
 	    // In case of k == 1, it copies the last element after popping
 	    // thus stack.length - k.
@@ -9649,10 +9648,10 @@
 	// MINDEX[] Move the INDEXed element to the top of the stack
 	// 0x26
 	function MINDEX(state) {
-	    var stack = state.stack;
-	    var k = stack.pop();
+	    const stack = state.stack;
+	    const k = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'MINDEX[]', k); }
+	    if (exports.DEBUG) console.log(state.step, 'MINDEX[]', k);
 
 	    stack.push(stack.splice(stack.length - k, 1)[0]);
 	}
@@ -9660,17 +9659,17 @@
 	// FDEF[] Function DEFinition
 	// 0x2C
 	function FDEF(state) {
-	    if (state.env !== 'fpgm') { throw new Error('FDEF not allowed here'); }
-	    var stack = state.stack;
-	    var prog = state.prog;
-	    var ip = state.ip;
+	    if (state.env !== 'fpgm') throw new Error('FDEF not allowed here');
+	    const stack = state.stack;
+	    const prog = state.prog;
+	    let ip = state.ip;
 
-	    var fn = stack.pop();
-	    var ipBegin = ip;
+	    const fn = stack.pop();
+	    const ipBegin = ip;
 
-	    if (exports.DEBUG) { console.log(state.step, 'FDEF[]', fn); }
+	    if (exports.DEBUG) console.log(state.step, 'FDEF[]', fn);
 
-	    while (prog[++ip] !== 0x2D){ }
+	    while (prog[++ip] !== 0x2D);
 
 	    state.ip = ip;
 	    state.funcs[fn] = prog.slice(ipBegin + 1, ip);
@@ -9679,16 +9678,16 @@
 	// MDAP[a] Move Direct Absolute Point
 	// 0x2E-0x2F
 	function MDAP(round, state) {
-	    var pi = state.stack.pop();
-	    var p = state.z0[pi];
-	    var fv = state.fv;
-	    var pv = state.pv;
+	    const pi = state.stack.pop();
+	    const p = state.z0[pi];
+	    const fv = state.fv;
+	    const pv = state.pv;
 
-	    if (exports.DEBUG) { console.log(state.step, 'MDAP[' + round + ']', pi); }
+	    if (exports.DEBUG) console.log(state.step, 'MDAP[' + round + ']', pi);
 
-	    var d = pv.distance(p, HPZero);
+	    let d = pv.distance(p, HPZero);
 
-	    if (round) { d = state.round(d); }
+	    if (round) d = state.round(d);
 
 	    fv.setRelative(p, HPZero, d, pv);
 	    fv.touch(p);
@@ -9699,24 +9698,24 @@
 	// IUP[a] Interpolate Untouched Points through the outline
 	// 0x30
 	function IUP(v, state) {
-	    var z2 = state.z2;
-	    var pLen = z2.length - 2;
-	    var cp;
-	    var pp;
-	    var np;
+	    const z2 = state.z2;
+	    const pLen = z2.length - 2;
+	    let cp;
+	    let pp;
+	    let np;
 
-	    if (exports.DEBUG) { console.log(state.step, 'IUP[' + v.axis + ']'); }
+	    if (exports.DEBUG) console.log(state.step, 'IUP[' + v.axis + ']');
 
-	    for (var i = 0; i < pLen; i++) {
+	    for (let i = 0; i < pLen; i++) {
 	        cp = z2[i]; // current point
 
 	        // if this point has been touched go on
-	        if (v.touched(cp)) { continue; }
+	        if (v.touched(cp)) continue;
 
 	        pp = cp.prevTouched(v);
 
 	        // no point on the contour has been touched?
-	        if (pp === cp) { continue; }
+	        if (pp === cp) continue;
 
 	        np = cp.nextTouched(v);
 
@@ -9734,20 +9733,20 @@
 	// SHP[] SHift Point using reference point
 	// 0x32-0x33
 	function SHP(a, state) {
-	    var stack = state.stack;
-	    var rpi = a ? state.rp1 : state.rp2;
-	    var rp = (a ? state.z0 : state.z1)[rpi];
-	    var fv = state.fv;
-	    var pv = state.pv;
-	    var loop = state.loop;
-	    var z2 = state.z2;
+	    const stack = state.stack;
+	    const rpi = a ? state.rp1 : state.rp2;
+	    const rp = (a ? state.z0 : state.z1)[rpi];
+	    const fv = state.fv;
+	    const pv = state.pv;
+	    let loop = state.loop;
+	    const z2 = state.z2;
 
 	    while (loop--)
 	    {
-	        var pi = stack.pop();
-	        var p = z2[pi];
+	        const pi = stack.pop();
+	        const p = z2[pi];
 
-	        var d = pv.distance(rp, rp, false, true);
+	        const d = pv.distance(rp, rp, false, true);
 	        fv.setRelative(p, p, d, pv);
 	        fv.touch(p);
 
@@ -9769,21 +9768,21 @@
 	// SHC[] SHift Contour using reference point
 	// 0x36-0x37
 	function SHC(a, state) {
-	    var stack = state.stack;
-	    var rpi = a ? state.rp1 : state.rp2;
-	    var rp = (a ? state.z0 : state.z1)[rpi];
-	    var fv = state.fv;
-	    var pv = state.pv;
-	    var ci = stack.pop();
-	    var sp = state.z2[state.contours[ci]];
-	    var p = sp;
+	    const stack = state.stack;
+	    const rpi = a ? state.rp1 : state.rp2;
+	    const rp = (a ? state.z0 : state.z1)[rpi];
+	    const fv = state.fv;
+	    const pv = state.pv;
+	    const ci = stack.pop();
+	    const sp = state.z2[state.contours[ci]];
+	    let p = sp;
 
-	    if (exports.DEBUG) { console.log(state.step, 'SHC[' + a + ']', ci); }
+	    if (exports.DEBUG) console.log(state.step, 'SHC[' + a + ']', ci);
 
-	    var d = pv.distance(rp, rp, false, true);
+	    const d = pv.distance(rp, rp, false, true);
 
 	    do {
-	        if (p !== rp) { fv.setRelative(p, p, d, pv); }
+	        if (p !== rp) fv.setRelative(p, p, d, pv);
 	        p = p.nextPointOnContour;
 	    } while (p !== sp);
 	}
@@ -9791,27 +9790,27 @@
 	// SHZ[] SHift Zone using reference point
 	// 0x36-0x37
 	function SHZ(a, state) {
-	    var stack = state.stack;
-	    var rpi = a ? state.rp1 : state.rp2;
-	    var rp = (a ? state.z0 : state.z1)[rpi];
-	    var fv = state.fv;
-	    var pv = state.pv;
+	    const stack = state.stack;
+	    const rpi = a ? state.rp1 : state.rp2;
+	    const rp = (a ? state.z0 : state.z1)[rpi];
+	    const fv = state.fv;
+	    const pv = state.pv;
 
-	    var e = stack.pop();
+	    const e = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SHZ[' + a + ']', e); }
+	    if (exports.DEBUG) console.log(state.step, 'SHZ[' + a + ']', e);
 
-	    var z;
+	    let z;
 	    switch (e) {
 	        case 0 : z = state.tZone; break;
 	        case 1 : z = state.gZone; break;
 	        default : throw new Error('Invalid zone');
 	    }
 
-	    var p;
-	    var d = pv.distance(rp, rp, false, true);
-	    var pLen = z.length - 2;
-	    for (var i = 0; i < pLen; i++)
+	    let p;
+	    const d = pv.distance(rp, rp, false, true);
+	    const pLen = z.length - 2;
+	    for (let i = 0; i < pLen; i++)
 	    {
 	        p = z[i];
 	        fv.setRelative(p, p, d, pv);
@@ -9822,15 +9821,15 @@
 	// SHPIX[] SHift point by a PIXel amount
 	// 0x38
 	function SHPIX(state) {
-	    var stack = state.stack;
-	    var loop = state.loop;
-	    var fv = state.fv;
-	    var d = stack.pop() / 0x40;
-	    var z2 = state.z2;
+	    const stack = state.stack;
+	    let loop = state.loop;
+	    const fv = state.fv;
+	    const d = stack.pop() / 0x40;
+	    const z2 = state.z2;
 
 	    while (loop--) {
-	        var pi = stack.pop();
-	        var p = z2[pi];
+	        const pi = stack.pop();
+	        const p = z2[pi];
 
 	        if (exports.DEBUG) {
 	            console.log(
@@ -9850,19 +9849,19 @@
 	// IP[] Interpolate Point
 	// 0x39
 	function IP(state) {
-	    var stack = state.stack;
-	    var rp1i = state.rp1;
-	    var rp2i = state.rp2;
-	    var loop = state.loop;
-	    var rp1 = state.z0[rp1i];
-	    var rp2 = state.z1[rp2i];
-	    var fv = state.fv;
-	    var pv = state.dpv;
-	    var z2 = state.z2;
+	    const stack = state.stack;
+	    const rp1i = state.rp1;
+	    const rp2i = state.rp2;
+	    let loop = state.loop;
+	    const rp1 = state.z0[rp1i];
+	    const rp2 = state.z1[rp2i];
+	    const fv = state.fv;
+	    const pv = state.dpv;
+	    const z2 = state.z2;
 
 	    while (loop--) {
-	        var pi = stack.pop();
-	        var p = z2[pi];
+	        const pi = stack.pop();
+	        const p = z2[pi];
 
 	        if (exports.DEBUG) {
 	            console.log(
@@ -9883,38 +9882,38 @@
 	// MSIRP[a] Move Stack Indirect Relative Point
 	// 0x3A-0x3B
 	function MSIRP(a, state) {
-	    var stack = state.stack;
-	    var d = stack.pop() / 64;
-	    var pi = stack.pop();
-	    var p = state.z1[pi];
-	    var rp0 = state.z0[state.rp0];
-	    var fv = state.fv;
-	    var pv = state.pv;
+	    const stack = state.stack;
+	    const d = stack.pop() / 64;
+	    const pi = stack.pop();
+	    const p = state.z1[pi];
+	    const rp0 = state.z0[state.rp0];
+	    const fv = state.fv;
+	    const pv = state.pv;
 
 	    fv.setRelative(p, rp0, d, pv);
 	    fv.touch(p);
 
-	    if (exports.DEBUG) { console.log(state.step, 'MSIRP[' + a + ']', d, pi); }
+	    if (exports.DEBUG) console.log(state.step, 'MSIRP[' + a + ']', d, pi);
 
 	    state.rp1 = state.rp0;
 	    state.rp2 = pi;
-	    if (a) { state.rp0 = pi; }
+	    if (a) state.rp0 = pi;
 	}
 
 	// ALIGNRP[] Align to reference point.
 	// 0x3C
 	function ALIGNRP(state) {
-	    var stack = state.stack;
-	    var rp0i = state.rp0;
-	    var rp0 = state.z0[rp0i];
-	    var loop = state.loop;
-	    var fv = state.fv;
-	    var pv = state.pv;
-	    var z1 = state.z1;
+	    const stack = state.stack;
+	    const rp0i = state.rp0;
+	    const rp0 = state.z0[rp0i];
+	    let loop = state.loop;
+	    const fv = state.fv;
+	    const pv = state.pv;
+	    const z1 = state.z1;
 
 	    while (loop--) {
-	        var pi = stack.pop();
-	        var p = z1[pi];
+	        const pi = stack.pop();
+	        const p = z1[pi];
 
 	        if (exports.DEBUG) {
 	            console.log(
@@ -9934,7 +9933,7 @@
 	// RTG[] Round To Double Grid
 	// 0x3D
 	function RTDG(state) {
-	    if (exports.DEBUG) { console.log(state.step, 'RTDG[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'RTDG[]');
 
 	    state.round = roundToDoubleGrid;
 	}
@@ -9942,13 +9941,13 @@
 	// MIAP[a] Move Indirect Absolute Point
 	// 0x3E-0x3F
 	function MIAP(round, state) {
-	    var stack = state.stack;
-	    var n = stack.pop();
-	    var pi = stack.pop();
-	    var p = state.z0[pi];
-	    var fv = state.fv;
-	    var pv = state.pv;
-	    var cv = state.cvt[n];
+	    const stack = state.stack;
+	    const n = stack.pop();
+	    const pi = stack.pop();
+	    const p = state.z0[pi];
+	    const fv = state.fv;
+	    const pv = state.pv;
+	    let cv = state.cvt[n];
 
 	    if (exports.DEBUG) {
 	        console.log(
@@ -9958,10 +9957,10 @@
 	        );
 	    }
 
-	    var d = pv.distance(p, HPZero);
+	    let d = pv.distance(p, HPZero);
 
 	    if (round) {
-	        if (Math.abs(d - cv) < state.cvCutIn) { d = cv; }
+	        if (Math.abs(d - cv) < state.cvCutIn) d = cv;
 
 	        d = state.round(d);
 	    }
@@ -9981,15 +9980,15 @@
 	// NPUSB[] PUSH N Bytes
 	// 0x40
 	function NPUSHB(state) {
-	    var prog = state.prog;
-	    var ip = state.ip;
-	    var stack = state.stack;
+	    const prog = state.prog;
+	    let ip = state.ip;
+	    const stack = state.stack;
 
-	    var n = prog[++ip];
+	    const n = prog[++ip];
 
-	    if (exports.DEBUG) { console.log(state.step, 'NPUSHB[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'NPUSHB[]', n);
 
-	    for (var i = 0; i < n; i++) { stack.push(prog[++ip]); }
+	    for (let i = 0; i < n; i++) stack.push(prog[++ip]);
 
 	    state.ip = ip;
 	}
@@ -9997,16 +9996,16 @@
 	// NPUSHW[] PUSH N Words
 	// 0x41
 	function NPUSHW(state) {
-	    var ip = state.ip;
-	    var prog = state.prog;
-	    var stack = state.stack;
-	    var n = prog[++ip];
+	    let ip = state.ip;
+	    const prog = state.prog;
+	    const stack = state.stack;
+	    const n = prog[++ip];
 
-	    if (exports.DEBUG) { console.log(state.step, 'NPUSHW[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'NPUSHW[]', n);
 
-	    for (var i = 0; i < n; i++) {
-	        var w = (prog[++ip] << 8) | prog[++ip];
-	        if (w & 0x8000) { w = -((w ^ 0xffff) + 1); }
+	    for (let i = 0; i < n; i++) {
+	        let w = (prog[++ip] << 8) | prog[++ip];
+	        if (w & 0x8000) w = -((w ^ 0xffff) + 1);
 	        stack.push(w);
 	    }
 
@@ -10016,15 +10015,15 @@
 	// WS[] Write Store
 	// 0x42
 	function WS(state) {
-	    var stack = state.stack;
-	    var store = state.store;
+	    const stack = state.stack;
+	    let store = state.store;
 
-	    if (!store) { store = state.store = []; }
+	    if (!store) store = state.store = [];
 
-	    var v = stack.pop();
-	    var l = stack.pop();
+	    const v = stack.pop();
+	    const l = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'WS', v, l); }
+	    if (exports.DEBUG) console.log(state.step, 'WS', v, l);
 
 	    store[l] = v;
 	}
@@ -10032,14 +10031,14 @@
 	// RS[] Read Store
 	// 0x43
 	function RS(state) {
-	    var stack = state.stack;
-	    var store = state.store;
+	    const stack = state.stack;
+	    const store = state.store;
 
-	    var l = stack.pop();
+	    const l = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'RS', l); }
+	    if (exports.DEBUG) console.log(state.step, 'RS', l);
 
-	    var v = (store && store[l]) || 0;
+	    const v = (store && store[l]) || 0;
 
 	    stack.push(v);
 	}
@@ -10047,12 +10046,12 @@
 	// WCVTP[] Write Control Value Table in Pixel units
 	// 0x44
 	function WCVTP(state) {
-	    var stack = state.stack;
+	    const stack = state.stack;
 
-	    var v = stack.pop();
-	    var l = stack.pop();
+	    const v = stack.pop();
+	    const l = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'WCVTP', v, l); }
+	    if (exports.DEBUG) console.log(state.step, 'WCVTP', v, l);
 
 	    state.cvt[l] = v / 0x40;
 	}
@@ -10060,10 +10059,10 @@
 	// RCVT[] Read Control Value Table entry
 	// 0x45
 	function RCVT(state) {
-	    var stack = state.stack;
-	    var cvte = stack.pop();
+	    const stack = state.stack;
+	    const cvte = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'RCVT', cvte); }
+	    if (exports.DEBUG) console.log(state.step, 'RCVT', cvte);
 
 	    stack.push(state.cvt[cvte] * 0x40);
 	}
@@ -10071,11 +10070,11 @@
 	// GC[] Get Coordinate projected onto the projection vector
 	// 0x46-0x47
 	function GC(a, state) {
-	    var stack = state.stack;
-	    var pi = stack.pop();
-	    var p = state.z2[pi];
+	    const stack = state.stack;
+	    const pi = stack.pop();
+	    const p = state.z2[pi];
 
-	    if (exports.DEBUG) { console.log(state.step, 'GC[' + a + ']', pi); }
+	    if (exports.DEBUG) console.log(state.step, 'GC[' + a + ']', pi);
 
 	    stack.push(state.dpv.distance(p, HPZero, a, false) * 0x40);
 	}
@@ -10083,14 +10082,14 @@
 	// MD[a] Measure Distance
 	// 0x49-0x4A
 	function MD(a, state) {
-	    var stack = state.stack;
-	    var pi2 = stack.pop();
-	    var pi1 = stack.pop();
-	    var p2 = state.z1[pi2];
-	    var p1 = state.z0[pi1];
-	    var d = state.dpv.distance(p1, p2, a, a);
+	    const stack = state.stack;
+	    const pi2 = stack.pop();
+	    const pi1 = stack.pop();
+	    const p2 = state.z1[pi2];
+	    const p1 = state.z0[pi1];
+	    const d = state.dpv.distance(p1, p2, a, a);
 
-	    if (exports.DEBUG) { console.log(state.step, 'MD[' + a + ']', pi2, pi1, '->', d); }
+	    if (exports.DEBUG) console.log(state.step, 'MD[' + a + ']', pi2, pi1, '->', d);
 
 	    state.stack.push(Math.round(d * 64));
 	}
@@ -10098,25 +10097,25 @@
 	// MPPEM[] Measure Pixels Per EM
 	// 0x4B
 	function MPPEM(state) {
-	    if (exports.DEBUG) { console.log(state.step, 'MPPEM[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'MPPEM[]');
 	    state.stack.push(state.ppem);
 	}
 
 	// FLIPON[] set the auto FLIP Boolean to ON
 	// 0x4D
 	function FLIPON(state) {
-	    if (exports.DEBUG) { console.log(state.step, 'FLIPON[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'FLIPON[]');
 	    state.autoFlip = true;
 	}
 
 	// LT[] Less Than
 	// 0x50
 	function LT(state) {
-	    var stack = state.stack;
-	    var e2 = stack.pop();
-	    var e1 = stack.pop();
+	    const stack = state.stack;
+	    const e2 = stack.pop();
+	    const e1 = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'LT[]', e2, e1); }
+	    if (exports.DEBUG) console.log(state.step, 'LT[]', e2, e1);
 
 	    stack.push(e1 < e2 ? 1 : 0);
 	}
@@ -10124,11 +10123,11 @@
 	// LTEQ[] Less Than or EQual
 	// 0x53
 	function LTEQ(state) {
-	    var stack = state.stack;
-	    var e2 = stack.pop();
-	    var e1 = stack.pop();
+	    const stack = state.stack;
+	    const e2 = stack.pop();
+	    const e1 = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'LTEQ[]', e2, e1); }
+	    if (exports.DEBUG) console.log(state.step, 'LTEQ[]', e2, e1);
 
 	    stack.push(e1 <= e2 ? 1 : 0);
 	}
@@ -10136,11 +10135,11 @@
 	// GTEQ[] Greater Than
 	// 0x52
 	function GT(state) {
-	    var stack = state.stack;
-	    var e2 = stack.pop();
-	    var e1 = stack.pop();
+	    const stack = state.stack;
+	    const e2 = stack.pop();
+	    const e1 = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'GT[]', e2, e1); }
+	    if (exports.DEBUG) console.log(state.step, 'GT[]', e2, e1);
 
 	    stack.push(e1 > e2 ? 1 : 0);
 	}
@@ -10148,11 +10147,11 @@
 	// GTEQ[] Greater Than or EQual
 	// 0x53
 	function GTEQ(state) {
-	    var stack = state.stack;
-	    var e2 = stack.pop();
-	    var e1 = stack.pop();
+	    const stack = state.stack;
+	    const e2 = stack.pop();
+	    const e1 = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'GTEQ[]', e2, e1); }
+	    if (exports.DEBUG) console.log(state.step, 'GTEQ[]', e2, e1);
 
 	    stack.push(e1 >= e2 ? 1 : 0);
 	}
@@ -10160,11 +10159,11 @@
 	// EQ[] EQual
 	// 0x54
 	function EQ(state) {
-	    var stack = state.stack;
-	    var e2 = stack.pop();
-	    var e1 = stack.pop();
+	    const stack = state.stack;
+	    const e2 = stack.pop();
+	    const e1 = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'EQ[]', e2, e1); }
+	    if (exports.DEBUG) console.log(state.step, 'EQ[]', e2, e1);
 
 	    stack.push(e2 === e1 ? 1 : 0);
 	}
@@ -10172,11 +10171,11 @@
 	// NEQ[] Not EQual
 	// 0x55
 	function NEQ(state) {
-	    var stack = state.stack;
-	    var e2 = stack.pop();
-	    var e1 = stack.pop();
+	    const stack = state.stack;
+	    const e2 = stack.pop();
+	    const e1 = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'NEQ[]', e2, e1); }
+	    if (exports.DEBUG) console.log(state.step, 'NEQ[]', e2, e1);
 
 	    stack.push(e2 !== e1 ? 1 : 0);
 	}
@@ -10184,10 +10183,10 @@
 	// ODD[] ODD
 	// 0x56
 	function ODD(state) {
-	    var stack = state.stack;
-	    var n = stack.pop();
+	    const stack = state.stack;
+	    const n = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'ODD[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'ODD[]', n);
 
 	    stack.push(Math.trunc(n) % 2 ? 1 : 0);
 	}
@@ -10195,10 +10194,10 @@
 	// EVEN[] EVEN
 	// 0x57
 	function EVEN(state) {
-	    var stack = state.stack;
-	    var n = stack.pop();
+	    const stack = state.stack;
+	    const n = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'EVEN[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'EVEN[]', n);
 
 	    stack.push(Math.trunc(n) % 2 ? 0 : 1);
 	}
@@ -10206,16 +10205,16 @@
 	// IF[] IF test
 	// 0x58
 	function IF(state) {
-	    var test = state.stack.pop();
+	    let test = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'IF[]', test); }
+	    if (exports.DEBUG) console.log(state.step, 'IF[]', test);
 
 	    // if test is true it just continues
 	    // if not the ip is skipped until matching ELSE or EIF
 	    if (!test) {
 	        skip(state, true);
 
-	        if (exports.DEBUG) { console.log(state.step,  'EIF[]'); }
+	        if (exports.DEBUG) console.log(state.step,  'EIF[]');
 	    }
 	}
 
@@ -10226,17 +10225,17 @@
 	    // executing an else branch.
 	    // -> just ignore it
 
-	    if (exports.DEBUG) { console.log(state.step, 'EIF[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'EIF[]');
 	}
 
 	// AND[] logical AND
 	// 0x5A
 	function AND(state) {
-	    var stack = state.stack;
-	    var e2 = stack.pop();
-	    var e1 = stack.pop();
+	    const stack = state.stack;
+	    const e2 = stack.pop();
+	    const e1 = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'AND[]', e2, e1); }
+	    if (exports.DEBUG) console.log(state.step, 'AND[]', e2, e1);
 
 	    stack.push(e2 && e1 ? 1 : 0);
 	}
@@ -10244,11 +10243,11 @@
 	// OR[] logical OR
 	// 0x5B
 	function OR(state) {
-	    var stack = state.stack;
-	    var e2 = stack.pop();
-	    var e1 = stack.pop();
+	    const stack = state.stack;
+	    const e2 = stack.pop();
+	    const e1 = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'OR[]', e2, e1); }
+	    if (exports.DEBUG) console.log(state.step, 'OR[]', e2, e1);
 
 	    stack.push(e2 || e1 ? 1 : 0);
 	}
@@ -10256,10 +10255,10 @@
 	// NOT[] logical NOT
 	// 0x5C
 	function NOT(state) {
-	    var stack = state.stack;
-	    var e = stack.pop();
+	    const stack = state.stack;
+	    const e = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'NOT[]', e); }
+	    if (exports.DEBUG) console.log(state.step, 'NOT[]', e);
 
 	    stack.push(e ? 0 : 1);
 	}
@@ -10269,28 +10268,28 @@
 	// DELTAP3[] DELTA exception P3
 	// 0x5D, 0x71, 0x72
 	function DELTAP123(b, state) {
-	    var stack = state.stack;
-	    var n = stack.pop();
-	    var fv = state.fv;
-	    var pv = state.pv;
-	    var ppem = state.ppem;
-	    var base = state.deltaBase + (b - 1) * 16;
-	    var ds = state.deltaShift;
-	    var z0 = state.z0;
+	    const stack = state.stack;
+	    const n = stack.pop();
+	    const fv = state.fv;
+	    const pv = state.pv;
+	    const ppem = state.ppem;
+	    const base = state.deltaBase + (b - 1) * 16;
+	    const ds = state.deltaShift;
+	    const z0 = state.z0;
 
-	    if (exports.DEBUG) { console.log(state.step, 'DELTAP[' + b + ']', n, stack); }
+	    if (exports.DEBUG) console.log(state.step, 'DELTAP[' + b + ']', n, stack);
 
-	    for (var i = 0; i < n; i++) {
-	        var pi = stack.pop();
-	        var arg = stack.pop();
-	        var appem = base + ((arg & 0xF0) >> 4);
-	        if (appem !== ppem) { continue; }
+	    for (let i = 0; i < n; i++) {
+	        const pi = stack.pop();
+	        const arg = stack.pop();
+	        const appem = base + ((arg & 0xF0) >> 4);
+	        if (appem !== ppem) continue;
 
-	        var mag = (arg & 0x0F) - 8;
-	        if (mag >= 0) { mag++; }
-	        if (exports.DEBUG) { console.log(state.step, 'DELTAPFIX', pi, 'by', mag * ds); }
+	        let mag = (arg & 0x0F) - 8;
+	        if (mag >= 0) mag++;
+	        if (exports.DEBUG) console.log(state.step, 'DELTAPFIX', pi, 'by', mag * ds);
 
-	        var p = z0[pi];
+	        const p = z0[pi];
 	        fv.setRelative(p, p, mag * ds, pv);
 	    }
 	}
@@ -10298,10 +10297,10 @@
 	// SDB[] Set Delta Base in the graphics state
 	// 0x5E
 	function SDB(state) {
-	    var stack = state.stack;
-	    var n = stack.pop();
+	    const stack = state.stack;
+	    const n = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SDB[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'SDB[]', n);
 
 	    state.deltaBase = n;
 	}
@@ -10309,10 +10308,10 @@
 	// SDS[] Set Delta Shift in the graphics state
 	// 0x5F
 	function SDS(state) {
-	    var stack = state.stack;
-	    var n = stack.pop();
+	    const stack = state.stack;
+	    const n = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SDS[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'SDS[]', n);
 
 	    state.deltaShift = Math.pow(0.5, n);
 	}
@@ -10320,11 +10319,11 @@
 	// ADD[] ADD
 	// 0x60
 	function ADD(state) {
-	    var stack = state.stack;
-	    var n2 = stack.pop();
-	    var n1 = stack.pop();
+	    const stack = state.stack;
+	    const n2 = stack.pop();
+	    const n1 = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'ADD[]', n2, n1); }
+	    if (exports.DEBUG) console.log(state.step, 'ADD[]', n2, n1);
 
 	    stack.push(n1 + n2);
 	}
@@ -10332,11 +10331,11 @@
 	// SUB[] SUB
 	// 0x61
 	function SUB(state) {
-	    var stack = state.stack;
-	    var n2 = stack.pop();
-	    var n1 = stack.pop();
+	    const stack = state.stack;
+	    const n2 = stack.pop();
+	    const n1 = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SUB[]', n2, n1); }
+	    if (exports.DEBUG) console.log(state.step, 'SUB[]', n2, n1);
 
 	    stack.push(n1 - n2);
 	}
@@ -10344,11 +10343,11 @@
 	// DIV[] DIV
 	// 0x62
 	function DIV(state) {
-	    var stack = state.stack;
-	    var n2 = stack.pop();
-	    var n1 = stack.pop();
+	    const stack = state.stack;
+	    const n2 = stack.pop();
+	    const n1 = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'DIV[]', n2, n1); }
+	    if (exports.DEBUG) console.log(state.step, 'DIV[]', n2, n1);
 
 	    stack.push(n1 * 64 / n2);
 	}
@@ -10356,11 +10355,11 @@
 	// MUL[] MUL
 	// 0x63
 	function MUL(state) {
-	    var stack = state.stack;
-	    var n2 = stack.pop();
-	    var n1 = stack.pop();
+	    const stack = state.stack;
+	    const n2 = stack.pop();
+	    const n1 = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'MUL[]', n2, n1); }
+	    if (exports.DEBUG) console.log(state.step, 'MUL[]', n2, n1);
 
 	    stack.push(n1 * n2 / 64);
 	}
@@ -10368,10 +10367,10 @@
 	// ABS[] ABSolute value
 	// 0x64
 	function ABS(state) {
-	    var stack = state.stack;
-	    var n = stack.pop();
+	    const stack = state.stack;
+	    const n = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'ABS[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'ABS[]', n);
 
 	    stack.push(Math.abs(n));
 	}
@@ -10379,10 +10378,10 @@
 	// NEG[] NEGate
 	// 0x65
 	function NEG(state) {
-	    var stack = state.stack;
-	    var n = stack.pop();
+	    const stack = state.stack;
+	    let n = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'NEG[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'NEG[]', n);
 
 	    stack.push(-n);
 	}
@@ -10390,10 +10389,10 @@
 	// FLOOR[] FLOOR
 	// 0x66
 	function FLOOR(state) {
-	    var stack = state.stack;
-	    var n = stack.pop();
+	    const stack = state.stack;
+	    const n = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'FLOOR[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'FLOOR[]', n);
 
 	    stack.push(Math.floor(n / 0x40) * 0x40);
 	}
@@ -10401,10 +10400,10 @@
 	// CEILING[] CEILING
 	// 0x67
 	function CEILING(state) {
-	    var stack = state.stack;
-	    var n = stack.pop();
+	    const stack = state.stack;
+	    const n = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'CEILING[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'CEILING[]', n);
 
 	    stack.push(Math.ceil(n / 0x40) * 0x40);
 	}
@@ -10412,10 +10411,10 @@
 	// ROUND[ab] ROUND value
 	// 0x68-0x6B
 	function ROUND(dt, state) {
-	    var stack = state.stack;
-	    var n = stack.pop();
+	    const stack = state.stack;
+	    const n = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'ROUND[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'ROUND[]');
 
 	    stack.push(state.round(n / 0x40) * 0x40);
 	}
@@ -10423,11 +10422,11 @@
 	// WCVTF[] Write Control Value Table in Funits
 	// 0x70
 	function WCVTF(state) {
-	    var stack = state.stack;
-	    var v = stack.pop();
-	    var l = stack.pop();
+	    const stack = state.stack;
+	    const v = stack.pop();
+	    const l = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'WCVTF[]', v, l); }
+	    if (exports.DEBUG) console.log(state.step, 'WCVTF[]', v, l);
 
 	    state.cvt[l] = v * state.ppem / state.font.unitsPerEm;
 	}
@@ -10437,26 +10436,26 @@
 	// DELTAC3[] DELTA exception C3
 	// 0x73, 0x74, 0x75
 	function DELTAC123(b, state) {
-	    var stack = state.stack;
-	    var n = stack.pop();
-	    var ppem = state.ppem;
-	    var base = state.deltaBase + (b - 1) * 16;
-	    var ds = state.deltaShift;
+	    const stack = state.stack;
+	    const n = stack.pop();
+	    const ppem = state.ppem;
+	    const base = state.deltaBase + (b - 1) * 16;
+	    const ds = state.deltaShift;
 
-	    if (exports.DEBUG) { console.log(state.step, 'DELTAC[' + b + ']', n, stack); }
+	    if (exports.DEBUG) console.log(state.step, 'DELTAC[' + b + ']', n, stack);
 
-	    for (var i = 0; i < n; i++) {
-	        var c = stack.pop();
-	        var arg = stack.pop();
-	        var appem = base + ((arg & 0xF0) >> 4);
-	        if (appem !== ppem) { continue; }
+	    for (let i = 0; i < n; i++) {
+	        const c = stack.pop();
+	        const arg = stack.pop();
+	        const appem = base + ((arg & 0xF0) >> 4);
+	        if (appem !== ppem) continue;
 
-	        var mag = (arg & 0x0F) - 8;
-	        if (mag >= 0) { mag++; }
+	        let mag = (arg & 0x0F) - 8;
+	        if (mag >= 0) mag++;
 
-	        var delta = mag * ds;
+	        const delta = mag * ds;
 
-	        if (exports.DEBUG) { console.log(state.step, 'DELTACFIX', c, 'by', delta); }
+	        if (exports.DEBUG) console.log(state.step, 'DELTACFIX', c, 'by', delta);
 
 	        state.cvt[c] += delta;
 	    }
@@ -10465,13 +10464,13 @@
 	// SROUND[] Super ROUND
 	// 0x76
 	function SROUND(state) {
-	    var n = state.stack.pop();
+	    let n = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'SROUND[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'SROUND[]', n);
 
 	    state.round = roundSuper;
 
-	    var period;
+	    let period;
 
 	    switch (n & 0xC0) {
 	        case 0x00:
@@ -10507,20 +10506,20 @@
 
 	    n &= 0x0F;
 
-	    if (n === 0) { state.srThreshold = 0; }
-	    else { state.srThreshold = (n / 8 - 0.5) * period; }
+	    if (n === 0) state.srThreshold = 0;
+	    else state.srThreshold = (n / 8 - 0.5) * period;
 	}
 
 	// S45ROUND[] Super ROUND 45 degrees
 	// 0x77
 	function S45ROUND(state) {
-	    var n = state.stack.pop();
+	    let n = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'S45ROUND[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'S45ROUND[]', n);
 
 	    state.round = roundSuper;
 
-	    var period;
+	    let period;
 
 	    switch (n & 0xC0) {
 	        case 0x00:
@@ -10557,14 +10556,14 @@
 
 	    n &= 0x0F;
 
-	    if (n === 0) { state.srThreshold = 0; }
-	    else { state.srThreshold = (n / 8 - 0.5) * period; }
+	    if (n === 0) state.srThreshold = 0;
+	    else state.srThreshold = (n / 8 - 0.5) * period;
 	}
 
 	// ROFF[] Round Off
 	// 0x7A
 	function ROFF(state) {
-	    if (exports.DEBUG) { console.log(state.step, 'ROFF[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'ROFF[]');
 
 	    state.round = roundOff;
 	}
@@ -10572,7 +10571,7 @@
 	// RUTG[] Round Up To Grid
 	// 0x7C
 	function RUTG(state) {
-	    if (exports.DEBUG) { console.log(state.step, 'RUTG[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'RUTG[]');
 
 	    state.round = roundUpToGrid;
 	}
@@ -10580,7 +10579,7 @@
 	// RDTG[] Round Down To Grid
 	// 0x7D
 	function RDTG(state) {
-	    if (exports.DEBUG) { console.log(state.step, 'RDTG[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'RDTG[]');
 
 	    state.round = roundDownToGrid;
 	}
@@ -10588,26 +10587,26 @@
 	// SCANCTRL[] SCAN conversion ConTRoL
 	// 0x85
 	function SCANCTRL(state) {
-	    var n = state.stack.pop();
+	    const n = state.stack.pop();
 
 	    // ignored by opentype.js
 
-	    if (exports.DEBUG) { console.log(state.step, 'SCANCTRL[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'SCANCTRL[]', n);
 	}
 
 	// SDPVTL[a] Set Dual Projection Vector To Line
 	// 0x86-0x87
 	function SDPVTL(a, state) {
-	    var stack = state.stack;
-	    var p2i = stack.pop();
-	    var p1i = stack.pop();
-	    var p2 = state.z2[p2i];
-	    var p1 = state.z1[p1i];
+	    const stack = state.stack;
+	    const p2i = stack.pop();
+	    const p1i = stack.pop();
+	    const p2 = state.z2[p2i];
+	    const p1 = state.z1[p1i];
 
-	    if (exports.DEBUG) { console.log(state.step, 'SDPVTL[' + a + ']', p2i, p1i); }
+	    if (exports.DEBUG) console.log(state.step, 'SDPVTL[' + a + ']', p2i, p1i);
 
-	    var dx;
-	    var dy;
+	    let dx;
+	    let dy;
 
 	    if (!a) {
 	        dx = p1.x - p2.x;
@@ -10623,20 +10622,20 @@
 	// GETINFO[] GET INFOrmation
 	// 0x88
 	function GETINFO(state) {
-	    var stack = state.stack;
-	    var sel = stack.pop();
-	    var r = 0;
+	    const stack = state.stack;
+	    const sel = stack.pop();
+	    let r = 0;
 
-	    if (exports.DEBUG) { console.log(state.step, 'GETINFO[]', sel); }
+	    if (exports.DEBUG) console.log(state.step, 'GETINFO[]', sel);
 
 	    // v35 as in no subpixel hinting
-	    if (sel & 0x01) { r = 35; }
+	    if (sel & 0x01) r = 35;
 
 	    // TODO rotation and stretch currently not supported
 	    // and thus those GETINFO are always 0.
 
 	    // opentype.js is always gray scaling
-	    if (sel & 0x20) { r |= 0x1000; }
+	    if (sel & 0x20) r |= 0x1000;
 
 	    stack.push(r);
 	}
@@ -10644,12 +10643,12 @@
 	// ROLL[] ROLL the top three stack elements
 	// 0x8A
 	function ROLL(state) {
-	    var stack = state.stack;
-	    var a = stack.pop();
-	    var b = stack.pop();
-	    var c = stack.pop();
+	    const stack = state.stack;
+	    const a = stack.pop();
+	    const b = stack.pop();
+	    const c = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'ROLL[]'); }
+	    if (exports.DEBUG) console.log(state.step, 'ROLL[]');
 
 	    stack.push(b);
 	    stack.push(a);
@@ -10659,11 +10658,11 @@
 	// MAX[] MAXimum of top two stack elements
 	// 0x8B
 	function MAX(state) {
-	    var stack = state.stack;
-	    var e2 = stack.pop();
-	    var e1 = stack.pop();
+	    const stack = state.stack;
+	    const e2 = stack.pop();
+	    const e1 = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'MAX[]', e2, e1); }
+	    if (exports.DEBUG) console.log(state.step, 'MAX[]', e2, e1);
 
 	    stack.push(Math.max(e1, e2));
 	}
@@ -10671,11 +10670,11 @@
 	// MIN[] MINimum of top two stack elements
 	// 0x8C
 	function MIN(state) {
-	    var stack = state.stack;
-	    var e2 = stack.pop();
-	    var e1 = stack.pop();
+	    const stack = state.stack;
+	    const e2 = stack.pop();
+	    const e1 = stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'MIN[]', e2, e1); }
+	    if (exports.DEBUG) console.log(state.step, 'MIN[]', e2, e1);
 
 	    stack.push(Math.min(e1, e2));
 	}
@@ -10683,18 +10682,18 @@
 	// SCANTYPE[] SCANTYPE
 	// 0x8D
 	function SCANTYPE(state) {
-	    var n = state.stack.pop();
+	    const n = state.stack.pop();
 	    // ignored by opentype.js
-	    if (exports.DEBUG) { console.log(state.step, 'SCANTYPE[]', n); }
+	    if (exports.DEBUG) console.log(state.step, 'SCANTYPE[]', n);
 	}
 
 	// INSTCTRL[] INSTCTRL
 	// 0x8D
 	function INSTCTRL(state) {
-	    var s = state.stack.pop();
-	    var v = state.stack.pop();
+	    const s = state.stack.pop();
+	    let v = state.stack.pop();
 
-	    if (exports.DEBUG) { console.log(state.step, 'INSTCTRL[]', s, v); }
+	    if (exports.DEBUG) console.log(state.step, 'INSTCTRL[]', s, v);
 
 	    switch (s) {
 	        case 1 : state.inhibitGridFit = !!v; return;
@@ -10706,13 +10705,13 @@
 	// PUSHB[abc] PUSH Bytes
 	// 0xB0-0xB7
 	function PUSHB(n, state) {
-	    var stack = state.stack;
-	    var prog = state.prog;
-	    var ip = state.ip;
+	    const stack = state.stack;
+	    const prog = state.prog;
+	    let ip = state.ip;
 
-	    if (exports.DEBUG) { console.log(state.step, 'PUSHB[' + n + ']'); }
+	    if (exports.DEBUG) console.log(state.step, 'PUSHB[' + n + ']');
 
-	    for (var i = 0; i < n; i++) { stack.push(prog[++ip]); }
+	    for (let i = 0; i < n; i++) stack.push(prog[++ip]);
 
 	    state.ip = ip;
 	}
@@ -10720,15 +10719,15 @@
 	// PUSHW[abc] PUSH Words
 	// 0xB8-0xBF
 	function PUSHW(n, state) {
-	    var ip = state.ip;
-	    var prog = state.prog;
-	    var stack = state.stack;
+	    let ip = state.ip;
+	    const prog = state.prog;
+	    const stack = state.stack;
 
-	    if (exports.DEBUG) { console.log(state.ip, 'PUSHW[' + n + ']'); }
+	    if (exports.DEBUG) console.log(state.ip, 'PUSHW[' + n + ']');
 
-	    for (var i = 0; i < n; i++) {
-	        var w = (prog[++ip] << 8) | prog[++ip];
-	        if (w & 0x8000) { w = -((w ^ 0xffff) + 1); }
+	    for (let i = 0; i < n; i++) {
+	        let w = (prog[++ip] << 8) | prog[++ip];
+	        if (w & 0x8000) w = -((w ^ 0xffff) + 1);
 	        stack.push(w);
 	    }
 
@@ -10746,20 +10745,20 @@
 	// (if indirect is 1)
 
 	function MDRP_MIRP(indirect, setRp0, keepD, ro, dt, state) {
-	    var stack = state.stack;
-	    var cvte = indirect && stack.pop();
-	    var pi = stack.pop();
-	    var rp0i = state.rp0;
-	    var rp = state.z0[rp0i];
-	    var p = state.z1[pi];
+	    const stack = state.stack;
+	    const cvte = indirect && stack.pop();
+	    const pi = stack.pop();
+	    const rp0i = state.rp0;
+	    const rp = state.z0[rp0i];
+	    const p = state.z1[pi];
 
-	    var md = state.minDis;
-	    var fv = state.fv;
-	    var pv = state.dpv;
-	    var od; // original distance
-	    var d; // moving distance
-	    var sign; // sign of distance
-	    var cv;
+	    const md = state.minDis;
+	    const fv = state.fv;
+	    const pv = state.dpv;
+	    let od; // original distance
+	    let d; // moving distance
+	    let sign; // sign of distance
+	    let cv;
 
 	    d = od = pv.distance(p, rp, true, true);
 	    sign = d >= 0 ? 1 : -1; // Math.sign would be 0 in case of 0
@@ -10770,12 +10769,12 @@
 	    if (indirect) {
 	        cv = state.cvt[cvte];
 
-	        if (ro && Math.abs(d - cv) < state.cvCutIn) { d = cv; }
+	        if (ro && Math.abs(d - cv) < state.cvCutIn) d = cv;
 	    }
 
-	    if (keepD && d < md) { d = md; }
+	    if (keepD && d < md) d = md;
 
-	    if (ro) { d = state.round(d); }
+	    if (ro) d = state.round(d);
 
 	    fv.setRelative(p, rp, sign * d, pv);
 	    fv.touch(p);
@@ -10799,7 +10798,7 @@
 
 	    state.rp1 = state.rp0;
 	    state.rp2 = pi;
-	    if (setRp0) { state.rp0 = pi; }
+	    if (setRp0) state.rp0 = pi;
 	}
 
 	/*
@@ -11372,35 +11371,33 @@
 	 * @param {any} events an object that enlists core events handlers
 	 */
 	function initializeCoreEvents(events) {
-	    var this$1 = this;
-
-	    var coreEvents = [
+	    const coreEvents = [
 	        'start', 'end', 'next', 'newToken', 'contextStart',
 	        'contextEnd', 'insertToken', 'removeToken', 'removeRange',
 	        'replaceToken', 'replaceRange', 'composeRUD', 'updateContextsRanges'
 	    ];
 
-	    coreEvents.forEach(function (eventId) {
-	        Object.defineProperty(this$1.events, eventId, {
+	    coreEvents.forEach(eventId => {
+	        Object.defineProperty(this.events, eventId, {
 	            value: new Event(eventId)
 	        });
 	    });
 
 	    if (!!events) {
-	        coreEvents.forEach(function (eventId) {
-	            var event = events[eventId];
+	        coreEvents.forEach(eventId => {
+	            const event = events[eventId];
 	            if (typeof event === 'function') {
-	                this$1.events[eventId].subscribe(event);
+	                this.events[eventId].subscribe(event);
 	            }
 	        });
 	    }
-	    var requiresContextUpdate = [
+	    const requiresContextUpdate = [
 	        'insertToken', 'removeToken', 'removeRange',
 	        'replaceToken', 'replaceRange', 'composeRUD'
 	    ];
-	    requiresContextUpdate.forEach(function (eventId) {
-	        this$1.events[eventId].subscribe(
-	            this$1.updateContextsRanges
+	    requiresContextUpdate.forEach(eventId => {
+	        this.events[eventId].subscribe(
+	            this.updateContextsRanges
 	        );
 	    });
 	}
@@ -11426,7 +11423,7 @@
 	 */
 	Token.prototype.setState = function(key, value) {
 	    this.state[key] = value;
-	    this.activeState = { key: key, value: this.state[key] };
+	    this.activeState = { key, value: this.state[key] };
 	    return this.activeState;
 	};
 
@@ -11448,23 +11445,21 @@
 	 * TODO: Perf. Optimization (lengthBefore === lengthAfter ? dispatch once)
 	 */
 	Tokenizer.prototype.composeRUD = function (RUDs) {
-	    var this$1 = this;
-
-	    var silent = true;
-	    var state = RUDs.map(function (RUD) { return (
-	        this$1[RUD[0]].apply(this$1, RUD.slice(1).concat(silent))
-	    ); });
-	    var hasFAILObject = function (obj) { return (
+	    const silent = true;
+	    const state = RUDs.map(RUD => (
+	        this[RUD[0]].apply(this, RUD.slice(1).concat(silent))
+	    ));
+	    const hasFAILObject = obj => (
 	        typeof obj === 'object' &&
 	        obj.hasOwnProperty('FAIL')
-	    ); };
+	    );
 	    if (state.every(hasFAILObject)) {
 	        return {
-	            FAIL: "composeRUD: one or more operations hasn't completed successfully",
+	            FAIL: `composeRUD: one or more operations hasn't completed successfully`,
 	            report: state.filter(hasFAILObject)
 	        };
 	    }
-	    this.dispatch('composeRUD', [state.filter(function (op) { return !hasFAILObject(op); })]);
+	    this.dispatch('composeRUD', [state.filter(op => !hasFAILObject(op))]);
 	};
 
 	/**
@@ -11476,12 +11471,12 @@
 	 */
 	Tokenizer.prototype.replaceRange = function (startIndex, offset, tokens, silent) {
 	    offset = offset !== null ? offset : this.tokens.length;
-	    var isTokenType = tokens.every(function (token) { return token instanceof Token; });
+	    const isTokenType = tokens.every(token => token instanceof Token);
 	    if (!isNaN(startIndex) && this.inboundIndex(startIndex) && isTokenType) {
-	        var replaced = this.tokens.splice.apply(
+	        const replaced = this.tokens.splice.apply(
 	            this.tokens, [startIndex, offset].concat(tokens)
 	        );
-	        if (!silent) { this.dispatch('replaceToken', [startIndex, offset, tokens]); }
+	        if (!silent) this.dispatch('replaceToken', [startIndex, offset, tokens]);
 	        return [replaced, tokens];
 	    } else {
 	        return { FAIL: 'replaceRange: invalid tokens or startIndex.' };
@@ -11496,8 +11491,8 @@
 	 */
 	Tokenizer.prototype.replaceToken = function (index, token, silent) {
 	    if (!isNaN(index) && this.inboundIndex(index) && token instanceof Token) {
-	        var replaced = this.tokens.splice(index, 1, token);
-	        if (!silent) { this.dispatch('replaceToken', [index, token]); }
+	        const replaced = this.tokens.splice(index, 1, token);
+	        if (!silent) this.dispatch('replaceToken', [index, token]);
 	        return [replaced[0], token];
 	    } else {
 	        return { FAIL: 'replaceToken: invalid token or index.' };
@@ -11512,8 +11507,8 @@
 	 */
 	Tokenizer.prototype.removeRange = function(startIndex, offset, silent) {
 	    offset = !isNaN(offset) ? offset : this.tokens.length;
-	    var tokens = this.tokens.splice(startIndex, offset);
-	    if (!silent) { this.dispatch('removeRange', [tokens, startIndex, offset]); }
+	    const tokens = this.tokens.splice(startIndex, offset);
+	    if (!silent) this.dispatch('removeRange', [tokens, startIndex, offset]);
 	    return tokens;
 	};
 
@@ -11524,8 +11519,8 @@
 	 */
 	Tokenizer.prototype.removeToken = function(index, silent) {
 	    if (!isNaN(index) && this.inboundIndex(index)) {
-	        var token = this.tokens.splice(index, 1);
-	        if (!silent) { this.dispatch('removeToken', [token, index]); }
+	        const token = this.tokens.splice(index, 1);
+	        if (!silent) this.dispatch('removeToken', [token, index]);
 	        return token;
 	    } else {
 	        return { FAIL: 'removeToken: invalid token index.' };
@@ -11539,14 +11534,14 @@
 	 * @param {boolean} silent dispatch events and update context ranges
 	 */
 	Tokenizer.prototype.insertToken = function (tokens, index, silent) {
-	    var tokenType = tokens.every(
-	        function (token) { return token instanceof Token; }
+	    const tokenType = tokens.every(
+	        token => token instanceof Token
 	    );
 	    if (tokenType) {
 	        this.tokens.splice.apply(
 	            this.tokens, [index, 0].concat(tokens)
 	        );
-	        if (!silent) { this.dispatch('insertToken', [tokens, index]); }
+	        if (!silent) this.dispatch('insertToken', [tokens, index]);
 	        return tokens;
 	    } else {
 	        return { FAIL: 'insertToken: invalid token(s).' };
@@ -11561,14 +11556,14 @@
 	 */
 	Tokenizer.prototype.registerModifier = function(modifierId, condition, modifier) {
 	    this.events.newToken.subscribe(function(token, contextParams) {
-	        var conditionParams = [token, contextParams];
-	        var canApplyModifier = (
+	        const conditionParams = [token, contextParams];
+	        const canApplyModifier = (
 	            condition === null ||
 	            condition.apply(this, conditionParams) === true
 	        );
-	        var modifierParams = [token, contextParams];
+	        const modifierParams = [token, contextParams];
 	        if (canApplyModifier) {
-	            var newStateValue = modifier.apply(this, modifierParams);
+	            let newStateValue = modifier.apply(this, modifierParams);
 	            token.setState(modifierId, newStateValue);
 	        }
 	    });
@@ -11583,7 +11578,7 @@
 	    if (typeof eventHandler === 'function') {
 	        return ((this.subscribers.push(eventHandler)) - 1);
 	    } else {
-	        return { FAIL: ("invalid '" + (this.eventId) + "' event handler")};
+	        return { FAIL: `invalid '${this.eventId}' event handler`};
 	    }
 	};
 
@@ -11634,7 +11629,7 @@
 	    if (range instanceof ContextRange) {
 	        return (
 	            this.getRangeTokens(range)
-	                .map(function (token) { return token.char; }).join('')
+	                .map(token => token.char).join('')
 	        );
 	    }
 	};
@@ -11643,7 +11638,7 @@
 	 * Converts all tokens into a string
 	 */
 	Tokenizer.prototype.getText = function () {
-	    return this.tokens.map(function (token) { return token.char; }).join('');
+	    return this.tokens.map(token => token.char).join('');
 	};
 
 	/**
@@ -11651,7 +11646,7 @@
 	 * @param {string} contextName context name to get
 	 */
 	Tokenizer.prototype.getContext = function (contextName) {
-	    var context = this.registeredContexts[contextName];
+	    let context = this.registeredContexts[contextName];
 	    return !!context ? context : null;
 	};
 
@@ -11661,7 +11656,7 @@
 	 * @param {function} eventHandler a function to be invoked on event
 	 */
 	Tokenizer.prototype.on = function(eventName, eventHandler) {
-	    var event = this.events[eventName];
+	    const event = this.events[eventName];
 	    if (!!event) {
 	        return event.subscribe(eventHandler);
 	    } else {
@@ -11675,12 +11670,10 @@
 	 * @param {any} args event handler arguments
 	 */
 	Tokenizer.prototype.dispatch = function(eventName, args) {
-	    var this$1 = this;
-
-	    var event = this.events[eventName];
+	    const event = this.events[eventName];
 	    if (event instanceof Event) {
-	        event.subscribers.forEach(function (subscriber) {
-	            subscriber.apply(this$1, args || []);
+	        event.subscribers.forEach(subscriber => {
+	            subscriber.apply(this, args || []);
 	        });
 	    }
 	};
@@ -11693,19 +11686,19 @@
 	 * TODO: call tokenize on registration to update context ranges with the new context.
 	 */
 	Tokenizer.prototype.registerContextChecker = function(contextName, contextStartCheck, contextEndCheck) {
-	    if (!!this.getContext(contextName)) { return {
+	    if (!!this.getContext(contextName)) return {
 	        FAIL:
-	        ("context name '" + contextName + "' is already registered.")
-	    }; }
-	    if (typeof contextStartCheck !== 'function') { return {
+	        `context name '${contextName}' is already registered.`
+	    };
+	    if (typeof contextStartCheck !== 'function') return {
 	        FAIL:
-	        "missing context start check."
-	    }; }
-	    if (typeof contextEndCheck !== 'function') { return {
+	        `missing context start check.`
+	    };
+	    if (typeof contextEndCheck !== 'function') return {
 	        FAIL:
-	        "missing context end check."
-	    }; }
-	    var contextCheckers = new ContextChecker(
+	        `missing context end check.`
+	    };
+	    const contextCheckers = new ContextChecker(
 	        contextName, contextStartCheck, contextEndCheck
 	    );
 	    this.registeredContexts[contextName] = contextCheckers;
@@ -11718,7 +11711,7 @@
 	 * @param {contextRange} range a context range
 	 */
 	Tokenizer.prototype.getRangeTokens = function(range) {
-	    var endIndex = range.startIndex + range.endOffset;
+	    const endIndex = range.startIndex + range.endOffset;
 	    return [].concat(
 	        this.tokens
 	            .slice(range.startIndex, endIndex)
@@ -11730,11 +11723,11 @@
 	 * @param {string} contextName context name
 	 */
 	Tokenizer.prototype.getContextRanges = function(contextName) {
-	    var context = this.getContext(contextName);
+	    const context = this.getContext(contextName);
 	    if (!!context) {
 	        return context.ranges;
 	    } else {
-	        return { FAIL: ("context checker '" + contextName + "' is not registered.") };
+	        return { FAIL: `context checker '${contextName}' is not registered.` };
 	    }
 	};
 
@@ -11742,10 +11735,10 @@
 	 * Resets context ranges to run context update
 	 */
 	Tokenizer.prototype.resetContextsRanges = function () {
-	    var registeredContexts = this.registeredContexts;
-	    for (var contextName in registeredContexts) {
+	    const registeredContexts = this.registeredContexts;
+	    for (const contextName in registeredContexts) {
 	        if (registeredContexts.hasOwnProperty(contextName)) {
-	            var context = registeredContexts[contextName];
+	            const context = registeredContexts[contextName];
 	            context.ranges = [];
 	        }
 	    }
@@ -11756,9 +11749,9 @@
 	 */
 	Tokenizer.prototype.updateContextsRanges = function () {
 	    this.resetContextsRanges();
-	    var chars = this.tokens.map(function (token) { return token.char; });
-	    for (var i = 0; i < chars.length; i++) {
-	        var contextParams = new ContextParams(chars, i);
+	    const chars = this.tokens.map(token => token.char);
+	    for (let i = 0; i < chars.length; i++) {
+	        const contextParams = new ContextParams(chars, i);
 	        this.runContextCheck(contextParams);
 	    }
 	    this.dispatch('updateContextsRanges', [this.registeredContexts]);
@@ -11770,10 +11763,10 @@
 	 * @param {string} contextName context name
 	 */
 	Tokenizer.prototype.setEndOffset = function (offset, contextName) {
-	    var startIndex = this.getContext(contextName).openRange.startIndex;
-	    var range = new ContextRange(startIndex, offset, contextName);
-	    var ranges = this.getContext(contextName).ranges;
-	    range.rangeId = contextName + "." + (ranges.length);
+	    const startIndex = this.getContext(contextName).openRange.startIndex;
+	    let range = new ContextRange(startIndex, offset, contextName);
+	    const ranges = this.getContext(contextName).ranges;
+	    range.rangeId = `${contextName}.${ranges.length}`;
 	    ranges.push(range);
 	    this.getContext(contextName).openRange = null;
 	    return range;
@@ -11784,21 +11777,19 @@
 	 * @param {contextParams} contextParams current context params
 	 */
 	Tokenizer.prototype.runContextCheck = function(contextParams) {
-	    var this$1 = this;
-
-	    var index = contextParams.index;
-	    this.contextCheckers.forEach(function (contextChecker) {
-	        var contextName = contextChecker.contextName;
-	        var openRange = this$1.getContext(contextName).openRange;
+	    const index = contextParams.index;
+	    this.contextCheckers.forEach(contextChecker => {
+	        let contextName = contextChecker.contextName;
+	        let openRange = this.getContext(contextName).openRange;
 	        if (!openRange && contextChecker.checkStart(contextParams)) {
 	            openRange = new ContextRange(index, null, contextName);
-	            this$1.getContext(contextName).openRange = openRange;
-	            this$1.dispatch('contextStart', [contextName, index]);
+	            this.getContext(contextName).openRange = openRange;
+	            this.dispatch('contextStart', [contextName, index]);
 	        }
 	        if (!!openRange && contextChecker.checkEnd(contextParams)) {
-	            var offset = (index - openRange.startIndex) + 1;
-	            var range = this$1.setEndOffset(offset, contextName);
-	            this$1.dispatch('contextEnd', [contextName, range]);
+	            const offset = (index - openRange.startIndex) + 1;
+	            const range = this.setEndOffset(offset, contextName);
+	            this.dispatch('contextEnd', [contextName, range]);
 	        }
 	    });
 	};
@@ -11810,14 +11801,14 @@
 	Tokenizer.prototype.tokenize = function (text) {
 	    this.tokens = [];
 	    this.resetContextsRanges();
-	    var chars = Array.from(text);
+	    let chars = Array.from(text);
 	    this.dispatch('start');
-	    for (var i = 0; i < chars.length; i++) {
-	        var char = chars[i];
-	        var contextParams = new ContextParams(chars, i);
+	    for (let i = 0; i < chars.length; i++) {
+	        const char = chars[i];
+	        const contextParams = new ContextParams(chars, i);
 	        this.dispatch('next', [contextParams]);
 	        this.runContextCheck(contextParams);
-	        var token = new Token(char);
+	        let token = new Token(char);
 	        this.tokens.push(token);
 	        this.dispatch('newToken', [token, contextParams]);
 	    }
@@ -11906,17 +11897,17 @@
 	 * @param {CoverageTable} coverage coverage table
 	 */
 	function lookupCoverage(glyphIndex, coverage) {
-	    if (!glyphIndex) { return -1; }
+	    if (!glyphIndex) return -1;
 	    switch (coverage.format) {
 	        case 1:
 	            return coverage.glyphs.indexOf(glyphIndex);
 
 	        case 2:
-	            var ranges = coverage.ranges;
-	            for (var i = 0; i < ranges.length; i++) {
-	                var range = ranges[i];
+	            let ranges = coverage.ranges;
+	            for (let i = 0; i < ranges.length; i++) {
+	                const range = ranges[i];
 	                if (glyphIndex >= range.start && glyphIndex <= range.end) {
-	                    var offset = glyphIndex - range.start;
+	                    let offset = glyphIndex - range.start;
 	                    return range.index + offset;
 	                }
 	            }
@@ -11932,8 +11923,8 @@
 	 * @param {ContextParams} contextParams context params to lookup
 	 */
 	function singleSubstitutionFormat1(glyphIndex, subtable) {
-	    var substituteIndex = lookupCoverage(glyphIndex, subtable.coverage);
-	    if (substituteIndex === -1) { return null; }
+	    let substituteIndex = lookupCoverage(glyphIndex, subtable.coverage);
+	    if (substituteIndex === -1) return null;
 	    return glyphIndex + subtable.deltaGlyphId;
 	}
 
@@ -11942,8 +11933,8 @@
 	 * @param {ContextParams} contextParams context params to lookup
 	 */
 	function singleSubstitutionFormat2(glyphIndex, subtable) {
-	    var substituteIndex = lookupCoverage(glyphIndex, subtable.coverage);
-	    if (substituteIndex === -1) { return null; }
+	    let substituteIndex = lookupCoverage(glyphIndex, subtable.coverage);
+	    if (substituteIndex === -1) return null;
 	    return subtable.substitute[substituteIndex];
 	}
 
@@ -11953,17 +11944,17 @@
 	 * @param {ContextParams} contextParams context params to lookup
 	 */
 	function lookupCoverageList(coverageList, contextParams) {
-	    var lookupList = [];
-	    for (var i = 0; i < coverageList.length; i++) {
-	        var coverage = coverageList[i];
-	        var glyphIndex = contextParams.current;
+	    let lookupList = [];
+	    for (let i = 0; i < coverageList.length; i++) {
+	        const coverage = coverageList[i];
+	        let glyphIndex = contextParams.current;
 	        glyphIndex = Array.isArray(glyphIndex) ? glyphIndex[0] : glyphIndex;
-	        var lookupIndex = lookupCoverage(glyphIndex, coverage);
+	        const lookupIndex = lookupCoverage(glyphIndex, coverage);
 	        if (lookupIndex !== -1) {
 	            lookupList.push(lookupIndex);
 	        }
 	    }
-	    if (lookupList.length !== coverageList.length) { return -1; }
+	    if (lookupList.length !== coverageList.length) return -1;
 	    return lookupList;
 	}
 
@@ -11972,59 +11963,59 @@
 	 * @param {ContextParams} contextParams context params to lookup
 	 */
 	function chainingSubstitutionFormat3(contextParams, subtable) {
-	    var lookupsCount = (
+	    const lookupsCount = (
 	        subtable.inputCoverage.length +
 	        subtable.lookaheadCoverage.length +
 	        subtable.backtrackCoverage.length
 	    );
-	    if (contextParams.context.length < lookupsCount) { return []; }
+	    if (contextParams.context.length < lookupsCount) return [];
 	    // INPUT LOOKUP //
-	    var inputLookups = lookupCoverageList(
+	    let inputLookups = lookupCoverageList(
 	        subtable.inputCoverage, contextParams
 	    );
-	    if (inputLookups === -1) { return []; }
+	    if (inputLookups === -1) return [];
 	    // LOOKAHEAD LOOKUP //
-	    var lookaheadOffset = subtable.inputCoverage.length - 1;
-	    if (contextParams.lookahead.length < subtable.lookaheadCoverage.length) { return []; }
-	    var lookaheadContext = contextParams.lookahead.slice(lookaheadOffset);
+	    const lookaheadOffset = subtable.inputCoverage.length - 1;
+	    if (contextParams.lookahead.length < subtable.lookaheadCoverage.length) return [];
+	    let lookaheadContext = contextParams.lookahead.slice(lookaheadOffset);
 	    while (lookaheadContext.length && isTashkeelArabicChar(lookaheadContext[0].char)) {
 	        lookaheadContext.shift();
 	    }
-	    var lookaheadParams = new ContextParams(lookaheadContext, 0);
-	    var lookaheadLookups = lookupCoverageList(
+	    const lookaheadParams = new ContextParams(lookaheadContext, 0);
+	    let lookaheadLookups = lookupCoverageList(
 	        subtable.lookaheadCoverage, lookaheadParams
 	    );
 	    // BACKTRACK LOOKUP //
-	    var backtrackContext = [].concat(contextParams.backtrack);
+	    let backtrackContext = [].concat(contextParams.backtrack);
 	    backtrackContext.reverse();
 	    while (backtrackContext.length && isTashkeelArabicChar(backtrackContext[0].char)) {
 	        backtrackContext.shift();
 	    }
-	    if (backtrackContext.length < subtable.backtrackCoverage.length) { return []; }
-	    var backtrackParams = new ContextParams(backtrackContext, 0);
-	    var backtrackLookups = lookupCoverageList(
+	    if (backtrackContext.length < subtable.backtrackCoverage.length) return [];
+	    const backtrackParams = new ContextParams(backtrackContext, 0);
+	    let backtrackLookups = lookupCoverageList(
 	        subtable.backtrackCoverage, backtrackParams
 	    );
-	    var contextRulesMatch = (
+	    const contextRulesMatch = (
 	        inputLookups.length === subtable.inputCoverage.length &&
 	        lookaheadLookups.length === subtable.lookaheadCoverage.length &&
 	        backtrackLookups.length === subtable.backtrackCoverage.length
 	    );
-	    var substitutions = [];
+	    let substitutions = [];
 	    if (contextRulesMatch) {
-	        for (var i = 0; i < subtable.lookupRecords.length; i++) {
-	            var lookupRecord = subtable.lookupRecords[i];
-	            var lookupListIndex = lookupRecord.lookupListIndex;
-	            var lookupTable = this.getLookupByIndex(lookupListIndex);
-	            for (var s = 0; s < lookupTable.subtables.length; s++) {
-	                var subtable$1 = lookupTable.subtables[s];
-	                var lookup = this.getLookupMethod(lookupTable, subtable$1);
-	                var substitutionType = this.getSubstitutionType(lookupTable, subtable$1);
+	        for (let i = 0; i < subtable.lookupRecords.length; i++) {
+	            const lookupRecord = subtable.lookupRecords[i];
+	            const lookupListIndex = lookupRecord.lookupListIndex;
+	            const lookupTable = this.getLookupByIndex(lookupListIndex);
+	            for (let s = 0; s < lookupTable.subtables.length; s++) {
+	                const subtable = lookupTable.subtables[s];
+	                const lookup = this.getLookupMethod(lookupTable, subtable);
+	                const substitutionType = this.getSubstitutionType(lookupTable, subtable);
 	                if (substitutionType === '12') {
-	                    for (var n = 0; n < inputLookups.length; n++) {
-	                        var glyphIndex = contextParams.get(n);
-	                        var substitution = lookup(glyphIndex);
-	                        if (substitution) { substitutions.push(substitution); }
+	                    for (let n = 0; n < inputLookups.length; n++) {
+	                        const glyphIndex = contextParams.get(n);
+	                        const substitution = lookup(glyphIndex);
+	                        if (substitution) substitutions.push(substitution);
 	                    }
 	                }
 	            }
@@ -12039,20 +12030,20 @@
 	 */
 	function ligatureSubstitutionFormat1(contextParams, subtable) {
 	    // COVERAGE LOOKUP //
-	    var glyphIndex = contextParams.current;
-	    var ligSetIndex = lookupCoverage(glyphIndex, subtable.coverage);
-	    if (ligSetIndex === -1) { return null; }
+	    let glyphIndex = contextParams.current;
+	    let ligSetIndex = lookupCoverage(glyphIndex, subtable.coverage);
+	    if (ligSetIndex === -1) return null;
 	    // COMPONENTS LOOKUP
 	    // (!) note, components are ordered in the written direction.
-	    var ligature;
-	    var ligatureSet = subtable.ligatureSets[ligSetIndex];
-	    for (var s = 0; s < ligatureSet.length; s++) {
+	    let ligature;
+	    let ligatureSet = subtable.ligatureSets[ligSetIndex];
+	    for (let s = 0; s < ligatureSet.length; s++) {
 	        ligature = ligatureSet[s];
-	        for (var l = 0; l < ligature.components.length; l++) {
-	            var lookaheadItem = contextParams.lookahead[l];
-	            var component = ligature.components[l];
-	            if (lookaheadItem !== component) { break; }
-	            if (l === ligature.components.length - 1) { return ligature; }
+	        for (let l = 0; l < ligature.components.length; l++) {
+	            const lookaheadItem = contextParams.lookahead[l];
+	            const component = ligature.components[l];
+	            if (lookaheadItem !== component) break;
+	            if (l === ligature.components.length - 1) return ligature;
 	        }
 	    }
 	    return null;
@@ -12064,8 +12055,8 @@
 	 * @param {any} subtable subtable
 	 */
 	function decompositionSubstitutionFormat1(glyphIndex, subtable) {
-	    var substituteIndex = lookupCoverage(glyphIndex, subtable.coverage);
-	    if (substituteIndex === -1) { return null; }
+	    let substituteIndex = lookupCoverage(glyphIndex, subtable.coverage);
+	    if (substituteIndex === -1) return null;
 	    return subtable.sequences[substituteIndex];
 	}
 
@@ -12073,12 +12064,12 @@
 	 * Get default script features indexes
 	 */
 	FeatureQuery.prototype.getDefaultScriptFeaturesIndexes = function () {
-	    var scripts = this.font.tables.gsub.scripts;
-	    for (var s = 0; s < scripts.length; s++) {
-	        var script = scripts[s];
-	        if (script.tag === 'DFLT') { return (
+	    const scripts = this.font.tables.gsub.scripts;
+	    for (let s = 0; s < scripts.length; s++) {
+	        const script = scripts[s];
+	        if (script.tag === 'DFLT') return (
 	            script.script.defaultLangSys.featureIndexes
-	        ); }
+	        );
 	    }
 	    return [];
 	};
@@ -12088,21 +12079,21 @@
 	 * @param {string} scriptTag script tag
 	 */
 	FeatureQuery.prototype.getScriptFeaturesIndexes = function(scriptTag) {
-	    var tables = this.font.tables;
-	    if (!tables.gsub) { return []; }
-	    if (!scriptTag) { return this.getDefaultScriptFeaturesIndexes(); }
-	    var scripts = this.font.tables.gsub.scripts;
-	    for (var i = 0; i < scripts.length; i++) {
-	        var script = scripts[i];
+	    const tables = this.font.tables;
+	    if (!tables.gsub) return [];
+	    if (!scriptTag) return this.getDefaultScriptFeaturesIndexes();
+	    const scripts = this.font.tables.gsub.scripts;
+	    for (let i = 0; i < scripts.length; i++) {
+	        const script = scripts[i];
 	        if (script.tag === scriptTag && script.script.defaultLangSys) {
 	            return script.script.defaultLangSys.featureIndexes;
 	        } else {
-	            var langSysRecords = script.langSysRecords;
+	            let langSysRecords = script.langSysRecords;
 	            if (!!langSysRecords) {
-	                for (var j = 0; j < langSysRecords.length; j++) {
-	                    var langSysRecord = langSysRecords[j];
+	                for (let j = 0; j < langSysRecords.length; j++) {
+	                    const langSysRecord = langSysRecords[j];
 	                    if (langSysRecord.tag === scriptTag) {
-	                        var langSys = langSysRecord.langSys;
+	                        let langSys = langSysRecord.langSys;
 	                        return langSys.featureIndexes;
 	                    }
 	                }
@@ -12118,10 +12109,10 @@
 	 * @param {string} scriptTag script tag
 	 */
 	FeatureQuery.prototype.mapTagsToFeatures = function (features, scriptTag) {
-	    var tags = {};
-	    for (var i = 0; i < features.length; i++) {
-	        var tag = features[i].tag;
-	        var feature = features[i].feature;
+	    let tags = {};
+	    for (let i = 0; i < features.length; i++) {
+	        const tag = features[i].tag;
+	        const feature = features[i].feature;
 	        tags[tag] = feature;
 	    }
 	    this.features[scriptTag].tags = tags;
@@ -12132,12 +12123,12 @@
 	 * @param {string} scriptTag script tag
 	 */
 	FeatureQuery.prototype.getScriptFeatures = function (scriptTag) {
-	    var features = this.features[scriptTag];
-	    if (this.features.hasOwnProperty(scriptTag)) { return features; }
-	    var featuresIndexes = this.getScriptFeaturesIndexes(scriptTag);
-	    if (!featuresIndexes) { return null; }
-	    var gsub = this.font.tables.gsub;
-	    features = featuresIndexes.map(function (index) { return gsub.features[index]; });
+	    let features = this.features[scriptTag];
+	    if (this.features.hasOwnProperty(scriptTag)) return features;
+	    const featuresIndexes = this.getScriptFeaturesIndexes(scriptTag);
+	    if (!featuresIndexes) return null;
+	    const gsub = this.font.tables.gsub;
+	    features = featuresIndexes.map(index => gsub.features[index]);
 	    this.features[scriptTag] = features;
 	    this.mapTagsToFeatures(features, scriptTag);
 	    return features;
@@ -12149,8 +12140,8 @@
 	 * @param {any} subtable subtable
 	 */
 	FeatureQuery.prototype.getSubstitutionType = function(lookupTable, subtable) {
-	    var lookupType = lookupTable.lookupType.toString();
-	    var substFormat = subtable.substFormat.toString();
+	    const lookupType = lookupTable.lookupType.toString();
+	    const substFormat = subtable.substFormat.toString();
 	    return lookupType + substFormat;
 	};
 
@@ -12160,35 +12151,33 @@
 	 * @param {any} subtable subtable
 	 */
 	FeatureQuery.prototype.getLookupMethod = function(lookupTable, subtable) {
-	    var this$1 = this;
-
-	    var substitutionType = this.getSubstitutionType(lookupTable, subtable);
+	    let substitutionType = this.getSubstitutionType(lookupTable, subtable);
 	    switch (substitutionType) {
 	        case '11':
-	            return function (glyphIndex) { return singleSubstitutionFormat1.apply(
-	                this$1, [glyphIndex, subtable]
-	            ); };
+	            return glyphIndex => singleSubstitutionFormat1.apply(
+	                this, [glyphIndex, subtable]
+	            );
 	        case '12':
-	            return function (glyphIndex) { return singleSubstitutionFormat2.apply(
-	                this$1, [glyphIndex, subtable]
-	            ); };
+	            return glyphIndex => singleSubstitutionFormat2.apply(
+	                this, [glyphIndex, subtable]
+	            );
 	        case '63':
-	            return function (contextParams) { return chainingSubstitutionFormat3.apply(
-	                this$1, [contextParams, subtable]
-	            ); };
+	            return contextParams => chainingSubstitutionFormat3.apply(
+	                this, [contextParams, subtable]
+	            );
 	        case '41':
-	            return function (contextParams) { return ligatureSubstitutionFormat1.apply(
-	                this$1, [contextParams, subtable]
-	            ); };
+	            return contextParams => ligatureSubstitutionFormat1.apply(
+	                this, [contextParams, subtable]
+	            );
 	        case '21':
-	            return function (glyphIndex) { return decompositionSubstitutionFormat1.apply(
-	                this$1, [glyphIndex, subtable]
-	            ); };
+	            return glyphIndex => decompositionSubstitutionFormat1.apply(
+	                this, [glyphIndex, subtable]
+	            );
 	        default:
 	            throw new Error(
-	                "lookupType: " + (lookupTable.lookupType) + " - " +
-	                "substFormat: " + (subtable.substFormat) + " " +
-	                "is not yet supported"
+	                `lookupType: ${lookupTable.lookupType} - ` +
+	                `substFormat: ${subtable.substFormat} ` +
+	                `is not yet supported`
 	            );
 	    }
 	};
@@ -12221,32 +12210,32 @@
 	 * @param {FQuery} query feature query
 	 */
 	FeatureQuery.prototype.lookupFeature = function (query) {
-	    var contextParams = query.contextParams;
-	    var currentIndex = contextParams.index;
-	    var feature = this.getFeature({
+	    let contextParams = query.contextParams;
+	    let currentIndex = contextParams.index;
+	    const feature = this.getFeature({
 	        tag: query.tag, script: query.script
 	    });
-	    if (!feature) { return new Error(
-	        "font '" + (this.font.names.fullName.en) + "' " +
-	        "doesn't support feature '" + (query.tag) + "' " +
-	        "for script '" + (query.script) + "'."
-	    ); }
-	    var lookups = this.getFeatureLookups(feature);
-	    var substitutions = [].concat(contextParams.context);
-	    for (var l = 0; l < lookups.length; l++) {
-	        var lookupTable = lookups[l];
-	        var subtables = this.getLookupSubtables(lookupTable);
-	        for (var s = 0; s < subtables.length; s++) {
-	            var subtable = subtables[s];
-	            var substType = this.getSubstitutionType(lookupTable, subtable);
-	            var lookup = this.getLookupMethod(lookupTable, subtable);
-	            var substitution = (void 0);
+	    if (!feature) return new Error(
+	        `font '${this.font.names.fullName.en}' ` +
+	        `doesn't support feature '${query.tag}' ` +
+	        `for script '${query.script}'.`
+	    );
+	    const lookups = this.getFeatureLookups(feature);
+	    const substitutions = [].concat(contextParams.context);
+	    for (let l = 0; l < lookups.length; l++) {
+	        const lookupTable = lookups[l];
+	        const subtables = this.getLookupSubtables(lookupTable);
+	        for (let s = 0; s < subtables.length; s++) {
+	            const subtable = subtables[s];
+	            const substType = this.getSubstitutionType(lookupTable, subtable);
+	            const lookup = this.getLookupMethod(lookupTable, subtable);
+	            let substitution;
 	            switch (substType) {
 	                case '11':
 	                    substitution = lookup(contextParams.current);
 	                    if (substitution) {
 	                        substitutions.splice(currentIndex, 1, new SubstitutionAction({
-	                            id: 11, tag: query.tag, substitution: substitution
+	                            id: 11, tag: query.tag, substitution
 	                        }));
 	                    }
 	                    break;
@@ -12254,7 +12243,7 @@
 	                    substitution = lookup(contextParams.current);
 	                    if (substitution) {
 	                        substitutions.splice(currentIndex, 1, new SubstitutionAction({
-	                            id: 12, tag: query.tag, substitution: substitution
+	                            id: 12, tag: query.tag, substitution
 	                        }));
 	                    }
 	                    break;
@@ -12262,7 +12251,7 @@
 	                    substitution = lookup(contextParams);
 	                    if (Array.isArray(substitution) && substitution.length) {
 	                        substitutions.splice(currentIndex, 1, new SubstitutionAction({
-	                            id: 63, tag: query.tag, substitution: substitution
+	                            id: 63, tag: query.tag, substitution
 	                        }));
 	                    }
 	                    break;
@@ -12270,7 +12259,7 @@
 	                    substitution = lookup(contextParams);
 	                    if (substitution) {
 	                        substitutions.splice(currentIndex, 1, new SubstitutionAction({
-	                            id: 41, tag: query.tag, substitution: substitution
+	                            id: 41, tag: query.tag, substitution
 	                        }));
 	                    }
 	                    break;
@@ -12278,13 +12267,13 @@
 	                    substitution = lookup(contextParams.current);
 	                    if (substitution) {
 	                        substitutions.splice(currentIndex, 1, new SubstitutionAction({
-	                            id: 21, tag: query.tag, substitution: substitution
+	                            id: 21, tag: query.tag, substitution
 	                        }));
 	                    }
 	                    break;
 	            }
 	            contextParams = new ContextParams(substitutions, currentIndex);
-	            if (Array.isArray(substitution) && !substitution.length) { continue; }
+	            if (Array.isArray(substitution) && !substitution.length) continue;
 	            substitution = null;
 	        }
 	    }
@@ -12296,12 +12285,12 @@
 	 * @param {FQuery} query feature query object
 	 */
 	FeatureQuery.prototype.supports = function (query) {
-	    if (!query.script) { return false; }
+	    if (!query.script) return false;
 	    this.getScriptFeatures(query.script);
-	    var supportedScript = this.features.hasOwnProperty(query.script);
-	    if (!query.tag) { return supportedScript; }
-	    var supportedFeature = (
-	        this.features[query.script].some(function (feature) { return feature.tag === query.tag; })
+	    const supportedScript = this.features.hasOwnProperty(query.script);
+	    if (!query.tag) return supportedScript;
+	    const supportedFeature = (
+	        this.features[query.script].some(feature => feature.tag === query.tag)
 	    );
 	    return supportedScript && supportedFeature;
 	};
@@ -12319,7 +12308,7 @@
 	 * @param {number} index lookup table index
 	 */
 	FeatureQuery.prototype.getLookupByIndex = function (index) {
-	    var lookups = this.font.tables.gsub.lookups;
+	    const lookups = this.font.tables.gsub.lookups;
 	    return lookups[index] || null;
 	};
 
@@ -12337,15 +12326,15 @@
 	 * @param {any} query an object that describes the properties of a query
 	 */
 	FeatureQuery.prototype.getFeature = function getFeature(query) {
-	    if (!this.font) { return { FAIL: "No font was found"}; }
+	    if (!this.font) return { FAIL: `No font was found`};
 	    if (!this.features.hasOwnProperty(query.script)) {
 	        this.getScriptFeatures(query.script);
 	    }
-	    var scriptFeatures = this.features[query.script];
-	    if (!scriptFeatures) { return (
-	        { FAIL: ("No feature for script " + (query.script))}
-	    ); }
-	    if (!scriptFeatures.tags[query.tag]) { return null; }
+	    const scriptFeatures = this.features[query.script];
+	    if (!scriptFeatures) return (
+	        { FAIL: `No feature for script ${query.script}`}
+	    );
+	    if (!scriptFeatures.tags[query.tag]) return null;
 	    return this.features[query.script].tags[query.tag];
 	};
 
@@ -12354,8 +12343,8 @@
 	 */
 
 	function arabicWordStartCheck(contextParams) {
-	    var char = contextParams.current;
-	    var prevChar = contextParams.get(-1);
+	    const char = contextParams.current;
+	    const prevChar = contextParams.get(-1);
 	    return (
 	        // ? arabic first char
 	        (prevChar === null && isArabicChar(char)) ||
@@ -12365,7 +12354,7 @@
 	}
 
 	function arabicWordEndCheck(contextParams) {
-	    var nextChar = contextParams.get(1);
+	    const nextChar = contextParams.get(1);
 	    return (
 	        // ? last arabic char
 	        (nextChar === null) ||
@@ -12384,8 +12373,8 @@
 	 */
 
 	function arabicSentenceStartCheck(contextParams) {
-	    var char = contextParams.current;
-	    var prevChar = contextParams.get(-1);
+	    const char = contextParams.current;
+	    const prevChar = contextParams.get(-1);
 	    return (
 	        // ? an arabic char preceded with a non arabic char
 	        (isArabicChar(char) || isTashkeelArabicChar(char)) &&
@@ -12394,21 +12383,21 @@
 	}
 
 	function arabicSentenceEndCheck(contextParams) {
-	    var nextChar = contextParams.get(1);
+	    const nextChar = contextParams.get(1);
 	    switch (true) {
 	        case nextChar === null:
 	            return true;
 	        case (!isArabicChar(nextChar) && !isTashkeelArabicChar(nextChar)):
-	            var nextIsWhitespace = isWhiteSpace(nextChar);
-	            if (!nextIsWhitespace) { return true; }
+	            const nextIsWhitespace = isWhiteSpace(nextChar);
+	            if (!nextIsWhitespace) return true;
 	            if (nextIsWhitespace) {
-	                var arabicCharAhead = false;
+	                let arabicCharAhead = false;
 	                arabicCharAhead = (
 	                    contextParams.lookahead.some(
-	                        function (c) { return isArabicChar(c) || isTashkeelArabicChar(c); }
+	                        c => isArabicChar(c) || isTashkeelArabicChar(c)
 	                    )
 	                );
-	                if (!arabicCharAhead) { return true; }
+	                if (!arabicCharAhead) return true;
 	            }
 	            break;
 	        default:
@@ -12448,8 +12437,8 @@
 	 * @param {number} index token index
 	 */
 	function chainingSubstitutionFormat3$1(action, tokens, index) {
-	    action.substitution.forEach(function (subst, offset) {
-	        var token = tokens[index + offset];
+	    action.substitution.forEach((subst, offset) => {
+	        const token = tokens[index + offset];
 	        token.setState(action.tag, subst);
 	    });
 	}
@@ -12461,10 +12450,10 @@
 	 * @param {number} index token index
 	 */
 	function ligatureSubstitutionFormat1$1(action, tokens, index) {
-	    var token = tokens[index];
+	    let token = tokens[index];
 	    token.setState(action.tag, action.substitution.ligGlyph);
-	    var compsCount = action.substitution.components.length;
-	    for (var i = 0; i < compsCount; i++) {
+	    const compsCount = action.substitution.components.length;
+	    for (let i = 0; i < compsCount; i++) {
 	        token = tokens[index + i + 1];
 	        token.setState('deleted', true);
 	    }
@@ -12473,7 +12462,7 @@
 	/**
 	 * Supported substitutions
 	 */
-	var SUBSTITUTIONS = {
+	const SUBSTITUTIONS = {
 	    11: singleSubstitutionFormat1$1,
 	    12: singleSubstitutionFormat2$1,
 	    63: chainingSubstitutionFormat3$1,
@@ -12501,13 +12490,13 @@
 	 * @param {ContextParams} charContextParams context params of a char
 	 */
 	function willConnectPrev(charContextParams) {
-	    var backtrack = [].concat(charContextParams.backtrack);
-	    for (var i = backtrack.length - 1; i >= 0; i--) {
-	        var prevChar = backtrack[i];
-	        var isolated = isIsolatedArabicChar(prevChar);
-	        var tashkeel = isTashkeelArabicChar(prevChar);
-	        if (!isolated && !tashkeel) { return true; }
-	        if (isolated) { return false; }
+	    let backtrack = [].concat(charContextParams.backtrack);
+	    for (let i = backtrack.length - 1; i >= 0; i--) {
+	        const prevChar = backtrack[i];
+	        const isolated = isIsolatedArabicChar(prevChar);
+	        const tashkeel = isTashkeelArabicChar(prevChar);
+	        if (!isolated && !tashkeel) return true;
+	        if (isolated) return false;
 	    }
 	    return false;
 	}
@@ -12517,11 +12506,11 @@
 	 * @param {ContextParams} charContextParams context params of a char
 	 */
 	function willConnectNext(charContextParams) {
-	    if (isIsolatedArabicChar(charContextParams.current)) { return false; }
-	    for (var i = 0; i < charContextParams.lookahead.length; i++) {
-	        var nextChar = charContextParams.lookahead[i];
-	        var tashkeel = isTashkeelArabicChar(nextChar);
-	        if (!tashkeel) { return true; }
+	    if (isIsolatedArabicChar(charContextParams.current)) return false;
+	    for (let i = 0; i < charContextParams.lookahead.length; i++) {
+	        const nextChar = charContextParams.lookahead[i];
+	        const tashkeel = isTashkeelArabicChar(nextChar);
+	        if (!tashkeel) return true;
 	    }
 	    return false;
 	}
@@ -12531,37 +12520,35 @@
 	 * @param {ContextRange} range a range of tokens
 	 */
 	function arabicPresentationForms(range) {
-	    var this$1 = this;
-
-	    var script = 'arab';
-	    var tags = this.featuresTags[script];
-	    var tokens = this.tokenizer.getRangeTokens(range);
-	    if (tokens.length === 1) { return; }
-	    var contextParams = new ContextParams(
-	        tokens.map(function (token) { return token.getState('glyphIndex'); }
+	    const script = 'arab';
+	    const tags = this.featuresTags[script];
+	    const tokens = this.tokenizer.getRangeTokens(range);
+	    if (tokens.length === 1) return;
+	    let contextParams = new ContextParams(
+	        tokens.map(token => token.getState('glyphIndex')
 	    ), 0);
-	    var charContextParams = new ContextParams(
-	        tokens.map(function (token) { return token.char; }
+	    const charContextParams = new ContextParams(
+	        tokens.map(token => token.char
 	    ), 0);
-	    tokens.forEach(function (token, index) {
-	        if (isTashkeelArabicChar(token.char)) { return; }
+	    tokens.forEach((token, index) => {
+	        if (isTashkeelArabicChar(token.char)) return;
 	        contextParams.setCurrentIndex(index);
 	        charContextParams.setCurrentIndex(index);
-	        var CONNECT = 0; // 2 bits 00 (10: can connect next) (01: can connect prev)
-	        if (willConnectPrev(charContextParams)) { CONNECT |= 1; }
-	        if (willConnectNext(charContextParams)) { CONNECT |= 2; }
-	        var tag;
+	        let CONNECT = 0; // 2 bits 00 (10: can connect next) (01: can connect prev)
+	        if (willConnectPrev(charContextParams)) CONNECT |= 1;
+	        if (willConnectNext(charContextParams)) CONNECT |= 2;
+	        let tag;
 	        switch (CONNECT) {
 	            case 1: (tag = 'fina'); break;
 	            case 2: (tag = 'init'); break;
 	            case 3: (tag = 'medi'); break;
 	        }
-	        if (tags.indexOf(tag) === -1) { return; }
-	        var substitutions = this$1.query.lookupFeature({
-	            tag: tag, script: script, contextParams: contextParams
+	        if (tags.indexOf(tag) === -1) return;
+	        let substitutions = this.query.lookupFeature({
+	            tag, script, contextParams
 	        });
-	        if (substitutions instanceof Error) { return console.info(substitutions.message); }
-	        substitutions.forEach(function (action, index) {
+	        if (substitutions instanceof Error) return console.info(substitutions.message);
+	        substitutions.forEach((action, index) => {
 	            if (action instanceof SubstitutionAction) {
 	                applySubstitution(action, tokens, index);
 	                contextParams.context[index] = action.substitution;
@@ -12580,7 +12567,7 @@
 	 * @param {number} index current item index
 	 */
 	function getContextParams(tokens, index) {
-	    var context = tokens.map(function (token) { return token.activeState.value; });
+	    const context = tokens.map(token => token.activeState.value);
 	    return new ContextParams(context, index || 0);
 	}
 
@@ -12589,19 +12576,17 @@
 	 * @param {ContextRange} range a range of tokens
 	 */
 	function arabicRequiredLigatures(range) {
-	    var this$1 = this;
-
-	    var script = 'arab';
-	    var tokens = this.tokenizer.getRangeTokens(range);
-	    var contextParams = getContextParams(tokens);
-	    contextParams.context.forEach(function (glyphIndex, index) {
+	    const script = 'arab';
+	    let tokens = this.tokenizer.getRangeTokens(range);
+	    let contextParams = getContextParams(tokens);
+	    contextParams.context.forEach((glyphIndex, index) => {
 	        contextParams.setCurrentIndex(index);
-	        var substitutions = this$1.query.lookupFeature({
-	            tag: 'rlig', script: script, contextParams: contextParams
+	        let substitutions = this.query.lookupFeature({
+	            tag: 'rlig', script, contextParams
 	        });
 	        if (substitutions.length) {
 	            substitutions.forEach(
-	                function (action) { return applySubstitution(action, tokens, index); }
+	                action => applySubstitution(action, tokens, index)
 	            );
 	            contextParams = getContextParams(tokens);
 	        }
@@ -12613,8 +12598,8 @@
 	 */
 
 	function latinWordStartCheck(contextParams) {
-	    var char = contextParams.current;
-	    var prevChar = contextParams.get(-1);
+	    const char = contextParams.current;
+	    const prevChar = contextParams.get(-1);
 	    return (
 	        // ? latin first char
 	        (prevChar === null && isLatinChar(char)) ||
@@ -12624,7 +12609,7 @@
 	}
 
 	function latinWordEndCheck(contextParams) {
-	    var nextChar = contextParams.get(1);
+	    const nextChar = contextParams.get(1);
 	    return (
 	        // ? last latin char
 	        (nextChar === null) ||
@@ -12648,7 +12633,7 @@
 	 * @param {number} index current item index
 	 */
 	function getContextParams$1(tokens, index) {
-	    var context = tokens.map(function (token) { return token.activeState.value; });
+	    const context = tokens.map(token => token.activeState.value);
 	    return new ContextParams(context, index || 0);
 	}
 
@@ -12657,19 +12642,17 @@
 	 * @param {ContextRange} range a range of tokens
 	 */
 	function latinLigature(range) {
-	    var this$1 = this;
-
-	    var script = 'latn';
-	    var tokens = this.tokenizer.getRangeTokens(range);
-	    var contextParams = getContextParams$1(tokens);
-	    contextParams.context.forEach(function (glyphIndex, index) {
+	    const script = 'latn';
+	    let tokens = this.tokenizer.getRangeTokens(range);
+	    let contextParams = getContextParams$1(tokens);
+	    contextParams.context.forEach((glyphIndex, index) => {
 	        contextParams.setCurrentIndex(index);
-	        var substitutions = this$1.query.lookupFeature({
-	            tag: 'liga', script: script, contextParams: contextParams
+	        let substitutions = this.query.lookupFeature({
+	            tag: 'liga', script, contextParams
 	        });
 	        if (substitutions.length) {
 	            substitutions.forEach(
-	                function (action) { return applySubstitution(action, tokens, index); }
+	                action => applySubstitution(action, tokens, index)
 	            );
 	            contextParams = getContextParams$1(tokens);
 	        }
@@ -12705,16 +12688,16 @@
 	 * arabic sentence check for adjusting arabic layout
 	 */
 	Bidi.prototype.contextChecks = ({
-	    latinWordCheck: latinWordCheck,
-	    arabicWordCheck: arabicWordCheck,
-	    arabicSentenceCheck: arabicSentenceCheck
+	    latinWordCheck,
+	    arabicWordCheck,
+	    arabicSentenceCheck
 	});
 
 	/**
 	 * Register arabic word check
 	 */
 	function registerContextChecker(checkId) {
-	    var check = this.contextChecks[(checkId + "Check")];
+	    const check = this.contextChecks[`${checkId}Check`];
 	    return this.tokenizer.registerContextChecker(
 	        checkId, check.startCheck, check.endCheck
 	    );
@@ -12736,12 +12719,10 @@
 	 * TODO: check base dir before applying adjustments - priority low
 	 */
 	function reverseArabicSentences() {
-	    var this$1 = this;
-
-	    var ranges = this.tokenizer.getContextRanges('arabicSentence');
-	    ranges.forEach(function (range) {
-	        var rangeTokens = this$1.tokenizer.getRangeTokens(range);
-	        this$1.tokenizer.replaceRange(
+	    const ranges = this.tokenizer.getContextRanges('arabicSentence');
+	    ranges.forEach(range => {
+	        let rangeTokens = this.tokenizer.getRangeTokens(range);
+	        this.tokenizer.replaceRange(
 	            range.startIndex,
 	            range.endOffset,
 	            rangeTokens.reverse()
@@ -12755,10 +12736,8 @@
 	 * @param {Array} tags features tags list
 	 */
 	Bidi.prototype.registerFeatures = function (script, tags) {
-	    var this$1 = this;
-
-	    var supportedTags = tags.filter(
-	        function (tag) { return this$1.query.supports({script: script, tag: tag}); }
+	    const supportedTags = tags.filter(
+	        tag => this.query.supports({script, tag})
 	    );
 	    if (!this.featuresTags.hasOwnProperty(script)) {
 	        this.featuresTags[script] = supportedTags;
@@ -12775,13 +12754,13 @@
 	 * @param {Font} font opentype font instance
 	 */
 	Bidi.prototype.applyFeatures = function (font, features) {
-	    if (!font) { throw new Error(
+	    if (!font) throw new Error(
 	        'No valid font was provided to apply features'
-	    ); }
-	    if (!this.query) { this.query = new FeatureQuery(font); }
-	    for (var f = 0; f < features.length; f++) {
-	        var feature = features[f];
-	        if (!this.query.supports({script: feature.script})) { continue; }
+	    );
+	    if (!this.query) this.query = new FeatureQuery(font);
+	    for (let f = 0; f < features.length; f++) {
+	        const feature = features[f];
+	        if (!this.query.supports({script: feature.script})) continue;
 	        this.registerFeatures(feature.script, feature.tags);
 	    }
 	};
@@ -12812,14 +12791,12 @@
 	 * Apply arabic presentation forms features
 	 */
 	function applyArabicPresentationForms() {
-	    var this$1 = this;
-
-	    var script = 'arab';
-	    if (!this.featuresTags.hasOwnProperty(script)) { return; }
+	    const script = 'arab';
+	    if (!this.featuresTags.hasOwnProperty(script)) return;
 	    checkGlyphIndexStatus.call(this);
-	    var ranges = this.tokenizer.getContextRanges('arabicWord');
-	    ranges.forEach(function (range) {
-	        arabicPresentationForms.call(this$1, range);
+	    const ranges = this.tokenizer.getContextRanges('arabicWord');
+	    ranges.forEach(range => {
+	        arabicPresentationForms.call(this, range);
 	    });
 	}
 
@@ -12827,16 +12804,14 @@
 	 * Apply required arabic ligatures
 	 */
 	function applyArabicRequireLigatures() {
-	    var this$1 = this;
-
-	    var script = 'arab';
-	    if (!this.featuresTags.hasOwnProperty(script)) { return; }
-	    var tags = this.featuresTags[script];
-	    if (tags.indexOf('rlig') === -1) { return; }
+	    const script = 'arab';
+	    if (!this.featuresTags.hasOwnProperty(script)) return;
+	    const tags = this.featuresTags[script];
+	    if (tags.indexOf('rlig') === -1) return;
 	    checkGlyphIndexStatus.call(this);
-	    var ranges = this.tokenizer.getContextRanges('arabicWord');
-	    ranges.forEach(function (range) {
-	        arabicRequiredLigatures.call(this$1, range);
+	    const ranges = this.tokenizer.getContextRanges('arabicWord');
+	    ranges.forEach(range => {
+	        arabicRequiredLigatures.call(this, range);
 	    });
 	}
 
@@ -12844,16 +12819,14 @@
 	 * Apply required arabic ligatures
 	 */
 	function applyLatinLigatures() {
-	    var this$1 = this;
-
-	    var script = 'latn';
-	    if (!this.featuresTags.hasOwnProperty(script)) { return; }
-	    var tags = this.featuresTags[script];
-	    if (tags.indexOf('liga') === -1) { return; }
+	    const script = 'latn';
+	    if (!this.featuresTags.hasOwnProperty(script)) return;
+	    const tags = this.featuresTags[script];
+	    if (tags.indexOf('liga') === -1) return;
 	    checkGlyphIndexStatus.call(this);
-	    var ranges = this.tokenizer.getContextRanges('latinWord');
-	    ranges.forEach(function (range) {
-	        latinLigature.call(this$1, range);
+	    const ranges = this.tokenizer.getContextRanges('latinWord');
+	    ranges.forEach(range => {
+	        latinLigature.call(this, range);
 	    });
 	}
 
@@ -12909,11 +12882,11 @@
 	 */
 	Bidi.prototype.getTextGlyphs = function (text) {
 	    this.processText(text);
-	    var indexes = [];
-	    for (var i = 0; i < this.tokenizer.tokens.length; i++) {
-	        var token = this.tokenizer.tokens[i];
-	        if (token.state.deleted) { continue; }
-	        var index = token.activeState.value;
+	    let indexes = [];
+	    for (let i = 0; i < this.tokenizer.tokens.length; i++) {
+	        const token = this.tokenizer.tokens[i];
+	        if (token.state.deleted) continue;
+	        const index = token.activeState.value;
 	        indexes.push(Array.isArray(index) ? index[0] : index);
 	    }
 	    return indexes;
@@ -13013,7 +12986,7 @@
 
 	    Object.defineProperty(this, 'hinting', {
 	        get: function() {
-	            if (this._hinting) { return this._hinting; }
+	            if (this._hinting) return this._hinting;
 	            if (this.outlinesFormat === 'truetype') {
 	                return (this._hinting = new Hinting(this));
 	            }
@@ -13049,8 +13022,8 @@
 	 * @return {opentype.Glyph}
 	 */
 	Font.prototype.charToGlyph = function(c) {
-	    var glyphIndex = this.charToGlyphIndex(c);
-	    var glyph = this.glyphs.get(glyphIndex);
+	    const glyphIndex = this.charToGlyphIndex(c);
+	    let glyph = this.glyphs.get(glyphIndex);
 	    if (!glyph) {
 	        // .notdef
 	        glyph = this.glyphs.get(0);
@@ -13065,11 +13038,11 @@
 	 */
 	Font.prototype.updateFeatures = function (options) {
 	    // TODO: update all features options not only 'latn'.
-	    return this.defaultRenderOptions.features.map(function (feature) {
+	    return this.defaultRenderOptions.features.map(feature => {
 	        if (feature.script === 'latn') {
 	            return {
 	                script: 'latn',
-	                tags: feature.tags.filter(function (tag) { return options[tag]; })
+	                tags: feature.tags.filter(tag => options[tag])
 	            };
 	        } else {
 	            return feature;
@@ -13087,30 +13060,28 @@
 	 * @return {opentype.Glyph[]}
 	 */
 	Font.prototype.stringToGlyphs = function(s, options) {
-	    var this$1 = this;
 
-
-	    var bidi = new Bidi();
+	    const bidi = new Bidi();
 
 	    // Create and register 'glyphIndex' state modifier
-	    var charToGlyphIndexMod = function (token) { return this$1.charToGlyphIndex(token.char); };
+	    const charToGlyphIndexMod = token => this.charToGlyphIndex(token.char);
 	    bidi.registerModifier('glyphIndex', null, charToGlyphIndexMod);
 
 	    // roll-back to default features
-	    var features = options ?
+	    let features = options ?
 	    this.updateFeatures(options.features) :
 	    this.defaultRenderOptions.features;
 
 	    bidi.applyFeatures(this, features);
 
-	    var indexes = bidi.getTextGlyphs(s);
+	    const indexes = bidi.getTextGlyphs(s);
 
-	    var length = indexes.length;
+	    let length = indexes.length;
 
 	    // convert glyph indexes to glyph objects
-	    var glyphs = new Array(length);
-	    var notdef = this.glyphs.get(0);
-	    for (var i = 0; i < length; i += 1) {
+	    const glyphs = new Array(length);
+	    const notdef = this.glyphs.get(0);
+	    for (let i = 0; i < length; i += 1) {
 	        glyphs[i] = this.glyphs.get(indexes[i]) || notdef;
 	    }
 	    return glyphs;
@@ -13129,8 +13100,8 @@
 	 * @return {opentype.Glyph}
 	 */
 	Font.prototype.nameToGlyph = function(name) {
-	    var glyphIndex = this.nameToGlyphIndex(name);
-	    var glyph = this.glyphs.get(glyphIndex);
+	    const glyphIndex = this.nameToGlyphIndex(name);
+	    let glyph = this.glyphs.get(glyphIndex);
 	    if (!glyph) {
 	        // .notdef
 	        glyph = this.glyphs.get(0);
@@ -13165,7 +13136,7 @@
 	Font.prototype.getKerningValue = function(leftGlyph, rightGlyph) {
 	    leftGlyph = leftGlyph.index || leftGlyph;
 	    rightGlyph = rightGlyph.index || rightGlyph;
-	    var gposKerning = this.position.defaultKerningTables;
+	    const gposKerning = this.position.defaultKerningTables;
 	    if (gposKerning) {
 	        return this.position.getKerningValue(gposKerning, leftGlyph, rightGlyph);
 	    }
@@ -13211,15 +13182,15 @@
 	    y = y !== undefined ? y : 0;
 	    fontSize = fontSize !== undefined ? fontSize : 72;
 	    options = Object.assign({}, this.defaultRenderOptions, options);
-	    var fontScale = 1 / this.unitsPerEm * fontSize;
-	    var glyphs = this.stringToGlyphs(text, options);
-	    var kerningLookups;
+	    const fontScale = 1 / this.unitsPerEm * fontSize;
+	    const glyphs = this.stringToGlyphs(text, options);
+	    let kerningLookups;
 	    if (options.kerning) {
-	        var script = options.script || this.position.getDefaultScriptName();
+	        const script = options.script || this.position.getDefaultScriptName();
 	        kerningLookups = this.position.getKerningTables(script, options.language);
 	    }
-	    for (var i = 0; i < glyphs.length; i += 1) {
-	        var glyph = glyphs[i];
+	    for (let i = 0; i < glyphs.length; i += 1) {
+	        const glyph = glyphs[i];
 	        callback.call(this, glyph, x, y, fontSize, options);
 	        if (glyph.advanceWidth) {
 	            x += glyph.advanceWidth * fontScale;
@@ -13228,7 +13199,7 @@
 	        if (options.kerning && i < glyphs.length - 1) {
 	            // We should apply position adjustment lookups in a more generic way.
 	            // Here we only use the xAdvance value.
-	            var kerningValue = kerningLookups ?
+	            const kerningValue = kerningLookups ?
 	                  this.position.getKerningValue(kerningLookups, glyph.index, glyphs[i + 1].index) :
 	                  this.getKerningValue(glyph, glyphs[i + 1]);
 	            x += kerningValue * fontScale;
@@ -13253,9 +13224,9 @@
 	 * @return {opentype.Path}
 	 */
 	Font.prototype.getPath = function(text, x, y, fontSize, options) {
-	    var fullPath = new Path();
+	    const fullPath = new Path();
 	    this.forEachGlyph(text, x, y, fontSize, options, function(glyph, gX, gY, gFontSize) {
-	        var glyphPath = glyph.getPath(gX, gY, gFontSize, options, this);
+	        const glyphPath = glyph.getPath(gX, gY, gFontSize, options, this);
 	        fullPath.extend(glyphPath);
 	    });
 	    return fullPath;
@@ -13271,9 +13242,9 @@
 	 * @return {opentype.Path[]}
 	 */
 	Font.prototype.getPaths = function(text, x, y, fontSize, options) {
-	    var glyphPaths = [];
+	    const glyphPaths = [];
 	    this.forEachGlyph(text, x, y, fontSize, options, function(glyph, gX, gY, gFontSize) {
-	        var glyphPath = glyph.getPath(gX, gY, gFontSize, options, this);
+	        const glyphPath = glyph.getPath(gX, gY, gFontSize, options, this);
 	        glyphPaths.push(glyphPath);
 	    });
 
@@ -13351,7 +13322,7 @@
 	 * @return {string}
 	 */
 	Font.prototype.getEnglishName = function(name) {
-	    var translations = this.names[name];
+	    const translations = this.names[name];
 	    if (translations) {
 	        return translations.en;
 	    }
@@ -13361,13 +13332,13 @@
 	 * Validate
 	 */
 	Font.prototype.validate = function() {
-	    var _this = this;
+	    const _this = this;
 
 	    function assert(predicate, message) {
 	    }
 
 	    function assertNamePresent(name) {
-	        var englishName = _this.getEnglishName(name);
+	        const englishName = _this.getEnglishName(name);
 	        assert(englishName && englishName.trim().length > 0);
 	    }
 
@@ -13402,11 +13373,11 @@
 	 * @return {ArrayBuffer}
 	 */
 	Font.prototype.toArrayBuffer = function() {
-	    var sfntTable = this.toTables();
-	    var bytes = sfntTable.encode();
-	    var buffer = new ArrayBuffer(bytes.length);
-	    var intArray = new Uint8Array(buffer);
-	    for (var i = 0; i < bytes.length; i++) {
+	    const sfntTable = this.toTables();
+	    const bytes = sfntTable.encode();
+	    const buffer = new ArrayBuffer(bytes.length);
+	    const intArray = new Uint8Array(buffer);
+	    for (let i = 0; i < bytes.length; i++) {
 	        intArray[i] = bytes[i];
 	    }
 
@@ -13417,31 +13388,31 @@
 	 * Initiate a download of the OpenType font.
 	 */
 	Font.prototype.download = function(fileName) {
-	    var familyName = this.getEnglishName('fontFamily');
-	    var styleName = this.getEnglishName('fontSubfamily');
+	    const familyName = this.getEnglishName('fontFamily');
+	    const styleName = this.getEnglishName('fontSubfamily');
 	    fileName = fileName || familyName.replace(/\s/g, '') + '-' + styleName + '.otf';
-	    var arrayBuffer = this.toArrayBuffer();
+	    const arrayBuffer = this.toArrayBuffer();
 
 	    if (isBrowser()) {
 	        window.URL = window.URL || window.webkitURL;
 
 	        if (window.URL) {
-	            var dataView = new DataView(arrayBuffer);
-	            var blob = new Blob([dataView], {type: 'font/opentype'});
+	            const dataView = new DataView(arrayBuffer);
+	            const blob = new Blob([dataView], {type: 'font/opentype'});
 
-	            var link = document.createElement('a');
+	            let link = document.createElement('a');
 	            link.href = window.URL.createObjectURL(blob);
 	            link.download = fileName;
 
-	            var event = document.createEvent('MouseEvents');
+	            let event = document.createEvent('MouseEvents');
 	            event.initEvent('click', true, false);
 	            link.dispatchEvent(event);
 	        } else {
 	            console.warn('Font file could not be downloaded. Try using a different browser.');
 	        }
 	    } else {
-	        var fs = require('fs');
-	        var buffer = arrayBufferToNodeBuffer(arrayBuffer);
+	        const fs = require('fs');
+	        const buffer = arrayBufferToNodeBuffer(arrayBuffer);
 	        fs.writeFileSync(fileName, buffer);
 	    }
 	};
@@ -13494,10 +13465,10 @@
 	// The `fvar` table stores font variation axes and instances.
 
 	function addName(name, names) {
-	    var nameString = JSON.stringify(name);
-	    var nameID = 256;
-	    for (var nameKey in names) {
-	        var n = parseInt(nameKey);
+	    const nameString = JSON.stringify(name);
+	    let nameID = 256;
+	    for (let nameKey in names) {
+	        let n = parseInt(nameKey);
 	        if (!n || n < 256) {
 	            continue;
 	        }
@@ -13516,7 +13487,7 @@
 	}
 
 	function makeFvarAxis(n, axis, names) {
-	    var nameID = addName(axis.name, names);
+	    const nameID = addName(axis.name, names);
 	    return [
 	        {name: 'tag_' + n, type: 'TAG', value: axis.tag},
 	        {name: 'minValue_' + n, type: 'FIXED', value: axis.minValue << 16},
@@ -13528,8 +13499,8 @@
 	}
 
 	function parseFvarAxis(data, start, names) {
-	    var axis = {};
-	    var p = new parse.Parser(data, start);
+	    const axis = {};
+	    const p = new parse.Parser(data, start);
 	    axis.tag = p.parseTag();
 	    axis.minValue = p.parseFixed();
 	    axis.defaultValue = p.parseFixed();
@@ -13540,14 +13511,14 @@
 	}
 
 	function makeFvarInstance(n, inst, axes, names) {
-	    var nameID = addName(inst.name, names);
-	    var fields = [
+	    const nameID = addName(inst.name, names);
+	    const fields = [
 	        {name: 'nameID_' + n, type: 'USHORT', value: nameID},
 	        {name: 'flags_' + n, type: 'USHORT', value: 0}
 	    ];
 
-	    for (var i = 0; i < axes.length; ++i) {
-	        var axisTag = axes[i].tag;
+	    for (let i = 0; i < axes.length; ++i) {
+	        const axisTag = axes[i].tag;
 	        fields.push({
 	            name: 'axis_' + n + ' ' + axisTag,
 	            type: 'FIXED',
@@ -13559,13 +13530,13 @@
 	}
 
 	function parseFvarInstance(data, start, axes, names) {
-	    var inst = {};
-	    var p = new parse.Parser(data, start);
+	    const inst = {};
+	    const p = new parse.Parser(data, start);
 	    inst.name = names[p.parseUShort()] || {};
 	    p.skip('uShort', 1);  // reserved for flags; no values defined
 
 	    inst.coordinates = {};
-	    for (var i = 0; i < axes.length; ++i) {
+	    for (let i = 0; i < axes.length; ++i) {
 	        inst.coordinates[axes[i].tag] = p.parseFixed();
 	    }
 
@@ -13573,7 +13544,7 @@
 	}
 
 	function makeFvarTable(fvar, names) {
-	    var result = new table.Table('fvar', [
+	    const result = new table.Table('fvar', [
 	        {name: 'version', type: 'ULONG', value: 0x10000},
 	        {name: 'offsetToData', type: 'USHORT', value: 0},
 	        {name: 'countSizePairs', type: 'USHORT', value: 2},
@@ -13584,11 +13555,11 @@
 	    ]);
 	    result.offsetToData = result.sizeOf();
 
-	    for (var i = 0; i < fvar.axes.length; i++) {
+	    for (let i = 0; i < fvar.axes.length; i++) {
 	        result.fields = result.fields.concat(makeFvarAxis(i, fvar.axes[i], names));
 	    }
 
-	    for (var j = 0; j < fvar.instances.length; j++) {
+	    for (let j = 0; j < fvar.instances.length; j++) {
 	        result.fields = result.fields.concat(makeFvarInstance(j, fvar.instances[j], fvar.axes, names));
 	    }
 
@@ -13596,25 +13567,25 @@
 	}
 
 	function parseFvarTable(data, start, names) {
-	    var p = new parse.Parser(data, start);
-	    var tableVersion = p.parseULong();
+	    const p = new parse.Parser(data, start);
+	    const tableVersion = p.parseULong();
 	    check.argument(tableVersion === 0x00010000, 'Unsupported fvar table version.');
-	    var offsetToData = p.parseOffset16();
+	    const offsetToData = p.parseOffset16();
 	    // Skip countSizePairs.
 	    p.skip('uShort', 1);
-	    var axisCount = p.parseUShort();
-	    var axisSize = p.parseUShort();
-	    var instanceCount = p.parseUShort();
-	    var instanceSize = p.parseUShort();
+	    const axisCount = p.parseUShort();
+	    const axisSize = p.parseUShort();
+	    const instanceCount = p.parseUShort();
+	    const instanceSize = p.parseUShort();
 
-	    var axes = [];
-	    for (var i = 0; i < axisCount; i++) {
+	    const axes = [];
+	    for (let i = 0; i < axisCount; i++) {
 	        axes.push(parseFvarAxis(data, start + offsetToData + i * axisSize, names));
 	    }
 
-	    var instances = [];
-	    var instanceStart = start + offsetToData + axisCount * axisSize;
-	    for (var j = 0; j < instanceCount; j++) {
+	    const instances = [];
+	    const instanceStart = start + offsetToData + axisCount * axisSize;
+	    for (let j = 0; j < instanceCount; j++) {
 	        instances.push(parseFvarInstance(data, instanceStart + j * instanceSize, axes, names));
 	    }
 
@@ -13625,13 +13596,13 @@
 
 	// The `GPOS` table contains kerning pairs, among other things.
 
-	var subtableParsers$1 = new Array(10);         // subtableParsers[0] is unused
+	const subtableParsers$1 = new Array(10);         // subtableParsers[0] is unused
 
 	// https://docs.microsoft.com/en-us/typography/opentype/spec/gpos#lookup-type-1-single-adjustment-positioning-subtable
 	// this = Parser instance
 	subtableParsers$1[1] = function parseLookup1() {
-	    var start = this.offset + this.relativeOffset;
-	    var posformat = this.parseUShort();
+	    const start = this.offset + this.relativeOffset;
+	    const posformat = this.parseUShort();
 	    if (posformat === 1) {
 	        return {
 	            posFormat: 1,
@@ -13650,12 +13621,12 @@
 
 	// https://docs.microsoft.com/en-us/typography/opentype/spec/gpos#lookup-type-2-pair-adjustment-positioning-subtable
 	subtableParsers$1[2] = function parseLookup2() {
-	    var start = this.offset + this.relativeOffset;
-	    var posFormat = this.parseUShort();
+	    const start = this.offset + this.relativeOffset;
+	    const posFormat = this.parseUShort();
 	    check.assert(posFormat === 1 || posFormat === 2, '0x' + start.toString(16) + ': GPOS lookup type 2 format must be 1 or 2.');
-	    var coverage = this.parsePointer(Parser.coverage);
-	    var valueFormat1 = this.parseUShort();
-	    var valueFormat2 = this.parseUShort();
+	    const coverage = this.parsePointer(Parser.coverage);
+	    const valueFormat1 = this.parseUShort();
+	    const valueFormat2 = this.parseUShort();
 	    if (posFormat === 1) {
 	        // Adjustments for Glyph Pairs
 	        return {
@@ -13672,10 +13643,10 @@
 	            })))
 	        };
 	    } else if (posFormat === 2) {
-	        var classDef1 = this.parsePointer(Parser.classDef);
-	        var classDef2 = this.parsePointer(Parser.classDef);
-	        var class1Count = this.parseUShort();
-	        var class2Count = this.parseUShort();
+	        const classDef1 = this.parsePointer(Parser.classDef);
+	        const classDef2 = this.parsePointer(Parser.classDef);
+	        const class1Count = this.parseUShort();
+	        const class2Count = this.parseUShort();
 	        return {
 	            // Class Pair Adjustment
 	            posFormat: posFormat,
@@ -13707,8 +13678,8 @@
 	// https://docs.microsoft.com/en-us/typography/opentype/spec/gpos
 	function parseGposTable(data, start) {
 	    start = start || 0;
-	    var p = new Parser(data, start);
-	    var tableVersion = p.parseVersion(1);
+	    const p = new Parser(data, start);
+	    const tableVersion = p.parseVersion(1);
 	    check.argument(tableVersion === 1 || tableVersion === 1.1, 'Unsupported GPOS table version ' + tableVersion);
 
 	    if (tableVersion === 1) {
@@ -13732,7 +13703,7 @@
 
 	// GPOS Writing //////////////////////////////////////////////
 	// NOT SUPPORTED
-	var subtableMakers$1 = new Array(10);
+	const subtableMakers$1 = new Array(10);
 
 	function makeGposTable(gpos) {
 	    return new table.Table('GPOS', [
@@ -13748,47 +13719,47 @@
 	// The `kern` table contains kerning pairs.
 
 	function parseWindowsKernTable(p) {
-	    var pairs = {};
+	    const pairs = {};
 	    // Skip nTables.
 	    p.skip('uShort');
-	    var subtableVersion = p.parseUShort();
+	    const subtableVersion = p.parseUShort();
 	    check.argument(subtableVersion === 0, 'Unsupported kern sub-table version.');
 	    // Skip subtableLength, subtableCoverage
 	    p.skip('uShort', 2);
-	    var nPairs = p.parseUShort();
+	    const nPairs = p.parseUShort();
 	    // Skip searchRange, entrySelector, rangeShift.
 	    p.skip('uShort', 3);
-	    for (var i = 0; i < nPairs; i += 1) {
-	        var leftIndex = p.parseUShort();
-	        var rightIndex = p.parseUShort();
-	        var value = p.parseShort();
+	    for (let i = 0; i < nPairs; i += 1) {
+	        const leftIndex = p.parseUShort();
+	        const rightIndex = p.parseUShort();
+	        const value = p.parseShort();
 	        pairs[leftIndex + ',' + rightIndex] = value;
 	    }
 	    return pairs;
 	}
 
 	function parseMacKernTable(p) {
-	    var pairs = {};
+	    const pairs = {};
 	    // The Mac kern table stores the version as a fixed (32 bits) but we only loaded the first 16 bits.
 	    // Skip the rest.
 	    p.skip('uShort');
-	    var nTables = p.parseULong();
+	    const nTables = p.parseULong();
 	    //check.argument(nTables === 1, 'Only 1 subtable is supported (got ' + nTables + ').');
 	    if (nTables > 1) {
 	        console.warn('Only the first kern subtable is supported.');
 	    }
 	    p.skip('uLong');
-	    var coverage = p.parseUShort();
-	    var subtableVersion = coverage & 0xFF;
+	    const coverage = p.parseUShort();
+	    const subtableVersion = coverage & 0xFF;
 	    p.skip('uShort');
 	    if (subtableVersion === 0) {
-	        var nPairs = p.parseUShort();
+	        const nPairs = p.parseUShort();
 	        // Skip searchRange, entrySelector, rangeShift.
 	        p.skip('uShort', 3);
-	        for (var i = 0; i < nPairs; i += 1) {
-	            var leftIndex = p.parseUShort();
-	            var rightIndex = p.parseUShort();
-	            var value = p.parseShort();
+	        for (let i = 0; i < nPairs; i += 1) {
+	            const leftIndex = p.parseUShort();
+	            const rightIndex = p.parseUShort();
+	            const value = p.parseShort();
 	            pairs[leftIndex + ',' + rightIndex] = value;
 	        }
 	    }
@@ -13797,8 +13768,8 @@
 
 	// Parse the `kern` table which contains kerning pairs.
 	function parseKernTable(data, start) {
-	    var p = new parse.Parser(data, start);
-	    var tableVersion = p.parseUShort();
+	    const p = new parse.Parser(data, start);
+	    const tableVersion = p.parseUShort();
 	    if (tableVersion === 0) {
 	        return parseWindowsKernTable(p);
 	    } else if (tableVersion === 1) {
@@ -13819,13 +13790,13 @@
 	// version where offsets are stored as uLongs. The `head` table specifies which version to use
 	// (under indexToLocFormat).
 	function parseLocaTable(data, start, numGlyphs, shortVersion) {
-	    var p = new parse.Parser(data, start);
-	    var parseFn = shortVersion ? p.parseUShort : p.parseULong;
+	    const p = new parse.Parser(data, start);
+	    const parseFn = shortVersion ? p.parseUShort : p.parseULong;
 	    // There is an extra entry after the last index element to compute the length of the last glyph.
 	    // That's why we use numGlyphs + 1.
-	    var glyphOffsets = [];
-	    for (var i = 0; i < numGlyphs + 1; i += 1) {
-	        var glyphOffset = parseFn.call(p);
+	    const glyphOffsets = [];
+	    for (let i = 0; i < numGlyphs + 1; i += 1) {
+	        let glyphOffset = parseFn.call(p);
 	        if (shortVersion) {
 	            // The short table version stores the actual offset divided by 2.
 	            glyphOffset *= 2;
@@ -13854,7 +13825,7 @@
 	 * @param  {Function} callback - The function to call when the font load completes
 	 */
 	function loadFromFile(path, callback) {
-	    var fs = require('fs');
+	    const fs = require('fs');
 	    fs.readFile(path, function(err, buffer) {
 	        if (err) {
 	            return callback(err.message);
@@ -13870,7 +13841,7 @@
 	 * @param  {Function} callback - The function to call when the font load completes
 	 */
 	function loadFromUrl(url, callback) {
-	    var request = new XMLHttpRequest();
+	    const request = new XMLHttpRequest();
 	    request.open('get', url, true);
 	    request.responseType = 'arraybuffer';
 	    request.onload = function() {
@@ -13896,13 +13867,13 @@
 	 * @return {Object[]}
 	 */
 	function parseOpenTypeTableEntries(data, numTables) {
-	    var tableEntries = [];
-	    var p = 12;
-	    for (var i = 0; i < numTables; i += 1) {
-	        var tag = parse.getTag(data, p);
-	        var checksum = parse.getULong(data, p + 4);
-	        var offset = parse.getULong(data, p + 8);
-	        var length = parse.getULong(data, p + 12);
+	    const tableEntries = [];
+	    let p = 12;
+	    for (let i = 0; i < numTables; i += 1) {
+	        const tag = parse.getTag(data, p);
+	        const checksum = parse.getULong(data, p + 4);
+	        const offset = parse.getULong(data, p + 8);
+	        const length = parse.getULong(data, p + 12);
 	        tableEntries.push({tag: tag, checksum: checksum, offset: offset, length: length, compression: false});
 	        p += 16;
 	    }
@@ -13917,14 +13888,14 @@
 	 * @return {Object[]}
 	 */
 	function parseWOFFTableEntries(data, numTables) {
-	    var tableEntries = [];
-	    var p = 44; // offset to the first table directory entry.
-	    for (var i = 0; i < numTables; i += 1) {
-	        var tag = parse.getTag(data, p);
-	        var offset = parse.getULong(data, p + 4);
-	        var compLength = parse.getULong(data, p + 8);
-	        var origLength = parse.getULong(data, p + 12);
-	        var compression = (void 0);
+	    const tableEntries = [];
+	    let p = 44; // offset to the first table directory entry.
+	    for (let i = 0; i < numTables; i += 1) {
+	        const tag = parse.getTag(data, p);
+	        const offset = parse.getULong(data, p + 4);
+	        const compLength = parse.getULong(data, p + 8);
+	        const origLength = parse.getULong(data, p + 12);
+	        let compression;
 	        if (compLength < origLength) {
 	            compression = 'WOFF';
 	        } else {
@@ -13953,14 +13924,14 @@
 	 */
 	function uncompressTable(data, tableEntry) {
 	    if (tableEntry.compression === 'WOFF') {
-	        var inBuffer = new Uint8Array(data.buffer, tableEntry.offset + 2, tableEntry.compressedLength - 2);
-	        var outBuffer = new Uint8Array(tableEntry.length);
+	        const inBuffer = new Uint8Array(data.buffer, tableEntry.offset + 2, tableEntry.compressedLength - 2);
+	        const outBuffer = new Uint8Array(tableEntry.length);
 	        tinyInflate(inBuffer, outBuffer);
 	        if (outBuffer.byteLength !== tableEntry.length) {
 	            throw new Error('Decompression error: ' + tableEntry.tag + ' decompressed length doesn\'t match recorded length');
 	        }
 
-	        var view = new DataView(outBuffer.buffer, 0);
+	        const view = new DataView(outBuffer.buffer, 0);
 	        return {data: view, offset: 0};
 	    } else {
 	        return {data: data, offset: tableEntry.offset};
@@ -13979,20 +13950,20 @@
 	function parseBuffer(buffer, opt) {
 	    opt = (opt === undefined || opt === null) ?  {} : opt;
 
-	    var indexToLocFormat;
-	    var ltagTable;
+	    let indexToLocFormat;
+	    let ltagTable;
 
 	    // Since the constructor can also be called to create new fonts from scratch, we indicate this
 	    // should be an empty font that we'll fill with our own data.
-	    var font = new Font({empty: true});
+	    const font = new Font({empty: true});
 
 	    // OpenType fonts use big endian byte ordering.
 	    // We can't rely on typed array view types, because they operate with the endianness of the host computer.
 	    // Instead we use DataViews where we can specify endianness.
-	    var data = new DataView(buffer, 0);
-	    var numTables;
-	    var tableEntries = [];
-	    var signature = parse.getTag(data, 0);
+	    const data = new DataView(buffer, 0);
+	    let numTables;
+	    let tableEntries = [];
+	    const signature = parse.getTag(data, 0);
 	    if (signature === String.fromCharCode(0, 1, 0, 0) || signature === 'true' || signature === 'typ1') {
 	        font.outlinesFormat = 'truetype';
 	        numTables = parse.getUShort(data, 4);
@@ -14002,7 +13973,7 @@
 	        numTables = parse.getUShort(data, 4);
 	        tableEntries = parseOpenTypeTableEntries(data, numTables);
 	    } else if (signature === 'wOFF') {
-	        var flavor = parse.getTag(data, 4);
+	        const flavor = parse.getTag(data, 4);
 	        if (flavor === String.fromCharCode(0, 1, 0, 0)) {
 	            font.outlinesFormat = 'truetype';
 	        } else if (flavor === 'OTTO') {
@@ -14017,21 +13988,21 @@
 	        throw new Error('Unsupported OpenType signature ' + signature);
 	    }
 
-	    var cffTableEntry;
-	    var fvarTableEntry;
-	    var glyfTableEntry;
-	    var gposTableEntry;
-	    var gsubTableEntry;
-	    var hmtxTableEntry;
-	    var kernTableEntry;
-	    var locaTableEntry;
-	    var nameTableEntry;
-	    var metaTableEntry;
-	    var p;
+	    let cffTableEntry;
+	    let fvarTableEntry;
+	    let glyfTableEntry;
+	    let gposTableEntry;
+	    let gsubTableEntry;
+	    let hmtxTableEntry;
+	    let kernTableEntry;
+	    let locaTableEntry;
+	    let nameTableEntry;
+	    let metaTableEntry;
+	    let p;
 
-	    for (var i = 0; i < numTables; i += 1) {
-	        var tableEntry = tableEntries[i];
-	        var table = (void 0);
+	    for (let i = 0; i < numTables; i += 1) {
+	        const tableEntry = tableEntries[i];
+	        let table;
 	        switch (tableEntry.tag) {
 	            case 'cmap':
 	                table = uncompressTable(data, tableEntry);
@@ -14117,53 +14088,213 @@
 	        }
 	    }
 
-	    var nameTable = uncompressTable(data, nameTableEntry);
+	    const nameTable = uncompressTable(data, nameTableEntry);
 	    font.tables.name = _name.parse(nameTable.data, nameTable.offset, ltagTable);
 	    font.names = font.tables.name;
 
 	    if (glyfTableEntry && locaTableEntry) {
-	        var shortVersion = indexToLocFormat === 0;
-	        var locaTable = uncompressTable(data, locaTableEntry);
-	        var locaOffsets = loca.parse(locaTable.data, locaTable.offset, font.numGlyphs, shortVersion);
-	        var glyfTable = uncompressTable(data, glyfTableEntry);
+	        const shortVersion = indexToLocFormat === 0;
+	        const locaTable = uncompressTable(data, locaTableEntry);
+	        const locaOffsets = loca.parse(locaTable.data, locaTable.offset, font.numGlyphs, shortVersion);
+	        const glyfTable = uncompressTable(data, glyfTableEntry);
 	        font.glyphs = glyf.parse(glyfTable.data, glyfTable.offset, locaOffsets, font, opt);
 	    } else if (cffTableEntry) {
-	        var cffTable = uncompressTable(data, cffTableEntry);
+	        const cffTable = uncompressTable(data, cffTableEntry);
 	        cff.parse(cffTable.data, cffTable.offset, font, opt);
 	    } else {
 	        throw new Error('Font doesn\'t contain TrueType or CFF outlines.');
 	    }
 
-	    var hmtxTable = uncompressTable(data, hmtxTableEntry);
+	    const hmtxTable = uncompressTable(data, hmtxTableEntry);
 	    hmtx.parse(font, hmtxTable.data, hmtxTable.offset, font.numberOfHMetrics, font.numGlyphs, font.glyphs, opt);
 	    addGlyphNames(font, opt);
 
 	    if (kernTableEntry) {
-	        var kernTable = uncompressTable(data, kernTableEntry);
+	        const kernTable = uncompressTable(data, kernTableEntry);
 	        font.kerningPairs = kern.parse(kernTable.data, kernTable.offset);
 	    } else {
 	        font.kerningPairs = {};
 	    }
 
 	    if (gposTableEntry) {
-	        var gposTable = uncompressTable(data, gposTableEntry);
+	        const gposTable = uncompressTable(data, gposTableEntry);
 	        font.tables.gpos = gpos.parse(gposTable.data, gposTable.offset);
 	        font.position.init();
 	    }
 
 	    if (gsubTableEntry) {
-	        var gsubTable = uncompressTable(data, gsubTableEntry);
+	        const gsubTable = uncompressTable(data, gsubTableEntry);
 	        font.tables.gsub = gsub.parse(gsubTable.data, gsubTable.offset);
 	    }
 
 	    if (fvarTableEntry) {
-	        var fvarTable = uncompressTable(data, fvarTableEntry);
+	        const fvarTable = uncompressTable(data, fvarTableEntry);
 	        font.tables.fvar = fvar.parse(fvarTable.data, fvarTable.offset, font.names);
 	    }
 
 	    if (metaTableEntry) {
-	        var metaTable = uncompressTable(data, metaTableEntry);
+	        const metaTable = uncompressTable(data, metaTableEntry);
 	        font.tables.meta = meta.parse(metaTable.data, metaTable.offset);
+	        font.metas = font.tables.meta;
+	    }
+
+	    return font;
+	}
+
+	/**
+	 * Parse the OpenType file data (as a FontMetadata) and return a Font object.
+	 * Throws an error if the font could not be parsed.
+	 * @param  {ArrayBuffer}
+	 * @param  {Object} opt - options for parsing
+	 */
+	async function parseFontMetadata(metadata, opt) {
+	    opt = (opt === undefined || opt === null) ?  {} : opt;
+
+	    let indexToLocFormat;
+	    let ltagTable;
+
+	    // Since the constructor can also be called to create new fonts from scratch, we indicate this
+	    // should be an empty font that we'll fill with our own data.
+	    const font = new Font({empty: true});
+
+	    const tableData = await metadata.getTables();
+	    const numTables = tableData.size;
+	  if (tableData.has('CFF ') || tableData.has('CFF2')) {
+	    font.outlinesFormat = 'cff';
+	  } else if (tableData.has('glyf') && tableData.has('loca')) {
+	    font.outlinesFormat = 'truetype';
+	  } else {
+	    // Bitmap or SVG fonts?
+	    throw new Error('Unsupported OpenType flavor');
+	  }
+
+	    let cffTableEntry;
+	    let fvarTableEntry;
+	    let glyfTableEntry;
+	    let gposTableEntry;
+	    let gsubTableEntry;
+	    let hmtxTableEntry;
+	    let kernTableEntry;
+	    let locaTableEntry;
+	    let nameTableEntry;
+	    let metaTableEntry;
+	    let p;
+
+	    for (const [tag, dataBlob] of tableData.entries()) {
+	        const data = new DataView(await dataBlob.arrayBuffer(), 0);
+	        const tableEntry = {data, offset: 0};
+	        switch (tag) {
+	            case 'cmap':
+	                font.tables.cmap = cmap.parse(tableEntry.data, tableEntry.offset);
+	                font.encoding = new CmapEncoding(font.tables.cmap);
+	                break;
+	            case 'cvt ' :
+	                p = new parse.Parser(tableEntry.data, tableEntry.offset);
+	                font.tables.cvt = p.parseShortList(tableEntry.data.byteLength / 2);
+	                break;
+	            case 'fvar':
+	                fvarTableEntry = tableEntry;
+	                break;
+	            case 'fpgm' :
+	                p = new parse.Parser(tableEntry.data, tableEntry.offset);
+	                font.tables.fpgm = p.parseByteList(tableEntry.data.byteLength);
+	                break;
+	            case 'head':
+	                font.tables.head = head.parse(tableEntry.data, tableEntry.offset);
+	                font.unitsPerEm = font.tables.head.unitsPerEm;
+	                indexToLocFormat = font.tables.head.indexToLocFormat;
+	                break;
+	            case 'hhea':
+	                font.tables.hhea = hhea.parse(tableEntry.data, tableEntry.offset);
+	                font.ascender = font.tables.hhea.ascender;
+	                font.descender = font.tables.hhea.descender;
+	                font.numberOfHMetrics = font.tables.hhea.numberOfHMetrics;
+	                break;
+	            case 'hmtx':
+	                hmtxTableEntry = tableEntry;
+	                break;
+	            case 'ltag':
+	                ltagTable = ltag.parse(tableEntry.data, tableEntry.offset);
+	                break;
+	            case 'maxp':
+	                font.tables.maxp = maxp.parse(tableEntry.data, tableEntry.offset);
+	                font.numGlyphs = font.tables.maxp.numGlyphs;
+	                break;
+	            case 'name':
+	                nameTableEntry = tableEntry;
+	                break;
+	            case 'OS/2':
+	                font.tables.os2 = os2.parse(tableEntry.data, tableEntry.offset);
+	                break;
+	            case 'post':
+	                font.tables.post = post.parse(tableEntry.data, tableEntry.offset);
+	                font.glyphNames = new GlyphNames(font.tables.post);
+	                break;
+	            case 'prep' :
+	                p = new parse.Parser(tableEntry.data, tableEntry.offset);
+	                font.tables.prep = p.parseByteList(tableEntry.data.byteLength);
+	                break;
+	            case 'glyf':
+	                glyfTableEntry = tableEntry;
+	                break;
+	            case 'loca':
+	                locaTableEntry = tableEntry;
+	                break;
+	            case 'CFF ':
+	                cffTableEntry = tableEntry;
+	                break;
+	            case 'kern':
+	                kernTableEntry = tableEntry;
+	                break;
+	            case 'GPOS':
+	                gposTableEntry = tableEntry;
+	                break;
+	            case 'GSUB':
+	                gsubTableEntry = tableEntry;
+	                break;
+	            case 'meta':
+	                metaTableEntry = tableEntry;
+	                break;
+	        }
+	  }
+
+	    font.tables.name = _name.parse(nameTableEntry.data, nameTableEntry.offset, ltagTable);
+	    font.names = font.tables.name;
+
+	    if (glyfTableEntry && locaTableEntry) {
+	        const shortVersion = indexToLocFormat === 0;
+	        const locaOffsets = loca.parse(locaTableEntry.data, locaTableEntry.offset, font.numGlyphs, shortVersion);
+	        font.glyphs = glyf.parse(glyfTableEntry.data, glyfTableEntry.offset, locaOffsets, font, opt);
+	    } else if (cffTableEntry) {
+	        cff.parse(cffTableEntry.data, cffTableEntry.offset, font, opt);
+	    } else {
+	        throw new Error('Font doesn\'t contain TrueType or CFF outlines.');
+	    }
+
+	    hmtx.parse(font, hmtxTableEntry.data, hmtxTableEntry.offset, font.numberOfHMetrics, font.numGlyphs, font.glyphs, opt);
+	    addGlyphNames(font, opt);
+
+	    if (kernTableEntry) {
+	        font.kerningPairs = kern.parse(kernTableEntry.data, kernTableEntry.offset);
+	    } else {
+	        font.kerningPairs = {};
+	    }
+
+	    if (gposTableEntry) {
+	        font.tables.gpos = gpos.parse(gposTableEntry.data, gposTableEntry.offset);
+	        font.position.init();
+	    }
+
+	    if (gsubTableEntry) {
+	        font.tables.gsub = gsub.parse(gsubTableEntry.data, gsubTableEntry.offset);
+	    }
+
+	    if (fvarTableEntry) {
+	        font.tables.fvar = fvar.parse(fvarTableEntry.data, fvarTableEntry.offset, font.names);
+	    }
+
+	    if (metaTableEntry) {
+	        font.tables.meta = meta.parse(metaTableEntry.data, metaTableEntry.offset);
 	        font.metas = font.tables.meta;
 	    }
 
@@ -14181,10 +14312,10 @@
 	 * @param  {Function} callback - The callback.
 	 */
 	function load(url, callback, opt) {
-	    var isNode = typeof window === 'undefined';
-	    var loadFn = isNode ? loadFromFile : loadFromUrl;
+	    const isNode = typeof window === 'undefined';
+	    const loadFn = isNode ? loadFromFile : loadFromUrl;
 
-	    return new Promise(function (resolve, reject) {
+	    return new Promise((resolve, reject) => {
 	        loadFn(url, function(err, arrayBuffer) {
 	            if (err) {
 	                if (callback) {
@@ -14193,7 +14324,7 @@
 	                    reject(err);
 	                }
 	            }
-	            var font;
+	            let font;
 	            try {
 	                font = parseBuffer(arrayBuffer, opt);
 	            } catch (e) {
@@ -14221,8 +14352,8 @@
 	 * @return {opentype.Font}
 	 */
 	function loadSync(url, opt) {
-	    var fs = require('fs');
-	    var buffer = fs.readFileSync(url);
+	    const fs = require('fs');
+	    const buffer = fs.readFileSync(url);
 	    return parseBuffer(nodeBufferToArrayBuffer(buffer), opt);
 	}
 
@@ -14234,6 +14365,7 @@
 		BoundingBox: BoundingBox,
 		_parse: parse,
 		parse: parseBuffer,
+		parseFontMetadata: parseFontMetadata,
 		load: load,
 		loadSync: loadSync
 	});

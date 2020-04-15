@@ -5,6 +5,7 @@
     <meta name="description" content="A JavaScript library to manipulate the letterforms of text from the browser or node.js.">
     <meta charset="utf-8">
     <link rel="stylesheet" href="site.css">
+    <link rel="stylesheet" href="picker.css">
     <script type="text/javascript" src="dist/opentype.js"></script>
 </head>
 <body>
@@ -30,8 +31,15 @@
         <small>opentype.js is an OpenType and TrueType font parser. Here you can inspect the raw font metadata.</small>
     </div>
 
-    <input id="file" type="file">
-    <span class="info" id="font-name">Roboto-Black</span>
+    <div id="font-picker">
+      <div id="controls">
+        <input id="search" type="text" />
+      </div>
+      <div id="list"></div>
+    </div>
+
+    <button id="open-picker">Choose Font</button>
+    <span class="info" id="font-name"></span>
     <canvas id="preview" width="940" height="50" class="text"></canvas>
     <div id="message"></div>
 
@@ -92,6 +100,7 @@
     <hr>
 </div>
 
-<script type="text/javascript" src="font-inspector.js"></script>
+<script src="font-picker.js"></script>
+<script src="font-inspector.js"></script>
 </body>
 </html>

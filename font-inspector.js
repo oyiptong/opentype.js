@@ -166,13 +166,13 @@ async function getAllFonts() {
 }
 
 (async () => {
-  let fonts = await getAllFonts();
-  var fontFileName = 'fonts/Roboto-Black.ttf';
+  const fonts = await getAllFonts();
 
-  document.getElementById('font-name').innerHTML = fonts["Monaco"].fullName;
-
-  var fileButton = document.getElementById('file');
-  fileButton.addEventListener('change', onReadFile, false);
+  var pickerButton = document.getElementById('open-picker');
+  pickerButton.addEventListener('click', () => {
+    document.querySelector('#font-picker').style.display = "block";
+    document.querySelector('#search').focus();
+  });
 
   var tableHeaders = document.getElementById('font-data').getElementsByTagName('h3');
   for(var i = tableHeaders.length; i--; ) {
@@ -183,12 +183,25 @@ async function getAllFonts() {
 
   enableHighDPICanvas('preview');
 
-  opentype.load(fontFileName, function(err, font) {
-    var amount, glyph, ctx, x, y, fontSize;
-    if (err) {
-      showErrorMessage(err.toString());
-      return;
+  const setFont = async (fontMeta) => {
+    document.getElementById('font-name').innerHTML = fontMeta.fullName;
+
+    try {
+      let font = await opentype.parseFontMetadata(fontMeta);
+      onFontLoaded(font);
+    } catch(e) {
+      showErrorMessage(e.toString());
     }
-    onFontLoaded(font);
-  }, {lowMemory:true});
+
+  };
+  setFont(fonts["Monaco"]);
+
+  document.addEventListener('font-selected', async (e) => {
+    const postscriptName = e.detail;
+    if (postscriptName in fonts) {
+      setFont(fonts[postscriptName]);
+    } else {
+      console.log(`Font not found: ${postscriptName}`);
+    }
+  });
 })();
