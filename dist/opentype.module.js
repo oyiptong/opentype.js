@@ -14365,5 +14365,5 @@ var opentype = /*#__PURE__*/Object.freeze({
 });
 
 export default opentype;
-export { BoundingBox, Font, Glyph, Path, parse as _parse, load, loadSync, parseBuffer as parse };
+export { BoundingBox, Font, Glyph, Path, parse as _parse, load, loadSync, parseBuffer as parse, parseFontMetadata };
 //# sourceMappingURL=opentype.module.js.map

@@ -14379,6 +14379,7 @@
 	exports.load = load;
 	exports.loadSync = loadSync;
 	exports.parse = parseBuffer;
+	exports.parseFontMetadata = parseFontMetadata;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
