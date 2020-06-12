@@ -380,10 +380,10 @@ async function getAllFonts() {
 
   const setFont = async (fontMeta) => {
     document.getElementById('font-name').innerHTML = fontMeta.fullName;
-    if (!('getBytes' in fontMeta)) {
-      alert('Error: FontMetadata needs getBytes() for this to work.');
+    if (!('blob' in fontMeta)) {
+      alert('Error: FontMetadata needs blob() for this to work.');
     }
-    let bytes = await fontMeta.getBytes();
+    let bytes = await fontMeta.blob();
     let buf = await bytes.arrayBuffer();
 
     try {
