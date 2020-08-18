@@ -165,43 +165,50 @@ async function getAllFonts() {
   return fonts;
 }
 
-(async () => {
-  const fonts = await getAllFonts();
+(() => {
+  window.addEventListener('UserActivationTriggered', async () => {
+    const fonts = await getAllFonts();
 
-  var pickerButton = document.getElementById('open-picker');
-  pickerButton.addEventListener('click', () => {
-    document.querySelector('#font-picker').style.display = "block";
-    document.querySelector('#search').focus();
-  });
+    var pickerButton = document.getElementById('open-picker');
+    pickerButton.addEventListener('click', () => {
+      document.querySelector('#font-picker').style.display = "block";
+      document.querySelector('#search').focus();
+    });
 
-  var tableHeaders = document.getElementById('font-data').getElementsByTagName('h3');
-  for(var i = tableHeaders.length; i--; ) {
-    tableHeaders[i].addEventListener('click', function(e) {
-      e.target.className = (e.target.className === 'collapsed') ? 'expanded' : 'collapsed';
+    var tableHeaders = document.getElementById('font-data').getElementsByTagName('h3');
+    for(var i = tableHeaders.length; i--; ) {
+      tableHeaders[i].addEventListener('click', function(e) {
+        e.target.className = (e.target.className === 'collapsed') ? 'expanded' : 'collapsed';
+      }, false);
+    }
+
+    enableHighDPICanvas('preview');
+
+    const setFont = async (fontMeta) => {
+      document.getElementById('font-name').innerHTML = fontMeta.fullName;
+      if (!('blob' in fontMeta)) {
+        alert('Error: FontMetadata needs blob() for this to work.');
+      }
+      let bytes = await fontMeta.blob();
+      let buf = await bytes.arrayBuffer();
+
+      try {
+        let font = await opentype.parse(buf);
+        onFontLoaded(font);
+      } catch(e) {
+        showErrorMessage(e.toString());
+      }
+
+    };
+    setFont(fonts["Monaco"]);
+
+    document.addEventListener('font-selected', async (e) => {
+      const postscriptName = e.detail;
+      if (postscriptName in fonts) {
+        setFont(fonts[postscriptName]);
+      } else {
+        console.log(`Font not found: ${postscriptName}`);
+      }
+    });
     }, false);
-  }
-
-  enableHighDPICanvas('preview');
-
-  const setFont = async (fontMeta) => {
-    document.getElementById('font-name').innerHTML = fontMeta.fullName;
-
-    try {
-      let font = await opentype.parseFontMetadata(fontMeta);
-      onFontLoaded(font);
-    } catch(e) {
-      showErrorMessage(e.toString());
-    }
-
-  };
-  setFont(fonts["Monaco"]);
-
-  document.addEventListener('font-selected', async (e) => {
-    const postscriptName = e.detail;
-    if (postscriptName in fonts) {
-      setFont(fonts[postscriptName]);
-    } else {
-      console.log(`Font not found: ${postscriptName}`);
-    }
-  });
 })();
