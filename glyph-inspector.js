@@ -364,6 +364,16 @@ async function getAllFonts() {
   return fonts;
 }
 
+function getDefaultFont(fonts) {
+  const defaultFontNames = ["Monaco", "Arial", "Tahoma"];
+  for (const f of defaultFontNames) {
+    if (f in fonts) {
+      return fonts[f];
+    }
+  }
+  return fonts[Object.keys(fonts)[0]];
+}
+
 (() => {
   window.addEventListener("UserActivationTriggered", async () => {
     let fonts = await getAllFonts();
@@ -395,7 +405,7 @@ async function getAllFonts() {
       }
 
     };
-    setFont(fonts["Monaco"]);
+    setFont(getDefaultFont(fonts));
 
     document.addEventListener('font-selected', async (e) => {
       const postscriptName = e.detail;
