@@ -4,7 +4,7 @@
   window.addEventListener("UserActivationTriggered", async () => {
     const $ = document.querySelector.bind(document);
     if (!navigator.fonts) {
-      alert("Font Access API not detected. Will not work.\nAlso, it is only supported MacOS for now.\nUse Canary and turn on the #font-access flag.");
+      alert("Font Access API not detected. Will not work.\nUse Canary and turn on the #font-access flag.");
       return;
     }
     // Gather all fonts
