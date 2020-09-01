@@ -365,7 +365,7 @@ async function getAllFonts() {
 }
 
 function getDefaultFont(fonts) {
-  const defaultFontNames = ["Monaco", "Arial", "Tahoma"];
+  const defaultFontNames = ["Monaco", "Tahoma", "DejaVuSansMono", "ArialMT"];
   for (const f of defaultFontNames) {
     if (f in fonts) {
       return fonts[f];
