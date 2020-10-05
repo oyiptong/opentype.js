@@ -14,12 +14,21 @@
     }
     return fonts;
   }
+
+  async function enumerateAndDispatch() {
+    if (document.hidden) {
+      await new Promise(resolve => {
+        document.addEventListener("visibilitychange", resolve, {once: true});
+      });
+    }
+    window.fonts = await getAllFonts();
+    window.dispatchEvent(enumerationReadyEvent);
+  }
   const enumerationReadyEvent = new Event("EnumerationReady");
 
   const permissionStatus = await navigator.permissions.query({name: "font-access"})
   if (permissionStatus.state == "granted") {
-    window.fonts = await getAllFonts();
-    window.dispatchEvent(enumerationReadyEvent);
+    await enumerateAndDispatch();
     return;
   }
 
@@ -38,9 +47,9 @@
 
   const button = document.createElement("button");
 
-  button.onclick = () => {
+  button.onclick = async () => {
     body.removeChild(container);
-    window.dispatchEvent(enumerationReadyEvent);
+    await enumerateAndDispatch();
   };
   button.textContent = "Click to enumerate fonts";
   modal.appendChild(button);
