@@ -1,6 +1,28 @@
 "use strict";
 
 (async () => {
+
+  if (!navigator.fonts) {
+    alert("Font Access API not detected. Will not work.\nUse Canary and turn on the #font-access flag.");
+    return;
+  }
+
+  async function getAllFonts() {
+    const fonts = {};
+    for await (const f of navigator.fonts.query()) {
+      fonts[f.postscriptName] = f;
+    }
+    return fonts;
+  }
+  const enumerationReadyEvent = new Event("EnumerationReady");
+
+  const permissionStatus = await navigator.permissions.query({name: "font-access"})
+  if (permissionStatus.state == "granted") {
+    window.fonts = await getAllFonts();
+    window.dispatchEvent(enumerationReadyEvent);
+    return;
+  }
+
   const $ = document.querySelector.bind(document);
   const body = $("body");
   const container = document.createElement("div");
@@ -14,13 +36,11 @@
   modal.innerHTML = "<h1>Font Access Demo</h1><p>User Activation is required to begin demo.</p";
   modal.id = "font-access-modal";
 
-
   const button = document.createElement("button");
-  const userActivationEvent = new Event('UserActivationTriggered');
 
   button.onclick = () => {
     body.removeChild(container);
-    window.dispatchEvent(userActivationEvent);
+    window.dispatchEvent(enumerationReadyEvent);
   };
   button.textContent = "Click to enumerate fonts";
   modal.appendChild(button);

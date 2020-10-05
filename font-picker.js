@@ -1,19 +1,11 @@
 "use strict";
 
 (() => {
-  window.addEventListener("UserActivationTriggered", async () => {
+  window.addEventListener("EnumerationReady", async () => {
     const $ = document.querySelector.bind(document);
-    if (!navigator.fonts) {
-      alert("Font Access API not detected. Will not work.\nUse Canary and turn on the #font-access flag.");
-      return;
-    }
     // Gather all fonts
-    let ms = [];
+    let ms = Object.values(window.fonts);
     let searchFilter = "";
-
-    for await (const metadata of navigator.fonts.query()) {
-      ms.push(metadata);
-    }
 
     const drawList = (opts = {}) => {
       const defaultOpts = {

@@ -157,14 +157,6 @@ function onReadFile(e) {
     reader.readAsArrayBuffer(file);
 }
 
-async function getAllFonts() {
-  const fonts = {};
-  for await (const f of navigator.fonts.query()) {
-    fonts[f.postscriptName] = f;
-  }
-  return fonts;
-}
-
 function getDefaultFont(fonts) {
   const defaultFontNames = ["Monaco", "Tahoma", "DejaVuSansMono", "ArialMT"];
   for (const f of defaultFontNames) {
@@ -176,9 +168,7 @@ function getDefaultFont(fonts) {
 }
 
 (() => {
-  window.addEventListener('UserActivationTriggered', async () => {
-    const fonts = await getAllFonts();
-
+  window.addEventListener("EnumerationReady", async () => {
     var pickerButton = document.getElementById('open-picker');
     pickerButton.addEventListener('click', () => {
       document.querySelector('#font-picker').style.display = "block";
@@ -210,12 +200,12 @@ function getDefaultFont(fonts) {
       }
 
     };
-    setFont(getDefaultFont(fonts));
+    setFont(getDefaultFont(window.fonts));
 
     document.addEventListener('font-selected', async (e) => {
       const postscriptName = e.detail;
-      if (postscriptName in fonts) {
-        setFont(fonts[postscriptName]);
+      if (postscriptName in window.fonts) {
+        setFont(window.fonts[postscriptName]);
       } else {
         console.log(`Font not found: ${postscriptName}`);
       }
