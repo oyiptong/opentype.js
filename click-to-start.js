@@ -18,7 +18,11 @@
   async function enumerateAndDispatch() {
     if (document.hidden) {
       await new Promise(resolve => {
-        document.addEventListener("visibilitychange", resolve, {once: true});
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === 'visible') {
+            resolve();
+          }
+        });
       });
     }
     window.fonts = await getAllFonts();
