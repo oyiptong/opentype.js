@@ -396,7 +396,12 @@ function getDefaultFont(fonts) {
       }
 
     };
-    setFont(getDefaultFont(window.fonts));
+
+    if (!window.fontIsSet) {
+      // Only set the font the first time.
+      setFont(getDefaultFont(window.fonts));
+      window.fontIsSet = true;
+    }
 
     const fontSelectedHandler = async (e) => {
       const postscriptName = e.detail;
