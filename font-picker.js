@@ -42,9 +42,11 @@
         const entry = Object.assign(document.createElement("div"), {
           className: "item",
           textContent: metadata[display],
+          dataPSName: metadata["postscriptName"],
+          /*
           style: `font-family: "${
           display === "family" ? metadata[display] : metadata["postscriptName"]
-        }"`
+        }"`*/
         });
 
         $("#list").append(entry);
@@ -64,7 +66,7 @@
         $("#list .item.selected").classList.remove("selected");
       e.target.classList.add("selected");
 
-      const event = new CustomEvent('font-selected', {detail: e.target.style.fontFamily});
+      const event = new CustomEvent('font-selected', {detail: e.target.dataPSName});
       document.dispatchEvent(event);
       $("#font-picker").style.display = "none";
     };
