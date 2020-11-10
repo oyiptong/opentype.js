@@ -384,10 +384,10 @@ function getDefaultFont(fonts) {
       if (!('blob' in fontMeta)) {
         alert('Error: FontMetadata needs blob() for this to work.');
       }
-      let bytes = await fontMeta.blob();
-      let buf = await bytes.arrayBuffer();
-
       try {
+        let bytes = await fontMeta.blob();
+        let buf = await bytes.arrayBuffer();
+
         let font = await opentype.parse(buf);
         onFontLoaded(font);
       } catch(e) {
