@@ -428,7 +428,7 @@ function getDefaultFont(fonts) {
   const importButton = document.querySelector("#import-fonts");
 
   if (!navigator.fonts || !navigator.fonts.showFontChooser) {
-    alert("Please use Chromium Canary and enable #font-access and #font-access-chooser in chrome://flags");
+    alert("Please use Chromium Canary and enable #enable-experimental-web-platform-features, #font-access and #font-access-chooser in chrome://flags");
     importButton.setAttribute("disabled", "true");
     return;
   }
