@@ -418,7 +418,7 @@ function getDefaultFont(fonts) {
 
   const showFontChooser = async () => {
     const fonts = {};
-    const fontMetadata = await navigator.fonts.showFontChooser();
+    const fontMetadata = await navigator.fonts.query();
     for (const f of fontMetadata) {
       fonts[f.postscriptName] = f;
     }
@@ -427,7 +427,7 @@ function getDefaultFont(fonts) {
 
   const importButton = document.querySelector("#import-fonts");
 
-  if (!navigator.fonts || !navigator.fonts.showFontChooser) {
+  if (!navigator.fonts || !navigator.fonts.query) {
     alert("Please use Chromium Canary and enable #enable-experimental-web-platform-features, #font-access and #font-access-chooser in chrome://flags");
     importButton.setAttribute("disabled", "true");
     return;

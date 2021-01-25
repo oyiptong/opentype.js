@@ -9,7 +9,8 @@
 
   async function getAllFonts() {
     const fonts = {};
-    for await (const f of navigator.fonts.query()) {
+    const all = await navigator.fonts.query({persistentAccess: true});
+    for (const f of all) {
       fonts[f.postscriptName] = f;
     }
     return fonts;

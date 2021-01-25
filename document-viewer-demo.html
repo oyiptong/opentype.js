@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>opentype.js glyph inspector</title>
+    <title>opentype.js font inspector</title>
     <meta name="description" content="A JavaScript library to manipulate the letterforms of text from the browser or node.js.">
     <meta http-equiv="origin-trial" content="AnD1hPV+sPZPz1T5ywXZFRUWAz3pk3Gm7j6DiQ1y6b0w4n99SnmvoqJeku9QseDczt5niYv0FROPi3wjc3Lb0QcAAABWeyJvcmlnaW4iOiJodHRwczovL295aXB0b25nLmdpdGh1Yi5pbzo0NDMiLCJmZWF0dXJlIjoiRm9udEFjY2VzcyIsImV4cGlyeSI6MTYwOTM1Mzg3OX0=">
     <meta charset="utf-8">
     <link rel="stylesheet" href="site.css">
     <link rel="stylesheet" href="picker.css">
-    <script src="dist/opentype.js"></script>
+    <script type="text/javascript" src="dist/opentype.js"></script>
 </head>
 <body>
 <div class="header">
@@ -31,8 +31,8 @@
 <div class="container">
 
     <div class="explain">
-        <h1>Glyph Inspector</h1>
-        <small>opentype.js is an OpenType and TrueType font parser. Here you can inspect the raw glyph data.</small>
+        <h1>Document Viewer</h1>
+        <small>Demo of a document needing a specific font. In this case: ArialMT</small>
     </div>
 
     <div id="font-picker">
@@ -42,26 +42,10 @@
       <div id="list"></div>
     </div>
 
-
-    <button id="open-picker">Choose Font</button>
+    <button id="import-fonts">Load Font(s)</button>
     <span class="info" id="font-name"></span>
+    <canvas id="preview" width="940" height="50" class="text"></canvas>
     <div id="message"></div>
-
-    <hr>
-
-    <div>
-        Glyphs <span id="pagination"></span>
-        <br>
-        <div id="glyph-list-end"></div>
-    </div>
-    <div style="position: relative">
-        <div id="glyph-display">
-            <canvas id="glyph-bg" width="500" height="500"></canvas>
-            <canvas id="glyph" width="500" height="500"></canvas>
-        </div>
-        <div id="glyph-data"></div>
-        <div style="clear: both"></div>
-    </div>
 
     <hr>
 
@@ -74,9 +58,7 @@
     <hr>
 </div>
 
-
-<script src="click-to-start.js"></script>
 <script src="font-picker.js"></script>
-<script src="glyph-inspector.js"></script>
+<script src="document-viewer-demo.js"></script>
 </body>
 </html>
