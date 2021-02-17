@@ -31,11 +31,13 @@
   }
   const enumerationReadyEvent = new Event("EnumerationReady");
 
+  /*
   const permissionStatus = await navigator.permissions.query({name: "font-access"})
   if (permissionStatus.state == "granted") {
     await enumerateAndDispatch();
     return;
   }
+  */
 
   const $ = document.querySelector.bind(document);
   const body = $("body");
